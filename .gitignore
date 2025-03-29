@@ -1,0 +1,25 @@
+# 공통 무시 규칙
+.DS_Store
+*.log
+
+# flutter 관련
+.dart_tool/
+.packages
+.pub-cache/
+build/
+.vscode/
+*.code-workspace
+
+# Android
+android/.gradle/
+android/local.properties
+
+# iOS
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+
+# idea, frontend 하위 프로젝트 포함
+idea/.idea/
+frontend/.dart_tool/
+frontend/.vscode/
