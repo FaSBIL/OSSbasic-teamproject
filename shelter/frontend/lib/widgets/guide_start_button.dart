@@ -14,12 +14,16 @@ class GuideStartButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed, // 버튼 클릭 시 콜백 함수 실행
       style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.blue, // 버튼 배경색: 파란색
-        foregroundColor: Colors.white, // 버튼 텍스트 색상: 흰색
+        backgroundColor: Colors.white, // 버튼 배경색: 파란색
+        foregroundColor: Colors.black, // 버튼 텍스트 색상: 흰색
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12), // 모서리 둥글게
+          borderRadius: BorderRadius.circular(16), // 모서리 둥글게
+          side: const BorderSide(
+            color: Colors.black, //  카드와 같은 테두리 추가
+            width: 1.5,
+          ),
         ),
-        minimumSize: const Size(double.infinity, 48), // 가로는 최대, 세로는 48
+        minimumSize: const Size.fromHeight(48), // 가로는 최대, 세로는 48
       ),
       child: const Text(
         "안내 시작", // 버튼에 표시될 텍스트

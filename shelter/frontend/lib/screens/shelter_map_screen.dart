@@ -9,7 +9,7 @@ import '../widgets/loading_indicator.dart'; // 로딩 스피너 UI
 
 import '../widgets/zoom_control_buttons.dart';
 import '../widgets/current_location_button.dart';
-import '../widgets/guide_start_button.dart';
+// import '../widgets/guide_start_button.dart';
 import '../widgets/shelter_slider.dart';
 
 class ShelterMapScreen extends StatefulWidget {
@@ -27,21 +27,24 @@ class _ShelterMapScreenState extends State<ShelterMapScreen> {
 
   /// ✅ 지도 컨트롤러 추가
   final MapController _mapController = MapController();
-  final List<Map<String, String>> shelterList = [
+  final List<Map<String, dynamic>> shelterList = [
     {
       'name': '성심당 본점',
       'address': '대전 중구 대종로480번길 15',
       'distance': '도보 5분 (400m)',
+      'latLng': LatLng(36.3273, 127.4082),
     },
     {
       'name': '대전역 대피소',
       'address': '대전 동구 중앙로215번길 7',
       'distance': '도보 10분 (800m)',
+      'latLng': LatLng(36.3326, 127.4342),
     },
     {
       'name': '한밭대학교 대피소',
       'address': '대전 유성구 대학로 291',
       'distance': '도보 15분 (1.2km)',
+      'latLng': LatLng(36.3505, 127.3848),
     },
   ];
 
@@ -139,29 +142,9 @@ class _ShelterMapScreenState extends State<ShelterMapScreen> {
             ),
           ),
 
-          /// 3. 하단 대피소 정보 카드 or 로딩 중 표시 + 안내 시작 버튼
+          /// 3. 오른쪽 하단: 확대/축소 + 현재 위치 버튼
           Positioned(
-            bottom: 30, // 버튼보다 위로 띄우기
-            left: 0,
-            right: 0,
-            child:
-                isLoading
-                    ? const LoadingIndicator()
-                    : ShelterSlider(
-                      shelterList: shelterList,
-                      onShelterSelected: (shelter) {
-                        final LatLng target = shelter['latLng'];
-                        _mapController.move(
-                          target,
-                          _mapController.camera.zoom,
-                        ); // ✅ 지도 이동
-                      },
-                    ),
-          ),
-
-          /// ✅ 4. 오른쪽 하단: 확대/축소 + 현재 위치 버튼
-          Positioned(
-            bottom: 200,
+            bottom: 300,
             right: 20,
             child: Column(
               children: [
@@ -175,16 +158,21 @@ class _ShelterMapScreenState extends State<ShelterMapScreen> {
             ),
           ),
 
-          /// 5. 하단 안내 시작 버튼 (항상 고정됨)
+          /// ✅ 4. 하단 카드 + 안내 버튼 묶어서 한 번에
           Positioned(
             bottom: 30,
-            left: 20,
-            right: 20,
-            child: GuideStartButton(
-              onPressed: () {
-                print('안내 시작');
-              },
-            ),
+            left: 0,
+            right: 0,
+            child:
+                isLoading
+                    ? const LoadingIndicator()
+                    : ShelterSlider(
+                      shelterList: shelterList,
+                      onShelterSelected: (shelter) {
+                        final LatLng target = shelter['latLng'];
+                        _mapController.move(target, _mapController.camera.zoom);
+                      },
+                    ),
           ),
         ],
       ),

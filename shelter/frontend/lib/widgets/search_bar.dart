@@ -21,9 +21,16 @@ class SearchBarWidget extends StatelessWidget {
           horizontal: 16,
           vertical: 0,
         ), // 내부 여백 설정
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12), // 테두리를 둥글게
-          borderSide: BorderSide.none, // 테두리선 없앰
+        // 비활성 상태일 때 테두리
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(40),
+          borderSide: const BorderSide(color: Colors.black, width: 2),
+        ),
+
+        // 입력 중일 때 테두리
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(40),
+          borderSide: const BorderSide(color: Colors.black, width: 2),
         ),
       ),
     );
