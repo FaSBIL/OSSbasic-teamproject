@@ -18,16 +18,16 @@ class ShelterCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width * 0.9, // ✅ 화면 너비의 90%로 지정
+      width: MediaQuery.of(context).size.width * 0.9, // 화면 너비의 90%로 지정
       constraints: const BoxConstraints(
-        minHeight: 100, // ✅ 카드 높이를 최소 100px 이상으로 보장
+        minHeight: 100, // 카드 높이를 최소 100px 이상으로 보장
       ),
       padding: const EdgeInsets.all(16), // 카드 내부 여백
       decoration: BoxDecoration(
         color: Colors.white, // 배경색 흰색
         borderRadius: BorderRadius.circular(16), // 테두리 둥글게
         border: Border.all(
-          // 🔲 검은 테두리 추가
+          // 검은 테두리 추가
           color: Colors.black,
           width: 2,
         ),

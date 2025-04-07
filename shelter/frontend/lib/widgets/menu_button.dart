@@ -18,7 +18,7 @@ class MenuButton extends StatelessWidget {
         boxShadow: [
           // 그림자 효과 설정
           BoxShadow(
-            color: Colors.black.withOpacity(0.1), // 연한 검정색 그림자
+            color: Colors.black.withValues(alpha: 0.2), // 연한 검정색 그림자
             blurRadius: 6, // 그림자 흐림 정도
             offset: const Offset(0, 2), // 아래쪽으로 살짝 그림자 위치
           ),

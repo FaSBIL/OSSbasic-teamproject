@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 
-/// 📌 지도 확대/축소 버튼 묶음 위젯
+/// 지도 확대/축소 버튼 묶음 위젯
 class ZoomControlButtons extends StatelessWidget {
   final MapController mapController; // 지도 컨트롤러
 

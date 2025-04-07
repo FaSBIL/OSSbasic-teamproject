@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart'; // 지도 위젯 패키지
 import 'package:latlong2/latlong.dart'; // 위경도 좌표용 패키지
-import 'package:geolocator/geolocator.dart'; // ✅ GPS 위치 사용을 위한 패키지 추가
-import 'dart:async'; // ✅ 위치 스트림을 위한 import
+import 'package:geolocator/geolocator.dart'; // GPS 위치 사용을 위한 패키지 추가
+import 'dart:async'; // 위치 스트림을 위한 import
 
 import '../widgets/search_bar.dart'; // 상단 검색창 위젯
 import '../widgets/loading_indicator.dart'; // 로딩 스피너 UI
@@ -22,10 +22,10 @@ class ShelterMapScreen extends StatefulWidget {
 class _ShelterMapScreenState extends State<ShelterMapScreen> {
   bool isLoading = false;
 
-  LatLng? currentPosition; // ✅ 현재 위치 저장
-  StreamSubscription<Position>? _positionStreamSubscription; // ✅ 스트림 구독 변수
+  LatLng? currentPosition; // 현재 위치 저장
+  StreamSubscription<Position>? _positionStreamSubscription; // 스트림 구독 변수
 
-  /// ✅ 지도 컨트롤러 추가
+  /// 더미데이터
   final MapController _mapController = MapController();
   final List<Map<String, dynamic>> shelterList = [
     {
@@ -48,7 +48,7 @@ class _ShelterMapScreenState extends State<ShelterMapScreen> {
     },
   ];
 
-  /// ✅ 실시간 위치 추적 시작
+  /// 실시간 위치 추적 시작
   void startTrackingLocation() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) return;
@@ -59,7 +59,7 @@ class _ShelterMapScreenState extends State<ShelterMapScreen> {
       if (permission == LocationPermission.denied) return;
     }
 
-    // ✅ 위치 스트림을 수신하고 상태 업데이트
+    // 위치 스트림을 수신하고 상태 업데이트
     _positionStreamSubscription = Geolocator.getPositionStream(
       locationSettings: const LocationSettings(
         accuracy: LocationAccuracy.high,
@@ -75,12 +75,12 @@ class _ShelterMapScreenState extends State<ShelterMapScreen> {
   @override
   void initState() {
     super.initState();
-    startTrackingLocation(); // ✅ 앱 실행 시 위치 추적 시작
+    startTrackingLocation(); // 앱 실행 시 위치 추적 시작
   }
 
   @override
   void dispose() {
-    _positionStreamSubscription?.cancel(); // ✅ 앱 종료 시 위치 추적 종료
+    _positionStreamSubscription?.cancel(); // 앱 종료 시 위치 추적 종료
     super.dispose();
   }
 
@@ -91,10 +91,10 @@ class _ShelterMapScreenState extends State<ShelterMapScreen> {
         children: [
           /// 1. 지도 영역 (OpenStreetMap 사용)
           FlutterMap(
-            mapController: _mapController, // ✅ 지도 컨트롤러 적용
+            mapController: _mapController, // 지도 컨트롤러 적용
             options: MapOptions(
               initialCenter:
-                  currentPosition ?? LatLng(37.5665, 126.9780), // ✅ 현재 위치 사용
+                  currentPosition ?? LatLng(37.5665, 126.9780), // 현재 위치 사용
               initialZoom: 13.0,
             ),
             children: [
@@ -104,7 +104,7 @@ class _ShelterMapScreenState extends State<ShelterMapScreen> {
                 subdomains: const ['a', 'b', 'c'],
               ),
 
-              /// ✅ 현재 위치 마커
+              /// 현재 위치 마커
               if (currentPosition != null)
                 MarkerLayer(
                   markers: [
@@ -158,7 +158,7 @@ class _ShelterMapScreenState extends State<ShelterMapScreen> {
             ),
           ),
 
-          /// ✅ 4. 하단 카드 + 안내 버튼 묶어서 한 번에
+          /// 4. 하단 카드 + 안내 버튼 묶어서 한 번에
           Positioned(
             bottom: 30,
             left: 0,

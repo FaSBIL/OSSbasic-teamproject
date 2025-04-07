@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart'; // Flutter Map 패키지
 import 'package:latlong2/latlong.dart'; // 위치 좌표(LatLng)를 위한 패키지
 
-/// 📌 현재 위치로 지도 이동하는 버튼 위젯 (이미지 스타일)
+/// 현재 위치로 지도 이동하는 버튼 위젯 (이미지 스타일)
 class CurrentLocationButton extends StatelessWidget {
   // 현재 위치 좌표 (nullable → null일 수도 있음)
   final LatLng? currentPosition;
@@ -27,7 +27,7 @@ class CurrentLocationButton extends StatelessWidget {
         boxShadow: [
           // 그림자 효과 추가 (이미지처럼 부드럽게)
           BoxShadow(
-            color: Colors.black.withOpacity(0.2), // 그림자 색: 연한 검정
+            color: Colors.black.withValues(alpha: 0.8), // 그림자 색: 연한 검정
             blurRadius: 8, // 그림자 퍼짐 정도
             offset: const Offset(0, 4), // 그림자 위치: 아래쪽으로 약간
           ),
