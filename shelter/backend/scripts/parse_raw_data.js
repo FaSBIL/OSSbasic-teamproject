@@ -3,7 +3,7 @@ const csv = require('csv-parser');
 
 const results = [];
 
-fs.createReadStream('./data/raw/daejeon.csv') // 업로드한 경로
+fs.createReadStream('./data/raw/jeju.csv') // 업로드한 경로
   .pipe(csv())
   .on('data', (row) => {
     // 먼저 열 키 확인
@@ -11,6 +11,6 @@ fs.createReadStream('./data/raw/daejeon.csv') // 업로드한 경로
     results.push(row);
   })
   .on('end', () => {
-    fs.writeFileSync('./data/processed/rawJSON/daejeon_raw.json', JSON.stringify(results, null, 2));
-    console.log('✅ 변환 완료! daejeon_raw.json 생성됨');
+    fs.writeFileSync('./data/processed/rawJSON/jeju_raw.json', JSON.stringify(results, null, 2));
+    console.log('✅ 변환 완료! jeju_raw.json 생성됨');
   });
