@@ -3,18 +3,18 @@ const csv = require('csv-parser');
 
 const results = [];
 
-fs.createReadStream('./data/raw/chungbuk.csv')
+fs.createReadStream('./data/raw/chungnam.csv')
   .pipe(csv())
   .on('data', (row) => {
     results.push({
-      name: row['민방위 대피시설명'],
-      address: row['시설 주소'],
-      lat: parseFloat(row['위도']),
-      lng: parseFloat(row['경도']),
-      region: '충청북도'
+      name: row['시설명'],
+      address: row['도로명전체주소'],
+      lat: parseFloat(row['위도(EPSG4326)']),
+      lng: parseFloat(row['경도(EPSG4326)']),
+      region: '충청남도'
     });
   })
   .on('end', () => {
-    fs.writeFileSync('./data/processed/chungbuk.json', JSON.stringify(results, null, 2));
-    console.log('✅ 정제된 chungbuk.json 생성 완료!');
+    fs.writeFileSync('./data/processed/chungnam.json', JSON.stringify(results, null, 2));
+    console.log('✅ 정제된 chungnam.json 생성 완료!');
   });
