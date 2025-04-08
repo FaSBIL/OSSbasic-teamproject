@@ -3,7 +3,7 @@ const csv = require('csv-parser');
 
 const results = [];
 
-fs.createReadStream('./data/raw/chungnam.csv')
+fs.createReadStream('./data/raw/seoul.csv')
   .pipe(csv())
   .on('data', (row) => {
     results.push({
@@ -11,10 +11,10 @@ fs.createReadStream('./data/raw/chungnam.csv')
       address: row['도로명전체주소'],
       lat: parseFloat(row['위도(EPSG4326)']),
       lng: parseFloat(row['경도(EPSG4326)']),
-      region: '충청남도'
+      region: '서울특별시'
     });
   })
   .on('end', () => {
-    fs.writeFileSync('./data/processed/chungnam.json', JSON.stringify(results, null, 2));
-    console.log('✅ 정제된 chungnam.json 생성 완료!');
+    fs.writeFileSync('./data/processed/seoul.json', JSON.stringify(results, null, 2));
+    console.log('✅ 정제된 seoul.json 생성 완료!');
   });
