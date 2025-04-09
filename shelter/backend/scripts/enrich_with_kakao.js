@@ -2,9 +2,9 @@ const fs = require('fs');
 const axios = require('axios');
 
 // 설정
-const inputFile = './shelters_cleaned.json';
+const inputFile = './data/tsunami/RefinedJSON/shelters_cleaned.json';
 const outputFile = './shelters_enriched.json';
-const kakaoKey = process.env.KAKAO_REST_KEY;
+const kakaoKey = "f82e6cb25da330769e61eec64472d61d";//api 키
 
 async function getAddress(lat, lng) {
   const url = `https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${lng}&y=${lat}`;
