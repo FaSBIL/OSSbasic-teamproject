@@ -4,7 +4,7 @@ const fs = require('fs');
 require('dotenv').config();
 
 // 설정값
-const serviceKey = process.env.TSUNAMI_KEY;
+const serviceKey = "8R5DA95M0CLD27Q0";//process.env.TSUNAMI_KEY;
 const baseUrl = 'https://www.safetydata.go.kr/V2/api/DSSP-IF-10944';
 
 // 요청 파라미터 구성
@@ -38,8 +38,8 @@ https.get(requestUrl, (res) => {
       if (!rows || !Array.isArray(rows)) {
         console.error('❌ 응답 데이터 구조가 예상과 다릅니다.');
         // 응답 전체 저장해서 분석할 수 있도록 로그
-        fs.writeFileSync('./response_debug.json', JSON.stringify(json, null, 2));
-        console.log('📄 response_debug.json 파일에 전체 응답 저장됨 (확인 필수)');
+        fs.writeFileSync('./response.json', JSON.stringify(json, null, 2));
+        console.log('📄 response.json 파일에 전체 응답 저장됨');
         return;
       }
 
@@ -56,3 +56,5 @@ https.get(requestUrl, (res) => {
 }).on('error', (err) => {
   console.error('요청 중 오류:', err.message);
 });
+
+console.log('[DEBUG] 서비스키:', process.env.TSUNAMI_KEY);
