@@ -28,3 +28,4 @@ shelter/frontend/pubspec.lock
 # npm 패키지들
 shelter/backend/node_modules/
 
+/.env

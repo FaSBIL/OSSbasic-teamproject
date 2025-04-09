@@ -10,7 +10,7 @@ const numOfRows = '1000';
 const baseUrl = 'https://www.safetydata.go.kr/V2/api/DSSP-IF-10944';
 
 // CSV로 저장할 시/도 설정
-const targetCity = '부산광역시'; // <- 원하는 지역으로 바꿔줘
+const targetCity = '충청북도'; // <- 원하는 지역으로 바꿔줘
 
 const queryParams = querystring.stringify({
   serviceKey: serviceKey,
