@@ -6,7 +6,6 @@ require('dotenv').config();
 // 설정값
 const serviceKey = process.env.TSUNAMI_KEY;
 const baseUrl = 'https://www.safetydata.go.kr/V2/api/DSSP-IF-10944';
-const targetCity = '충청북도'; // 시/도 필터링용
 
 // 요청 파라미터 구성
 const queryParams = querystring.stringify({
@@ -27,29 +26,29 @@ https.get(requestUrl, (res) => {
     try {
       const json = JSON.parse(data);
 
-      const rows = json?.DisasterShelter?.[1]?.row;
+      // 전체 구조 디버깅용 출력
+      console.log('[INFO] 응답 구조 확인용:', Object.keys(json));
+
+      // rows 데이터 가져오기 (구조에 따라 수정 필요)
+      const rows =
+        json?.DisasterShelter?.row ||  // 가장 가능성 높은 구조
+        json?.DisasterShelter?.[1]?.row ||  // 원래 쓰던 구조
+        null;
+
       if (!rows || !Array.isArray(rows)) {
-        console.error('응답 데이터가 올바르지 않습니다.');
-        return;
-      }
-
-      // 필터: 시/도 이름 포함된 주소 기준
-      const filtered = rows.filter(item =>
-        item.RN_DTL_ADRES && item.RN_DTL_ADRES.includes(targetCity)
-      );
-
-      if (filtered.length === 0) {
-        console.log(`${targetCity} 지역 대피소 정보가 없습니다.`);
+        console.error('❌ 응답 데이터 구조가 예상과 다릅니다.');
+        // 응답 전체 저장해서 분석할 수 있도록 로그
+        fs.writeFileSync('./response_debug.json', JSON.stringify(json, null, 2));
+        console.log('📄 response_debug.json 파일에 전체 응답 저장됨 (확인 필수)');
         return;
       }
 
       // 저장 경로
-      const outputPath = `./data/tsunami/raw/shelters_${targetCity}.json`;
+      const outputPath = './data/tsunami/RawJSON/all_shelters.json';
 
       // JSON 파일로 저장
-      fs.writeFileSync(outputPath, JSON.stringify(filtered, null, 2), 'utf8');
-      console.log(`✅ ${targetCity} 대피소 정보를 JSON으로 저장했습니다: ${outputPath}`);
-
+      fs.writeFileSync(outputPath, JSON.stringify(rows, null, 2), 'utf8');
+      console.log(`✅ 전체 대피소 정보를 JSON으로 저장했습니다: ${outputPath}`);
     } catch (e) {
       console.error('데이터 처리 오류:', e.message);
     }
