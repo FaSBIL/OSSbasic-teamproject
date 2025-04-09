@@ -35,7 +35,8 @@ class VolumeSlider extends StatelessWidget {
                 activeTrackColor: activeColor,
                 inactiveTrackColor: inactiveColor.withAlpha(77),
                 thumbColor: AppColors.white,
-                overlayColor: AppColors.lightBlue.withAlpha(25),
+                overlayColor: AppColors.lightGray.withAlpha(50),
+                thumbShape: const _CustomThumbShape(),
               ),
               child: Slider(
                 value: value,
@@ -51,3 +52,43 @@ class VolumeSlider extends StatelessWidget {
     );
   }
 }
+
+class _CustomThumbShape extends SliderComponentShape {
+  const _CustomThumbShape();
+
+  @override
+  Size getPreferredSize(bool isEnabled, bool isDiscrete) => const Size(28, 28);
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset center, {
+    required Animation<double> activationAnimation,
+    required Animation<double> enableAnimation,
+    required bool isDiscrete,
+    required TextPainter labelPainter,
+    required RenderBox parentBox,
+    required Size sizeWithOverflow,
+    required SliderThemeData sliderTheme,
+    required TextDirection textDirection,
+    required double textScaleFactor,
+    required double value,
+  }) {
+    final canvas = context.canvas;
+
+    canvas.drawCircle(
+      center.translate(0, 2),
+      14,
+      Paint()
+        ..color = Colors.black.withAlpha(40)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+    );
+
+    canvas.drawCircle(
+      center,
+      12,
+      Paint()..color = Colors.white,
+    );
+  }
+}
+
