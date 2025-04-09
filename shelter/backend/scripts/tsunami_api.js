@@ -3,7 +3,7 @@ const querystring = require('querystring');
 const fs = require('fs');
 
 // 설정값
-const serviceKey = "8R5DA95M0CLD27Q0";//api 키
+const serviceKey = "";//api 키
 const baseUrl = 'https://www.safetydata.go.kr/V2/api/DSSP-IF-10944';
 
 // 요청 파라미터 구성
