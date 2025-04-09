@@ -9,10 +9,14 @@ class NavButton extends StatelessWidget {
     required this.text,
   }) : super(key: key);
 
+  void _handleNavPress(){
+    // 안내 시작 버튼 클릭 시 처리 로직 구현 예정
+  }
+
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {}, //onTap처리는 아직 구현안함
+      onPressed: _handleNavPress,
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.blue,
         foregroundColor: AppColors.white,
