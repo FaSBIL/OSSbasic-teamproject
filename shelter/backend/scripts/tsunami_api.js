@@ -4,7 +4,7 @@ const querystring = require('querystring');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
 // 설정값
-const serviceKey = '여기에_서비스_키_입력';
+const serviceKey = TSUNAMI_KEY;
 const pageNo = '1';
 const numOfRows = '1000';
 const baseUrl = 'https://www.safetydata.go.kr/V2/api/DSSP-IF-10944';
