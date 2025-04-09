@@ -1,10 +1,9 @@
 const https = require('https');
 const querystring = require('querystring');
 const fs = require('fs');
-require('dotenv').config();
 
 // 설정값
-const serviceKey = "8R5DA95M0CLD27Q0";//process.env.TSUNAMI_KEY;
+const serviceKey = "8R5DA95M0CLD27Q0";//api 키키
 const baseUrl = 'https://www.safetydata.go.kr/V2/api/DSSP-IF-10944';
 
 // 요청 파라미터 구성
@@ -57,4 +56,3 @@ https.get(requestUrl, (res) => {
   console.error('요청 중 오류:', err.message);
 });
 
-console.log('[DEBUG] 서비스키:', process.env.TSUNAMI_KEY);
