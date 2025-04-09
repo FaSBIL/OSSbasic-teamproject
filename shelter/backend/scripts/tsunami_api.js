@@ -1,8 +1,6 @@
 const https = require('https');
 const querystring = require('querystring');
 const fs = require('fs');
-const createCsvWriter = require('csv-writer').createObjectCsvWriter;
-
 require('dotenv').config();
 
 // 설정값
@@ -25,7 +23,7 @@ https.get(requestUrl, (res) => {
 
   res.on('data', chunk => data += chunk);
 
-  res.on('end', async () => {
+  res.on('end', () => {
     try {
       const json = JSON.parse(data);
 
@@ -45,25 +43,12 @@ https.get(requestUrl, (res) => {
         return;
       }
 
-      // CSV 저장 설정
-      const csvWriter = createCsvWriter({
-        path: `./data/tsunami/raw/shelters_${targetCity}.csv`,
-        header: [
-          { id: 'SHNT_PLACE_NM', title: '대피소명' },
-          { id: 'RN_DTL_ADRES', title: '도로명주소' },
-          { id: 'LO', title: '경도' },
-          { id: 'LA', title: '위도' },
-          { id: 'PSBL_NMPR', title: '수용인원' },
-          { id: 'EV_ANTCTY', title: '해발고도' },
-          { id: 'USE_AT', title: '사용여부' },
-          { id: 'SHNT_PLACE_DTL_POSITION', title: '상세위치' },
-          { id: 'SHNT_PLACE_TY_CD', title: '대피소종류' },
-          { id: 'ERTHQK_SHUNT_AT', title: '내진설계여부' },
-        ]
-      });
+      // 저장 경로
+      const outputPath = `./data/tsunami/raw/shelters_${targetCity}.json`;
 
-      await csvWriter.writeRecords(filtered);
-      console.log(`✅ ${targetCity} 지역 대피소 정보를 shelters_${targetCity}.csv로 저장했습니다.`);
+      // JSON 파일로 저장
+      fs.writeFileSync(outputPath, JSON.stringify(filtered, null, 2), 'utf8');
+      console.log(`✅ ${targetCity} 대피소 정보를 JSON으로 저장했습니다: ${outputPath}`);
 
     } catch (e) {
       console.error('데이터 처리 오류:', e.message);
