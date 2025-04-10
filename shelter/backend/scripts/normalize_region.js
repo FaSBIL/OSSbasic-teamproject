@@ -1,7 +1,7 @@
 const fs = require('fs');
 
-const input = './shelters_enriched.json';
-const output = './shelters_normalized.json';
+const input = './shelters_final.json';
+const output = './shelters_tsunami.json';
 
 const raw = fs.readFileSync(input, 'utf8');
 const data = JSON.parse(raw);
