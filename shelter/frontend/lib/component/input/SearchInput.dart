@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../theme/color.dart';
 import '../../theme/typography.dart';
-import '../icon/iconUtils.dart';
+import '../icon/IconUtils.dart';
 
 class SearchInput extends StatelessWidget {
   final VoidCallback? onBackTap;
