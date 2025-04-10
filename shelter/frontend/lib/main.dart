@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart'; // Flutter의 기본 UI 패키지를 가져옴
-import 'screens/shelter_map_screen.dart'; // 대피소 지도 화면 위젯을 가져옴 (사용자 정의 파일)
+import 'screens/test.dart';
 
 void main() {
   // 앱의 시작점 (main 함수)
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
           bodyLarge: TextStyle(fontWeight: FontWeight.bold), // 큰 텍스트는 굵게 표시
         ),
       ),
-      home: const ShelterMapScreen(), // 앱 실행 시 처음 보여줄 화면
+      home: const TestScreen(), // 앱 실행 시 처음 보여줄 화면
       debugShowCheckedModeBanner: false, // 오른쪽 상단 디버그 배너 제거
     );
   }
