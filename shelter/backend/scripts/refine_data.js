@@ -1,20 +1,27 @@
 const fs = require('fs');
-const csv = require('csv-parser');
 
-const results = [];
+// 입력 파일
+const raw = fs.readFileSync('./data/earthquake/responses/response1.json', 'utf8');
+const parsed = JSON.parse(raw);
+const body = parsed.body;
 
-fs.createReadStream('./data/raw/gyeongbuk.csv')
-  .pipe(csv())
-  .on('data', (row) => {
-    results.push({
-      name: row['시설명'],
-      address: row['도로명전체주소'],
-      lat: parseFloat(row['위도(EPSG4326)']),
-      lng: parseFloat(row['경도(EPSG4326)']),
-      region: '경상북도'
-    });
-  })
-  .on('end', () => {
-    fs.writeFileSync('./data/processed/refinedJSON/gyeongbuk.json', JSON.stringify(results, null, 2));
-    console.log('✅ 정제된 gyeongbuk.json 생성 완료!');
-  });
+if (!Array.isArray(body)) {
+  throw new Error('❌ body 항목이 배열이 아닙니다.');
+}
+
+// 정제
+const cleaned = body.map(item => {
+  const address = item.EQK_ACMDFCLTY_ADRES || '';
+  const region = address.split(' ')[0]; // ex) "충청남도", "경상북도"
+  return {
+    name: item.VT_ACMDFCLTY_NM ?? null,
+    address: address,
+    lat: item.LA ?? null,
+    lng: item.LO ?? null,
+    region: region
+  };
+});
+
+// 저장
+fs.writeFileSync('./data/earthquake/RefinedJSON/shelters_cleaned1.json', JSON.stringify(cleaned, null, 2), 'utf8');
+console.log(`✅ ${cleaned.length}개의 대피소 정보를 정제하여 shelters_cleaned1.json에 저장했습니다.`);
