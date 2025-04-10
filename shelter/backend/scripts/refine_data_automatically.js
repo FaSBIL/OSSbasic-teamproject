@@ -3,7 +3,7 @@ const path = require('path');
 
 // 설정
 const startPage = 1;
-const endPage = 10;
+const endPage = 12;
 
 const inputDir = './data/earthquake/responses';
 const outputDir = './data/earthquake/RefinedJSON';
