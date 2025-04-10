@@ -1,16 +1,15 @@
 const https = require('https');
 const querystring = require('querystring');
 const fs = require('fs');
-require('dotenv').config();
 
 // 설정
-const serviceKey = process.env.EARTHQUAKE_SHELTER_KEY;
+const serviceKey = "76MNTO4T2Q3GI284";
 const baseUrl = 'https://www.safetydata.go.kr/V2/api/DSSP-IF-10943';
 const numOfRows = 1000;
 
 // 범위 설정
-const startPage = 1;
-const endPage = 10; // 필요한 만큼 조정 가능
+const startPage = 11;
+const endPage = 20; // 필요한 만큼 조정 가능
 
 // 저장 디렉토리
 const outputDir = './data/earthquake/RawJSON';
