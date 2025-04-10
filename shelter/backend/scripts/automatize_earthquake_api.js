@@ -3,7 +3,7 @@ const querystring = require('querystring');
 const fs = require('fs');
 
 // 설정
-const serviceKey = "76MNTO4T2Q3GI284";
+const serviceKey = "";
 const baseUrl = 'https://www.safetydata.go.kr/V2/api/DSSP-IF-10943';
 const numOfRows = 1000;
 

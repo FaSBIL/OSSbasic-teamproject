@@ -3,7 +3,7 @@ const axios = require('axios');
 
 const input = './shelters_fixed.json';
 const output = './shelters_final.json';
-const kakaoKey = "f82e6cb25da330769e61eec64472d61d";
+const kakaoKey = "";
 
 // 1. 기본 주소 + 행정구역 추출
 async function getAddress(lat, lng) {
