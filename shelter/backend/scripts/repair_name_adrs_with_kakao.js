@@ -5,7 +5,8 @@ const input = './shelters_fixed.json';
 const output = './shelters_final.json';
 const kakaoKey = "f82e6cb25da330769e61eec64472d61d";
 
-async function getAddressAndName(lat, lng) {
+// 1. 기본 주소 + 행정구역 추출
+async function getAddress(lat, lng) {
   const url = `https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${lng}&y=${lat}`;
   try {
     const res = await axios.get(url, {
@@ -15,12 +16,25 @@ async function getAddressAndName(lat, lng) {
     const doc = res.data.documents[0];
     const address = doc?.road_address?.address_name || doc?.address?.address_name || '';
     const region = address.split(' ')[0] || '';
-    const name = doc?.address?.address_name?.split(' ')?.slice(-1)[0] || '대피소'; // 예: "○○리" 등
-
-    return { address, region, name };
+    return { address, region };
   } catch (err) {
-    console.error(`❌ 주소 요청 실패 (${lat}, ${lng}):`, err.message);
-    return { address: '', region: '', name: '' };
+    console.error(`❌ coord2address 실패 (${lat}, ${lng}):`, err.message);
+    return { address: '', region: '' };
+  }
+}
+
+// 2. 장소 검색 API로 주변 장소명 가져오기
+async function getPlaceName(lat, lng) {
+  const url = `https://dapi.kakao.com/v2/local/search/keyword.json?query=대피소&y=${lat}&x=${lng}&radius=200`;
+  try {
+    const res = await axios.get(url, {
+      headers: { Authorization: `KakaoAK ${kakaoKey}` }
+    });
+    const place = res.data.documents[0];
+    return place?.place_name || '';
+  } catch (err) {
+    console.error(`❌ 장소명 검색 실패 (${lat}, ${lng}):`, err.message);
+    return '';
   }
 }
 
@@ -30,23 +44,32 @@ async function getAddressAndName(lat, lng) {
   const updated = [];
 
   for (const [i, shelter] of shelters.entries()) {
-    const needsFix =
-      (shelter.address.includes('�') || shelter.name.includes('�'));
+    const hasBroken = (shelter.address.includes('�') || shelter.name.includes('�'));
 
-    if (needsFix) {
-      console.log(`📍 [${i + 1}] 깨진 항목 복구 시도 중...`);
-      const { address, region, name } = await getAddressAndName(shelter.lat, shelter.lng);
+    if (hasBroken) {
+      console.log(`📍 [${i + 1}] 깨진 항목 보완 중...`);
 
+      // 주소 & 지역
+      const { address, region } = await getAddress(shelter.lat, shelter.lng);
       if (address) shelter.address = address;
       if (region) shelter.region = region;
-      if (name && shelter.name.includes('�')) shelter.name = `${name} 주변`; // ex: "문동리 주변"
 
-      console.log(`✅ 복구 완료 → ${shelter.name}`);
+      // name 복원: 주변 장소명
+      if (shelter.name.includes('�')) {
+        const placeName = await getPlaceName(shelter.lat, shelter.lng);
+        if (placeName) {
+          shelter.name = placeName;
+          console.log(`✅ 이름 복구 → ${placeName}`);
+        } else {
+          shelter.name = `${address.split(' ')[2] || '인근'} 공터`;
+          console.warn(`⚠️ 주변 장소명 없어서 '${shelter.name}'로 대체`);
+        }
+      }
     }
 
     updated.push(shelter);
   }
 
   fs.writeFileSync(output, JSON.stringify(updated, null, 2), 'utf8');
-  console.log(`✅ 모든 주소·이름 보완 완료: ${output}`);
+  console.log(`✅ 최종 보완 완료: ${output}`);
 })();
