@@ -30,9 +30,7 @@ class BaseListItem extends StatelessWidget {
           child: Padding(
             padding: padding,
             child: Row(
-              crossAxisAlignment: subtitle != null
-                  ? CrossAxisAlignment.start
-                  : CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (leading != null) ...[
                   leading!,
@@ -44,7 +42,7 @@ class BaseListItem extends StatelessWidget {
                     children: [
                       title,
                       if (subtitle != null) ...[
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 2),
                         subtitle!,
                       ],
                     ],
