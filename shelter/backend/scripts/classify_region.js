@@ -7,7 +7,7 @@ const regionCode = 'jeonnam'; // 파일명에 들어갈 코드
 
 // ✅ 입력 파일 위치
 const inputDir = './data/earthquake/RefinedJSON';
-const outputPath = `./data/earthquake/RegionSplit/${regionCode}_earthquake.json`;
+const outputPath = `./data/earthquake/earthquakeForDB/${regionCode}_earthquake.json`;
 
 // 출력 폴더 없으면 생성
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
