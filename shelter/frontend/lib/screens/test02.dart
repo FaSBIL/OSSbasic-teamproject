@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../component/Inputs/SearchInput.dart';
+import '../component/input/SearchInput.dart';
 
 class Test02Screen extends StatefulWidget {
   const Test02Screen({Key? key}) : super(key: key);

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../theme/color.dart';
-import '../icon/customIcon.dart';
-import '../icon/iconUtils.dart';
+import '../icon/CustomIcon.dart';
+import '../icon/IconUtils.dart';
 
 class FavoriteButton extends StatefulWidget {
   const FavoriteButton({

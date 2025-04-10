@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shelter/screens/test02.dart';
-import '../component/Inputs/MainInput.dart';
+import '../component/input/MainInput.dart';
 import '../component/buttons/FavoriteButton.dart';
 import '../component/buttons/GpsButton.dart';
 import '../component/buttons/NavButton.dart';
 import '../component/icon/IconUtils.dart';
-import '../component/icon/customIcon.dart';
+import '../component/icon/CustomIcon.dart';
 import '../component/list/ConfigItem.dart';
 import '../component/list/EvacuationSiteItem.dart';
 import '../component/list/FavoriteListItem.dart';

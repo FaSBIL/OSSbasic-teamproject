@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import './BaseListItem.dart';
 import '../../theme/color.dart';
 import '../../theme/typography.dart';
-import '../icon/iconUtils.dart';
-import '../icon/customIcon.dart';
+import '../icon/IconUtils.dart';
+import '../icon/CustomIcon.dart';
 
 class FavoriteListItem extends StatelessWidget {
   final String title;

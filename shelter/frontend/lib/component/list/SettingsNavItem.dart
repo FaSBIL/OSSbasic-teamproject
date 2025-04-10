@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import './BaseListItem.dart';
 import '../../theme/color.dart';
 import '../../theme/typography.dart';
-import '../icon/iconUtils.dart';
+import '../icon/IconUtils.dart';
 
 class SettingsNavItem extends StatelessWidget {
   final String label;
