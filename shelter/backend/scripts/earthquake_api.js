@@ -8,7 +8,7 @@ const serviceKey = "76MNTO4T2Q3GI284";
 const baseUrl = 'https://www.safetydata.go.kr/V2/api/DSSP-IF-10943';
 const params = querystring.stringify({
   serviceKey: serviceKey,
-  pageNo: 2,
+  pageNo: 3,
   numOfRows: 1000,
   returnType: 'json'
 });
@@ -25,7 +25,7 @@ https.get(url, (res) => {
   res.on('end', () => {
     try {
       const json = JSON.parse(rawData);
-      const filename = './earthquake_shelters_raw2.json';
+      const filename = './data/earthquake/RawJSON/response3.json';
 
       fs.writeFileSync(filename, JSON.stringify(json, null, 2), 'utf8');
       console.log(`✅ API 호출 성공: ${filename} 저장 완료`);
