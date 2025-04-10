@@ -3,7 +3,7 @@ const axios = require('axios');
 
 const input = './data/tsunami/tsunamiForDB/shelters_normalized.json';
 const output = './shelters_fixed.json';
-const kakaoKey = "f82e6cb25da330769e61eec64472d61d";
+const kakaoKey = "";
 
 async function getAddressFromCoords(lat, lng) {
   const url = `https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${lng}&y=${lat}`;
