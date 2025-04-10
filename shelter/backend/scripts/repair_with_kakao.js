@@ -1,7 +1,7 @@
 const fs = require('fs');
 const axios = require('axios');
 
-const input = './shelters_normalized.json';
+const input = './data/tsunami/tsunamiForDB/shelters_normalized.json';
 const output = './shelters_fixed.json';
 const kakaoKey = "f82e6cb25da330769e61eec64472d61d";
 
