@@ -3,7 +3,7 @@ const querystring = require('querystring');
 const fs = require('fs');
 
 // .env에 저장된 인증키
-const serviceKey = "";
+const serviceKey = "76MNTO4T2Q3GI284";
 
 const baseUrl = 'https://www.safetydata.go.kr/V2/api/DSSP-IF-10943';
 const params = querystring.stringify({
