@@ -12,7 +12,7 @@ const startPage = 11;
 const endPage = 20; // 필요한 만큼 조정 가능
 
 // 저장 디렉토리
-const outputDir = './data/earthquake/RawJSON';
+const outputDir = './data/earthquake/responses';
 if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 
 // 페이지별 요청 반복

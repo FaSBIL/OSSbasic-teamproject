@@ -2,14 +2,15 @@ const fs = require('fs');
 const path = require('path');
 
 // 설정
-const startPage = 1;
-const endPage = 10;
+const startPage = 11;
+const endPage = 12;
 
 const baseDir = './data/earthquake/responses';
+const resultDir='./data/earthquake/RawJSON';
 
 for (let i = startPage; i <= endPage; i++) {
   const inputPath = path.join(baseDir, `response${i}.json`);
-  const outputPath = path.join(baseDir, `earthquake_shelters${i}.json`);
+  const outputPath = path.join(resultDir, `earthquake_shelters${i}.json`);
 
   try {
     const raw = fs.readFileSync(inputPath, 'utf8');
