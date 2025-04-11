@@ -4,7 +4,7 @@ const axios = require('axios');
 // 설정
 const inputFile = './data/civil/civilForDB/seoul.json';
 const outputFile = './data/civil/civilForDB/seoul.json';
-const kakaoKey = "f82e6cb25da330769e61eec64472d61d"; // Kakao REST API 키
+const kakaoKey = ""; // Kakao REST API 키
 
 // 주소만 가져오는 함수
 async function getAddress(lat, lng) {

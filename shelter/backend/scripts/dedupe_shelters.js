@@ -2,8 +2,8 @@ const fs = require('fs');
 const path = require('path');
 
 // 입력 파일과 출력 파일 경로
-const inputPath = './data/civil/civilForDB/seoul.json';
-const outputPath = './data/civil/civilForDB/seoul.json';
+const inputPath = './data/earthquake/earthquakeForDB/ulsan_earthquake.json';
+const outputPath = './data/earthquake/earthquakeForDB/ulsan_earthquake.json';
 
 const raw = fs.readFileSync(inputPath, 'utf8');
 const shelters = JSON.parse(raw);
