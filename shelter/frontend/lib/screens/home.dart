@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -8,8 +10,20 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // 지도 배경 대신 회색 박스
-          Container(color: Colors.grey[300]),
+          // 지도 배경
+          FlutterMap(
+            options: MapOptions(
+              initialCenter: LatLng(37.5665, 126.9780), // 서울의 위도와 경도
+              initialZoom: 12.0,
+            ),
+            children: [
+              TileLayer(
+                urlTemplate:
+                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                subdomains: ['a', 'b', 'c'],
+              ),
+            ],
+          ),
 
           // 검색창
           Positioned(
@@ -40,7 +54,7 @@ class HomeScreen extends StatelessWidget {
             child: IconButton(
               icon: const Icon(Icons.settings),
               onPressed: () {
-                //설정 화면으로 이동
+                // 설정 화면으로 이동
               },
             ),
           ),
