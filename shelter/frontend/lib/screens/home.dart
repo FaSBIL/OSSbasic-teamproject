@@ -65,20 +65,18 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // 지도 배경
-          FlutterMap(
-            options: MapOptions(
-              initialCenter:
-                  _currentPosition ?? LatLng(37.5665, 126.9780), // 서울의 위도와 경도
-              initialZoom: 12.0,
-            ),
-            children: [
-              TileLayer(
-                urlTemplate:
-                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                subdomains: ['a', 'b', 'c'],
+          if (_currentPosition != null)
+            FlutterMap(
+              options: MapOptions(
+                initialCenter: _currentPosition!, // 사용자 위치로 초기화
+                initialZoom: 12.0,
               ),
-              if (_currentPosition != null)
+              children: [
+                TileLayer(
+                  urlTemplate:
+                      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  subdomains: ['a', 'b', 'c'],
+                ),
                 MarkerLayer(
                   markers: [
                     Marker(
@@ -91,9 +89,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 ),
-            ],
-          ),
-          // 필터 버튼 (해일, 지진, 홍수, 화재)
+              ],
+            )
+          else
+            const Center(
+              child: CircularProgressIndicator(), // 로딩 상태 표시
+            ),
+          // 필터 버튼, 검색창, 설정 버튼 등 기존 UI 유지
           Positioned(
             top: 120,
             left: 16,
@@ -107,10 +109,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   _buildFilterButton(Icons.sailing, '홍수'),
                   _buildFilterButton(Icons.local_fire_department, '화재'),
                 ],
-              ), // <-- Properly closed Row widget
+              ),
             ),
           ),
-          // 검색창
           Positioned(
             top: 60,
             left: 16,
@@ -131,8 +132,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-
-          // 설정 버튼
           Positioned(
             top: 60,
             right: 16,
@@ -143,8 +142,6 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
           ),
-
-          // 오류 메시지 표시
           if (_errorMessage.isNotEmpty)
             Positioned(
               top: 120,
@@ -162,8 +159,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-
-          // 현재 위치 버튼
           Positioned(
             bottom: 24,
             right: 16,
@@ -171,7 +166,6 @@ class _HomeScreenState extends State<HomeScreen> {
               mini: true,
               backgroundColor: Colors.white,
               onPressed: () {
-                // 현재 위치 버튼을 눌렀을 때 초기 위치로 이동
                 if (_currentPosition != null) {
                   setState(() {
                     // 지도 중심을 현재 위치로 이동
