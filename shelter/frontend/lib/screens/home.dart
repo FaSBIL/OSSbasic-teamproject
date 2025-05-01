@@ -21,6 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _initializePositionStream(); // 실시간 위치 스트림 초기화
+    _setInitialLocation(); // 초기 위치 설정
   }
 
   void _initializePositionStream() {
@@ -44,6 +45,19 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       },
     );
+  }
+
+  Future<void> _setInitialLocation() async {
+    try {
+      final position = await _locationService.getCurrentLocation();
+      setState(() {
+        _currentPosition = LatLng(position.latitude, position.longitude);
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString();
+      });
+    }
   }
 
   @override
@@ -79,7 +93,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
             ],
           ),
-
+          // 필터 버튼 (해일, 지진, 홍수, 화재)
+          Positioned(
+            top: 120,
+            left: 16,
+            right: 16,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _buildFilterButton(Icons.pool, '해일'),
+                  _buildFilterButton(Icons.show_chart, '지진'),
+                  _buildFilterButton(Icons.sailing, '홍수'),
+                  _buildFilterButton(Icons.local_fire_department, '화재'),
+                ],
+              ), // <-- Properly closed Row widget
+            ),
+          ),
           // 검색창
           Positioned(
             top: 60,
@@ -152,6 +182,27 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // 필터 버튼 위젯
+  Widget _buildFilterButton(IconData icon, String label) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 18),
+            const SizedBox(width: 6),
+            Text(label),
+          ],
+        ),
       ),
     );
   }
