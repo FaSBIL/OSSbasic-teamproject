@@ -53,6 +53,11 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - shelter_db/civilSheltersByRegion.db
+    - shelter_db/earthquakeSheltersByRegion.db
+    - shelter_db/tsunamiShelters.db
+
   fonts:
     - family: NotoSansKR
       fonts:
