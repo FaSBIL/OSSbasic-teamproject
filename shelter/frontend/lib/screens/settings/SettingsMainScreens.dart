@@ -47,6 +47,12 @@ class SettingsMainScreen extends StatelessWidget {
                       () => Navigator.pushNamed(context, AppRoutes.themeMode),
                 ),
 
+                SettingsNavItem(
+                  label: '서울 민방위 대피소 보기',
+                  onTap:
+                      () => Navigator.pushNamed(context, AppRoutes.shelterList),
+                ),
+
                 const SizedBox(height: 8),
 
                 const ConfigItem(label: 'GPS', value: 'ON'),

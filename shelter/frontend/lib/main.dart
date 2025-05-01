@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:flutter/material.dart'; // Flutter의 기본 UI 패키지를 가져옴
 import 'package:shelter/screens/settings/SettingsMainScreens.dart';
 import 'screens/test.dart';
@@ -5,6 +7,14 @@ import 'routes/AppRoutes.dart';
 
 void main() {
   // 앱의 시작점 (main 함수)
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // ✅ 데스크탑 환경에서 SQLite 초기화
+  if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  }
+
   runApp(const MyApp()); // MyApp 위젯을 실행해서 앱을 시작함
 }
 
@@ -21,7 +31,7 @@ class MyApp extends StatelessWidget {
 
       initialRoute: AppRoutes.settings,
       routes: AppRoutes.routes,
-      home: const SettingsMainScreen(), // 앱 실행 시 처음 보여줄 화면
+      //home: const SettingsMainScreen(), // 앱 실행 시 처음 보여줄 화면
       debugShowCheckedModeBanner: false, // 오른쪽 상단 디버그 배너 제거
     );
   }
