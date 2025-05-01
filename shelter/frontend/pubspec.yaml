@@ -60,6 +60,7 @@ flutter:
     - shelter_db/civilSheltersByRegion.db
     - shelter_db/earthquakeSheltersByRegion.db
     - shelter_db/tsunamiShelters.db
+    - lib/assets/user_locations/user_locations.json
 
   fonts:
     - family: NotoSansKR
