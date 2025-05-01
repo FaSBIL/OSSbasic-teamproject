@@ -1,10 +1,22 @@
+import 'dart:io';
 import 'package:flutter/material.dart'; // Flutter의 기본 UI 패키지를 가져옴
 import 'package:shelter/screens/settings/SettingsMainScreens.dart';
 import 'screens/test.dart';
 import 'routes/AppRoutes.dart';
+import 'package:sqflite/sqflite.dart';
+import 'utils/db_loader.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-void main() {
-  // 앱의 시작점 (main 함수)
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 💻 데스크탑(Linux, Windows, macOS)용 SQLite 초기화
+  if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  }
+
+  await loadSeoulCivilShelters(); // 테스트용 쿼리
   runApp(const MyApp()); // MyApp 위젯을 실행해서 앱을 시작함
 }
 
@@ -25,4 +37,18 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false, // 오른쪽 상단 디버그 배너 제거
     );
   }
+}
+
+Future<void> loadSeoulCivilShelters() async {
+  final db = await loadDatabase('civilSheltersByRegion.db');
+
+  final List<Map<String, dynamic>> rows = await db.query(
+    'civil_seoul',
+  ); // 테이블명: seoul
+
+  for (var row in rows) {
+    print('📍 ${row['name']} | 좌표: (${row['latitude']}, ${row['longitude']})');
+  }
+
+  await db.close();
 }
