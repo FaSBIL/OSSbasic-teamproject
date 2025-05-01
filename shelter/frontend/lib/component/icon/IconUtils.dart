@@ -11,4 +11,7 @@ class AppIcons {
   static const IconData arrowRight = Icons.arrow_back_ios_new_rounded;
   static const IconData arrowLeft = Icons.arrow_forward_ios_rounded;
   static const IconData check = Icons.check;
+  static const IconData destination = Icons.location_on_rounded;
+  static const IconData gpsFixed = Icons.gps_fixed_rounded;
+  static const IconData shelterResult = Icons.Icons.flag_circle_rounded;
 }
