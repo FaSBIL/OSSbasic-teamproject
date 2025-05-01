@@ -1,6 +1,11 @@
 import 'package:geolocator/geolocator.dart';
 
 class LocationService {
+  // 싱글톤 패턴 구현
+  static final LocationService _instance = LocationService._internal();
+  factory LocationService() => _instance;
+  LocationService._internal();
+
   Future<Position> getCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -26,6 +31,8 @@ class LocationService {
     }
 
     // 현재 위치 반환
-    return await Geolocator.getCurrentPosition();
+    return await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
   }
 }
