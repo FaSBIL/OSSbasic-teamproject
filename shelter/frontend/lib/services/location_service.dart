@@ -39,9 +39,12 @@ class LocationService {
     );
   }
 
-  Future<String> getNearestLocation(double latitude, double longitude) async {
+  Future<Map<String, String>> getNearestLocation(
+    double latitude,
+    double longitude,
+  ) async {
     try {
-      // JSON 파일 로드 (올바른 경로로 수정)
+      // JSON 파일 로드
       final String response = await rootBundle.loadString(
         'lib/assets/user_locations/user_locations.json',
       );
@@ -49,6 +52,7 @@ class LocationService {
 
       double minDistance = double.infinity;
       String nearestLocation = '';
+      String nearestCity = '';
 
       // 각 지역과의 거리 계산
       for (final location in locations) {
@@ -64,10 +68,11 @@ class LocationService {
         if (distance < minDistance) {
           minDistance = distance;
           nearestLocation = location['do'];
+          nearestCity = location['city'];
         }
       }
 
-      return nearestLocation;
+      return {'do': nearestLocation, 'city': nearestCity};
     } catch (e) {
       throw Exception('지역명을 찾는 중 오류 발생: $e');
     }
