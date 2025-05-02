@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import '../utils/db_loader.dart';
 
 class ShelterService {
   late Database _civilDb;
@@ -8,23 +9,17 @@ class ShelterService {
   late Database _tsunamiDb;
 
   Future<void> initialize() async {
-    // 민방위 대피소 DB 초기화
-    _civilDb = await openDatabase(
-      join(await getDatabasesPath(), 'civilSheltersByRegion.db'),
-    );
-
-    // 지진 옥외 대피소 DB 초기화
-    _earthquakeDb = await openDatabase(
-      join(await getDatabasesPath(), 'earthquakeSheltersByRegion.db'),
-    );
-
-    // 지진해일 대피소 DB 초기화
-    _tsunamiDb = await openDatabase(
-      join(await getDatabasesPath(), 'tsunamiShelters.db'),
-    );
+    // loadDatabase 유틸리티를 사용하여 DB 초기화
+    _civilDb = await loadDatabase('civilSheltersByRegion.db');
+    _earthquakeDb = await loadDatabase('earthquakeSheltersByRegion.db');
+    _tsunamiDb = await loadDatabase('tsunamiShelters.db');
+    print('[Service] Databases initialized'); // 초기화 완료 로그 추가
   }
 
   Future<List<Map<String, dynamic>>> getCivilShelters(String region) async {
+    if (_civilDb == null) {
+      throw Exception('Database not initialized');
+    }
     return await _civilDb.query(
       'civil_$region',
       columns: ['name', 'address', 'latitude', 'longitude'],
