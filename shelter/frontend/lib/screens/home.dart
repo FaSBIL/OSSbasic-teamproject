@@ -1,41 +1,51 @@
 import 'package:flutter/material.dart';
+import '../component/map/mapbox.dart';
+import '../component/input/MainInput.dart';
+import '../component/buttons/GpsButton.dart';
+import '../services/location_service.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<MapboxState> mapboxKey = GlobalKey<MapboxState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          // 지도 배경 대신 회색 박스
-          Container(color: Colors.grey[300]),
+          Mapbox(
+            key: mapboxKey,
+            latitude: 37.5665,
+            longitude: 126.9780,
+            zoom: 14.0,
+          ),
 
-          // 검색창
           Positioned(
-            top: 60,
+            top: 12,
             left: 16,
-            right: 60,
-            child: Container(
-              height: 45,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Row(
-                children: [
-                  const Icon(Icons.search, color: Colors.grey),
-                  const SizedBox(width: 8),
-                  const Text("대피소 검색", style: TextStyle(color: Colors.grey)),
-                ],
+            right: 16,
+            child: SafeArea(
+              child: MainInput(
+                onTap: () {
+                  print(" MainInput 눌림"); // 테스트 코드
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(builder: (_) => const SearchScreen()),
+                  // );
+                },
               ),
             ),
           ),
 
           // 설정 버튼
           Positioned(
-            top: 60,
+            top: 74,
             right: 16,
             child: IconButton(
               icon: const Icon(Icons.settings),
@@ -47,7 +57,7 @@ class HomeScreen extends StatelessWidget {
 
           // 필터 버튼 (해일, 지진, 홍수, 화재)
           Positioned(
-            top: 120,
+            top: 160,
             left: 16,
             right: 16,
             child: SingleChildScrollView(
@@ -67,13 +77,10 @@ class HomeScreen extends StatelessWidget {
           Positioned(
             bottom: 24,
             right: 16,
-            child: FloatingActionButton(
-              mini: true,
-              backgroundColor: Colors.white,
+            child: GpsButton(
               onPressed: () {
-                // 현재 위치 이동 기능
+                mapboxKey.currentState?.moveToCurrentLocation();
               },
-              child: const Icon(Icons.my_location, color: Colors.black),
             ),
           ),
         ],

@@ -2,24 +2,20 @@ import 'package:flutter/material.dart';
 import '../../theme/color.dart';
 
 class GpsButton extends StatelessWidget {
-  const GpsButton({
-    Key? key
-    }): super(key: key);
+  final VoidCallback onPressed;
 
-  void _handleGpsPress(){
-    // 현재 위치를 중심으로 지도를 이동하는 로직 구현 에정
-  }
+  const GpsButton({Key? key, required this.onPressed}) : super(key: key);
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Material(
       elevation: 1.5,
       shape: const CircleBorder(),
       color: AppColors.white,
       child: InkWell(
         customBorder: const CircleBorder(),
-        onTap: _handleGpsPress,
-        child: Padding (
+        onTap: onPressed,
+        child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Icon(
             Icons.my_location,

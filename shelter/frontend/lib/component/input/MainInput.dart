@@ -7,11 +7,8 @@ class MainInput extends StatelessWidget {
   final VoidCallback onTap;
   final String searchText;
 
-  const MainInput({
-    Key? key,
-    required this.onTap,
-    this.searchText = '',
-  }) : super(key: key);
+  const MainInput({Key? key, required this.onTap, this.searchText = ''})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +35,7 @@ class MainInput extends StatelessWidget {
               child: Text(
                 searchText.isEmpty ? '대파소 검색' : searchText,
                 style: AppTextStyles.body.copyWith(
-                  color: searchText.isEmpty
-                      ? AppColors.gray
-                      : AppColors.black,
+                  color: searchText.isEmpty ? AppColors.gray : AppColors.black,
                 ),
               ),
             ),
