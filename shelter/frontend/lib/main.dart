@@ -3,6 +3,7 @@ import 'package:shelter/screens/settings/SettingsMainScreens.dart';
 import 'screens/test.dart';
 import 'routes/AppRoutes.dart';
 import 'screens/location_screen.dart';
+import 'screens/home.dart';
 
 void main() {
   // 앱의 시작점 (main 함수)
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
 
       initialRoute: AppRoutes.settings,
       routes: AppRoutes.routes,
-      home: const SettingsMainScreen(), // 앱 실행 시 처음 보여줄 화면
+      home: const HomeScreen(), // 앱 실행 시 처음 보여줄 화면
       debugShowCheckedModeBanner: false, // 오른쪽 상단 디버그 배너 제거
     );
   }

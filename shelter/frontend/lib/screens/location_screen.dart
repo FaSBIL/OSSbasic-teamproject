@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import '../services/location_service.dart';
+import '../services/user_location.dart';
 
 class LocationScreen extends StatefulWidget {
   const LocationScreen({super.key});
@@ -10,7 +10,7 @@ class LocationScreen extends StatefulWidget {
 }
 
 class _LocationScreenState extends State<LocationScreen> {
-  final LocationService _locationService = LocationService();
+  final UserLocationService _locationService = UserLocationService();
   Position? _currentPosition;
   String _errorMessage = '';
   String _nearestLocation = ''; // 가장 가까운 지역명 저장

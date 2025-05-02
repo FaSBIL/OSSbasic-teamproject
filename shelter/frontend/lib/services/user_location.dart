@@ -3,11 +3,11 @@ import 'dart:math';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 
-class LocationService {
+class UserLocationService {
   // 싱글톤 패턴 구현
-  static final LocationService _instance = LocationService._internal();
-  factory LocationService() => _instance;
-  LocationService._internal();
+  static final UserLocationService _instance = UserLocationService._internal();
+  factory UserLocationService() => _instance;
+  UserLocationService._internal();
 
   Future<Position> getCurrentLocation() async {
     bool serviceEnabled;
