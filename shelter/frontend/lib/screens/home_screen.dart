@@ -4,7 +4,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import '../services/user_location.dart';
 import '../services/filter_shelters.dart';
-import '../widgets/shelter_map.dart';
+import '../map/shelter_map.dart';
 import '../widgets/shelter_filter_buttons.dart';
 import '../widgets/error_banner.dart';
 
