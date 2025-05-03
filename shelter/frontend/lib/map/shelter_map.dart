@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:shelter/map/location_marker.dart';
+import 'package:flutter_compass/flutter_compass.dart';
 
 class ShelterMap extends StatelessWidget {
   final LatLng? currentPosition;
@@ -42,13 +44,18 @@ class ShelterMap extends StatelessWidget {
         MarkerLayer(
           markers: [
             Marker(
-              width: 80.0,
-              height: 80.0,
+              width: 80,
+              height: 80,
               point: currentPosition!,
-              child: const Icon(
-                Icons.my_location,
-                color: Colors.redAccent,
-                size: 35,
+              child: StreamBuilder<double?>(
+                stream: FlutterCompass.events!.map((event) => event.heading),
+                builder: (context, snapshot) {
+                  final heading = snapshot.data ?? 0.0;
+                  return LocationMarker(
+                    heading: heading, // 회전 각도
+                    size: 40,
+                  );
+                },
               ),
               key: const Key('current_location'),
             ),
