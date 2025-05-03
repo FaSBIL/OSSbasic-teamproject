@@ -18,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final UserLocationService _locationService = UserLocationService();
   final ShelterService _shelterService = ShelterService();
+  final MapController _mapController = MapController();
   LatLng? _currentPosition;
   String _errorMessage = '';
   late Stream<Position> _positionStream;
@@ -63,10 +64,15 @@ class _HomeScreenState extends State<HomeScreen> {
     _positionStream.listen(
       (Position position) {
         if (!mounted) return;
-        setState(
-          () =>
-              _currentPosition = LatLng(position.latitude, position.longitude),
-        );
+        final newPosition = LatLng(position.latitude, position.longitude);
+        setState(() => _currentPosition = newPosition);
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            _mapController.move(newPosition, _mapController.camera.zoom);
+          }
+        });
+
         _loadShelters();
       },
       onError: (e) {
@@ -88,9 +94,15 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _setInitialLocation() async {
     try {
       final position = await _locationService.getCurrentLocation();
-      setState(
-        () => _currentPosition = LatLng(position.latitude, position.longitude),
-      );
+      final initialPosition = LatLng(position.latitude, position.longitude);
+      setState(() => _currentPosition = initialPosition);
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _mapController.move(initialPosition, 14.0);
+        }
+      });
+
       await _loadShelters();
     } catch (e) {
       setState(() => _errorMessage = '위치 설정 오류: $e');
@@ -178,6 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ShelterMap(
             currentPosition: _currentPosition,
             shelterMarkers: _shelterMarkers,
+            mapController: _mapController,
           ),
           _buildSearchBar(),
           _buildSettingsButton(),

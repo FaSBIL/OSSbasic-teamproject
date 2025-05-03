@@ -5,11 +5,13 @@ import 'package:latlong2/latlong.dart';
 class ShelterMap extends StatelessWidget {
   final LatLng? currentPosition;
   final List<Marker> shelterMarkers;
+  final MapController mapController;
 
   const ShelterMap({
     super.key,
     required this.currentPosition,
     required this.shelterMarkers,
+    required this.mapController,
   });
 
   @override
@@ -28,6 +30,7 @@ class ShelterMap extends StatelessWidget {
     }
 
     return FlutterMap(
+      mapController: mapController,
       options: MapOptions(
         initialCenter: currentPosition!,
         initialZoom: 14.0,
