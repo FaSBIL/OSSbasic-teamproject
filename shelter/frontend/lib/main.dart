@@ -3,7 +3,7 @@ import 'package:shelter/screens/settings/SettingsMainScreens.dart';
 import 'screens/test.dart';
 import 'routes/AppRoutes.dart';
 import 'screens/location_screen.dart';
-import 'screens/home_screen.dart';
+import 'screens/home.dart';
 
 void main() {
   // 앱의 시작점 (main 함수)
