@@ -36,6 +36,9 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  sqflite: ^2.4.2
+  path_provider: ^2.1.5
+  flutter_compass: ^0.8.0
 
 dev_dependencies:
   flutter_test:
@@ -53,6 +56,12 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  assets:
+    - shelter_db/civilSheltersByRegion.db
+    - shelter_db/earthquakeSheltersByRegion.db
+    - shelter_db/tsunamiShelters.db
+    - lib/assets/user_locations/user_locations.json
+
   fonts:
     - family: NotoSansKR
       fonts:

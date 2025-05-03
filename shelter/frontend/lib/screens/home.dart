@@ -1,65 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:shelter/map/shelter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:shelter/component/input/MainInput.dart';
+import 'package:shelter/component/buttons/GpsButton.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:shelter/services/user_location.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  LatLng? _currentPosition;
+  List<Marker> _shelterMarkers = [];
+  final MapController _mapController = MapController();
+
+  @override
+  void initState() {
+    super.initState();
+    _getUserLocation();
+  }
+
+  void _getUserLocation() async {
+    try {
+      final locationService = UserLocationService();
+      final position = await locationService.getCurrentLocation();
+      setState(() {
+        _currentPosition = LatLng(position.latitude, position.longitude);
+      });
+    } catch (e) {
+      print('위치 가져오기 실패: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          // 지도 배경 대신 회색 박스
-          Container(color: Colors.grey[300]),
+          // 지도
+          ShelterMap(
+            currentPosition: _currentPosition,
+            shelterMarkers: _shelterMarkers,
+            mapController: _mapController,
+          ),
 
-          // 검색창
+          //검색창
           Positioned(
             top: 60,
             left: 16,
-            right: 60,
-            child: Container(
-              height: 45,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: Row(
-                children: [
-                  const Icon(Icons.search, color: Colors.grey),
-                  const SizedBox(width: 8),
-                  const Text("대피소 검색", style: TextStyle(color: Colors.grey)),
-                ],
-              ),
-            ),
-          ),
-
-          // 설정 버튼
-          Positioned(
-            top: 60,
             right: 16,
-            child: IconButton(
-              icon: const Icon(Icons.settings),
-              onPressed: () {
-                //설정 화면으로 이동
+            child: MainInput(
+              onTap: () {
+                // 검색 페이지로 이동하거나 검색 기능 실행
+                print('검색창 선택됨');
               },
-            ),
-          ),
-
-          // 필터 버튼 (해일, 지진, 홍수, 화재)
-          Positioned(
-            top: 120,
-            left: 16,
-            right: 16,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  _buildFilterButton(Icons.pool, '해일'),
-                  _buildFilterButton(Icons.show_chart, '지진'),
-                  _buildFilterButton(Icons.sailing, '홍수'),
-                  _buildFilterButton(Icons.local_fire_department, '화재'),
-                ],
-              ),
+              searchText: '', // 또는 최근 검색어, 상태값 등
             ),
           ),
 
@@ -67,37 +66,9 @@ class HomeScreen extends StatelessWidget {
           Positioned(
             bottom: 24,
             right: 16,
-            child: FloatingActionButton(
-              mini: true,
-              backgroundColor: Colors.white,
-              onPressed: () {
-                // 현재 위치 이동 기능
-              },
-              child: const Icon(Icons.my_location, color: Colors.black),
-            ),
+            child: GpsButton(mapController: _mapController),
           ),
         ],
-      ),
-    );
-  }
-
-  // 필터 버튼 위젯
-  Widget _buildFilterButton(IconData icon, String label) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, size: 18),
-            const SizedBox(width: 6),
-            Text(label),
-          ],
-        ),
       ),
     );
   }
