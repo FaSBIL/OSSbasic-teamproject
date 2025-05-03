@@ -35,7 +35,7 @@ class ShelterMap extends StatelessWidget {
       mapController: mapController,
       options: MapOptions(
         initialCenter: currentPosition!,
-        initialZoom: 14.0,
+        initialZoom: 17.0,
         minZoom: 10.0,
         maxZoom: 18.0,
       ),
