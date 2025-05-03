@@ -9,7 +9,8 @@ import '../widgets/shelter_filter_buttons.dart';
 import '../widgets/error_banner.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final MapController _mapController = MapController();
+  HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -20,6 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final ShelterService _shelterService = ShelterService();
   LatLng? _currentPosition;
   String _errorMessage = '';
+  final MapController _mapController = MapController();
   late Stream<Position> _positionStream;
   String _selectedShelterType = 'civil';
   List<Marker> _shelterMarkers = [];
@@ -178,6 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ShelterMap(
             currentPosition: _currentPosition,
             shelterMarkers: _shelterMarkers,
+            mapController: _mapController,
           ),
           _buildSearchBar(),
           _buildSettingsButton(),
