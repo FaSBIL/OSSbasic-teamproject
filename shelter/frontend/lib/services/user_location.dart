@@ -3,11 +3,11 @@ import 'dart:math';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 
-class LocationService {
+class UserLocationService {
   // 싱글톤 패턴 구현
-  static final LocationService _instance = LocationService._internal();
-  factory LocationService() => _instance;
-  LocationService._internal();
+  static final UserLocationService _instance = UserLocationService._internal();
+  factory UserLocationService() => _instance;
+  UserLocationService._internal();
 
   Future<Position> getCurrentLocation() async {
     bool serviceEnabled;
@@ -30,6 +30,7 @@ class LocationService {
 
     // 영구적으로 권한이 거부된 경우
     if (permission == LocationPermission.deniedForever) {
+      await Geolocator.openAppSettings();
       throw Exception('위치 권한이 영구적으로 거부되었습니다. 설정에서 권한을 허용해주세요.');
     }
 
