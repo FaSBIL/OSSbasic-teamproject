@@ -1,0 +1,12 @@
+backend/data/region_graphs/all_nodes.db filter=lfs diff=lfs merge=lfs -text
+backend/data/region_graphs/all_nodesf.db filter=lfs diff=lfs merge=lfs -text
+backend/data/region_graphs/edges_all.json filter=lfs diff=lfs merge=lfs -text
+backend/data/region_graphs/nodes_all.json filter=lfs diff=lfs merge=lfs -text
+backend/data/region_graphs/region_chungbuk.db filter=lfs diff=lfs merge=lfs -text
+backend/data/region_graphs/region_chungnam.db filter=lfs diff=lfs merge=lfs -text
+backend/data/region_graphs/region_gangwon.db filter=lfs diff=lfs merge=lfs -text
+backend/data/region_graphs/region_gyeongbuk.db filter=lfs diff=lfs merge=lfs -text
+backend/data/region_graphs/region_gyeonggi.db filter=lfs diff=lfs merge=lfs -text
+backend/data/region_graphs/region_gyeongnam.db filter=lfs diff=lfs merge=lfs -text
+backend/data/region_graphs/region_jeonnam.db filter=lfs diff=lfs merge=lfs -text
+backend/data/region_graphs/used_node_ids.json filter=lfs diff=lfs merge=lfs -text
