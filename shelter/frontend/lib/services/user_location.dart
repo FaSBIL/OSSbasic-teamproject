@@ -30,6 +30,7 @@ class UserLocationService {
 
     // 영구적으로 권한이 거부된 경우
     if (permission == LocationPermission.deniedForever) {
+      await Geolocator.openAppSettings();
       throw Exception('위치 권한이 영구적으로 거부되었습니다. 설정에서 권한을 허용해주세요.');
     }
 

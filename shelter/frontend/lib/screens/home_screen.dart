@@ -4,12 +4,13 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geolocator/geolocator.dart';
 import '../services/user_location.dart';
 import '../services/filter_shelters.dart';
-import '../widgets/shelter_map.dart';
+import '../map/shelter_map.dart';
 import '../widgets/shelter_filter_buttons.dart';
 import '../widgets/error_banner.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final MapController _mapController = MapController();
+  HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -21,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final MapController _mapController = MapController();
   LatLng? _currentPosition;
   String _errorMessage = '';
+  final MapController _mapController = MapController();
   late Stream<Position> _positionStream;
   String _selectedShelterType = 'civil';
   List<Marker> _shelterMarkers = [];
