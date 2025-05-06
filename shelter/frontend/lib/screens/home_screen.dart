@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final MapController _mapController = MapController();
   LatLng? _currentPosition;
   String _errorMessage = '';
-  final MapController _mapController = MapController();
+  //final MapController _mapController = MapController();
   late Stream<Position> _positionStream;
   String _selectedShelterType = 'civil';
   List<Marker> _shelterMarkers = [];
