@@ -18,7 +18,7 @@ class ShelterBottomSheet extends StatelessWidget {
     final initialSize = mode == SheetMode.list ? 0.5 : 0.4;
     final snapSizes = mode == SheetMode.list
         ? [0.085, 0.5, 0.95]
-        : [0.085, 0.4, 0.95];
+        : [0.085, 0.35, 0.95];
 
     return DraggableScrollableSheet(
       initialChildSize: initialSize,
@@ -43,7 +43,7 @@ class ShelterBottomSheet extends StatelessWidget {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.only(top: 16, bottom: 5),
+                padding: const EdgeInsets.only(top: 16, bottom: 0),
                 child: Container(
                   width: 100,
                   height: 5,
@@ -58,7 +58,7 @@ class ShelterBottomSheet extends StatelessWidget {
                 child: SingleChildScrollView(
                   controller: scrollController,
                   child: Padding(
-                    padding: const EdgeInsets.only(top:25, bottom:30),
+                    padding: const EdgeInsets.only(top:5, bottom:30),
                     child: child,
                   ),
                 ),
