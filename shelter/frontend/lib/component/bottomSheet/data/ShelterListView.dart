@@ -19,29 +19,27 @@ class ShelterListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
-      controller: scrollController,
-      padding: const EdgeInsets.only(bottom: 30),
-      itemCount: shelters.length,
-      separatorBuilder: (context, index) => const SizedBox(height: 16),
-      itemBuilder: (context, index){
-        final shelter = shelters[index];
-        
-        return GestureDetector(
-          onTap: () => onTapItem(shelter),
-          child: ShelterListItem(
-            title: shelter['name'] ?? 'nonData',
-            address: shelter['address'] ?? 'nonData',
-            distance: shelter['distance'] ?? 0.0,
-            isFavorite: shelter['isFavorite'] ?? false,
-            isEarthquakeSafe: shelter['earthquake'] ?? false,
-            isTsunamiSafe: shelter['earthquake'] ?? false,
+    return Column(
+      children: List.generate(
+        shelters.length,
+        (index) {
+          final shelter = shelters[index];
+          return GestureDetector(
             onTap: () => onTapItem(shelter),
-            onFavoriteToggle: () => onFavoriteToggle(shelter),
-            onNavigatePressed: () => onNavigate(shelter),
-          ),
-        );
-      },
+            child: ShelterListItem(
+              title: shelter['name'] ?? 'nonData',
+              address: shelter['address'] ?? 'nonData',
+              distance: shelter['distance'] ?? '0.0',
+              isFavorite: shelter['isFavorite'] ?? false,
+              isEarthquakeSafe: shelter['earthquake'] ?? false,
+              isTsunamiSafe: shelter['tsunami'] ?? false,
+              onTap: () => onTapItem(shelter),
+              onFavoriteToggle: () => onFavoriteToggle(shelter),
+              onNavigatePressed: () => onNavigate(shelter),
+            ),
+          );
+        },
+      ),
     );
   }
 }
