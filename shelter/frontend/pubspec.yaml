@@ -61,7 +61,14 @@ flutter:
     - shelter_db/earthquakeSheltersByRegion.db
     - shelter_db/tsunamiShelters.db
     - lib/assets/user_locations/user_locations.json
-    - assets/OSMPublicTransport/
+    - assets/OSMPublicTransport/8/
+    - assets/OSMPublicTransport/8/216/
+    - assets/OSMPublicTransport/8/217/
+    - assets/OSMPublicTransport/8/218/
+    - assets/OSMPublicTransport/8/219/
+    - assets/OSMPublicTransport/8/220/
+    - assets/OSMPublicTransport/8/221/
+
 
   fonts:
     - family: NotoSansKR

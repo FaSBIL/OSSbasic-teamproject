@@ -35,14 +35,25 @@ class ShelterMap extends StatelessWidget {
       mapController: mapController,
       options: MapOptions(
         initialCenter: currentPosition!,
-        initialZoom: 14.0,
-        minZoom: 14.0,
-        maxZoom: 14.0,
+        initialZoom: 8.0,
+        minZoom: 8.0,
+        maxZoom: 8.0,
+        interactionOptions: const InteractionOptions(
+          flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+        ),
+        // 지도 이동 범위 제한
+        cameraConstraint: CameraConstraint.contain(
+          bounds: LatLngBounds(
+            LatLng(32.990806, 124.804694), // SW
+            LatLng(39.095972, 131.307917), // NE
+          ),
+        ),
       ),
       children: [
         TileLayer(
-          tileProvider: FileTileProvider(),
           urlTemplate: 'assets/OSMPublicTransport/{z}/{x}/{y}.png',
+          tileProvider: AssetTileProvider(),
+
           //userAgentPackageName: 'com.example.shelter',
         ),
         MarkerLayer(
