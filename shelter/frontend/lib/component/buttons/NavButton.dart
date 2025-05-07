@@ -18,9 +18,10 @@ class NavButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.blue,
         foregroundColor: AppColors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 6.0),
+        minimumSize: const Size(80, 35),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(100.0),
+          borderRadius: BorderRadius.circular(50.0),
         ),
         textStyle: const TextStyle(
           fontSize: 14.0,
