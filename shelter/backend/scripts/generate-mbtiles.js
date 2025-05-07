@@ -87,8 +87,8 @@ db.serialize(() => {
     ['name', 'Offline Tiles'],
     ['format', 'png'],
     ['version', '1'],
-    ['minzoom', '0'],
-    ['maxzoom', '15'],
+    ['minzoom', '8'],
+    ['maxzoom', '14'],
     ['bounds', '-180.0,-85.0511,180.0,85.0511'],
   ];
   metaEntries.forEach(([name, value]) => metadata.run(name, value));
