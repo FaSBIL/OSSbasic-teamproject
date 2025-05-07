@@ -55,7 +55,7 @@ class ShelterListItem extends StatelessWidget {
                     if(isTsunamiSafe) const SizedBox(width: 8),
                     if(isEarthquakeSafe) const CustomIcon( iconData: AppIcons.earthquake, color: AppColors.darkGray),
                     if(isEarthquakeSafe) const SizedBox(width: 8),
-                    FavoriteButton(),
+                    FavoriteButton( onFavoriteToggle: onFavoriteToggle,),
                     const SizedBox(width: 8),
                     NavButton(
                       text: '안내 시작',

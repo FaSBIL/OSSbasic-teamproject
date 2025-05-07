@@ -4,8 +4,11 @@ import '../icon/CustomIcon.dart';
 import '../icon/IconUtils.dart';
 
 class FavoriteButton extends StatefulWidget {
+  final VoidCallback onFavoriteToggle;
+
   const FavoriteButton({
-    Key? key
+    Key? key,
+    required this.onFavoriteToggle,
   }) : super(key: key);
 
   @override
@@ -19,6 +22,8 @@ class _FavoriteButtonState extends State<FavoriteButton>{
     setState((){
       isFavorited = !isFavorited;
     });
+
+    widget.onFavoriteToggle();
   }
 
   @override
