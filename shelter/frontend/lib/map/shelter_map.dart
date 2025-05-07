@@ -51,7 +51,7 @@ class ShelterMap extends StatelessWidget {
       ),
       children: [
         TileLayer(
-          urlTemplate: 'assets/OSMPublicTransport/{z}/{x}/{y}.png',
+          urlTemplate: 'assets/osm/{z}/{x}/{y}.png',
           tileProvider: AssetTileProvider(),
 
           //userAgentPackageName: 'com.example.shelter',
