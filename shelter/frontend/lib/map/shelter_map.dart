@@ -35,14 +35,15 @@ class ShelterMap extends StatelessWidget {
       mapController: mapController,
       options: MapOptions(
         initialCenter: currentPosition!,
-        initialZoom: 17.0,
-        minZoom: 10.0,
-        maxZoom: 18.0,
+        initialZoom: 14.0,
+        minZoom: 14.0,
+        maxZoom: 14.0,
       ),
       children: [
         TileLayer(
-          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-          userAgentPackageName: 'com.example.shelter',
+          tileProvider: FileTileProvider(),
+          urlTemplate: 'assets/OSMPublicTransport/{z}/{x}/{y}.png',
+          //userAgentPackageName: 'com.example.shelter',
         ),
         MarkerLayer(
           markers: [
