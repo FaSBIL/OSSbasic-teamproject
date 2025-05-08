@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       ),
 
       routes: AppRoutes.routes,
-      home: const HomeScreen(), // 앱 실행 시 처음 보여줄 화면
+      home: HomeScreen(), // 앱 실행 시 처음 보여줄 화면
       debugShowCheckedModeBanner: false, // 오른쪽 상단 디버그 배너 제거
     );
   }
