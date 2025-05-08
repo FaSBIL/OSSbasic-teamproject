@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../utils/db_loader.dart';
+import '../models/shelter.dart';
 
 class ShelterService {
   late Database _civilDb;
@@ -46,5 +47,10 @@ class ShelterService {
     await _civilDb.close();
     await _earthquakeDb.close();
     await _tsunamiDb.close();
+  }
+
+  Future<List<Shelter>> getCivilSheltersAsModel(String region) async {
+    final rows = await getCivilShelters(region); // 기존의 Map 형태
+    return rows.map((row) => Shelter.fromMap(row)).toList(); // 모델 객체로 변환
   }
 }

@@ -5,6 +5,9 @@ import 'package:shelter/component/input/MainInput.dart';
 import 'package:shelter/component/buttons/GpsButton.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:shelter/services/user_location.dart';
+import 'package:shelter/services/filter_shelters.dart';
+import 'package:shelter/models/shelter.dart';
+import 'package:shelter/widgets/shelter_detail_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,6 +20,9 @@ class _HomeScreenState extends State<HomeScreen> {
   LatLng? _currentPosition;
   List<Marker> _shelterMarkers = [];
   final MapController _mapController = MapController();
+
+  final ShelterService _shelterService = ShelterService(); // 대피소 서비스
+  Shelter? _selectedShelter; // 선택된 대피소 정보를 담는 변수
 
   @override
   void initState() {
@@ -31,8 +37,62 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _currentPosition = LatLng(position.latitude, position.longitude);
       });
+
+      await _shelterService.initialize();
+
+      // 대피소 불러오기 + 마커 만들기
+      final regionInfo = await locationService.getNearestLocation(
+        position.latitude,
+        position.longitude,
+      );
+
+      final regionNameToCode = {
+        '서울특별시': 'seoul',
+        '부산광역시': 'busan',
+        '대구광역시': 'daegu',
+        '인천광역시': 'incheon',
+        '광주광역시': 'gwangju',
+        '대전광역시': 'daejeon',
+        '울산광역시': 'ulsan',
+        '세종특별자치시': 'sejong',
+        '경기도': 'gyeonggi',
+        '강원특별자치도': 'gangwon',
+        '충청북도': 'chungbuk',
+        '충청남도': 'chungnam',
+        '전북특별자치도': 'jeonbuk',
+        '전라북도': 'jeonbuk',
+        '전라남도': 'jeonnam',
+        '경상북도': 'gyeongbuk',
+        '경상남도': 'gyeongnam',
+        '제주특별자치도': 'jeju',
+      };
+      final regionCode =
+          regionNameToCode[regionInfo['do']?.trim() ?? ''] ?? 'chungbuk';
+
+      final shelters = await _shelterService.getCivilSheltersAsModel(
+        regionCode,
+      );
+
+      setState(() {
+        _shelterMarkers =
+            shelters.map((shelter) {
+              return Marker(
+                width: 60,
+                height: 60,
+                point: LatLng(shelter.latitude, shelter.longitude),
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedShelter = shelter;
+                    });
+                  },
+                  child: const Icon(Icons.location_pin, color: Colors.green),
+                ),
+              );
+            }).toList();
+      });
     } catch (e) {
-      print('위치 가져오기 실패: $e');
+      print('위치 또는 대피소 로딩 실패: $e');
     }
   }
 
@@ -68,6 +128,13 @@ class _HomeScreenState extends State<HomeScreen> {
             right: 16,
             child: GpsButton(mapController: _mapController),
           ),
+          if (_selectedShelter != null)
+            Positioned(
+              bottom: 80,
+              left: 16,
+              right: 16,
+              child: ShelterDetailCard(shelter: _selectedShelter!),
+            ),
         ],
       ),
     );

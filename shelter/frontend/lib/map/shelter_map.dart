@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:shelter/map/location_marker.dart';
+import 'package:shelter/map/user_marker.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 
 class ShelterMap extends StatelessWidget {
