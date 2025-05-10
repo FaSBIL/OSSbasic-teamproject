@@ -124,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
           // 현재 위치 버튼
           Positioned(
-            bottom: 24,
+            bottom: 280,
             right: 16,
             child: GpsButton(mapController: _mapController),
           ),

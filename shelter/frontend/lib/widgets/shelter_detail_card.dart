@@ -11,7 +11,7 @@ class ShelterDetailCard extends StatelessWidget {
     return Card(
       color: Colors.white,
       margin: const EdgeInsets.all(16),
-      elevation: 6,
+      elevation: 8,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16),
