@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'ShelterListItem.dart';
+import 'package:shelter/utils/distance_calculator.dart';
 
 class ShelterListView extends StatelessWidget {
   final ScrollController scrollController;
@@ -24,19 +25,36 @@ class ShelterListView extends StatelessWidget {
         shelters.length,
         (index) {
           final shelter = shelters[index];
-          return GestureDetector(
-            onTap: () => onTapItem(shelter),
-            child: ShelterListItem(
-              title: shelter['name'] ?? 'nonData',
-              address: shelter['address'] ?? 'nonData',
-              distance: shelter['distance'] ?? '0.0',
-              isFavorite: shelter['isFavorite'] ?? false,
-              isEarthquakeSafe: shelter['earthquake'] ?? false,
-              isTsunamiSafe: shelter['tsunami'] ?? false,
-              onTap: () => onTapItem(shelter),
-              onFavoriteToggle: () => onFavoriteToggle(shelter),
-              onNavigatePressed: () => onNavigate(shelter),
+          return FutureBuilder<String>(
+            future: DistanceCalculator.calculateDistance(
+              shelter['latitude'] ?? 0.0,
+              shelter['longitude'] ?? 0.0,
             ),
+            builder: (context, snapshot) {
+              String distanceText;
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                distanceText = 'Calculating';
+              } else if (snapshot.hasError) {
+                distanceText = 'Error: ${snapshot.error}';
+              } else {
+                distanceText = snapshot.data ?? '거리 취득 장애';
+              }
+
+              return GestureDetector(
+                onTap: () => onTapItem(shelter),
+                child: ShelterListItem(
+                  title: shelter['name'] ?? 'no Data',
+                  address: shelter['address'] ?? 'no Data',
+                  distance: distanceText,
+                  isFavorite: (shelter['isFavorite'] ?? 0) == 1,
+                  isEarthquakeSafe: (shelter['earthquake'] ?? 0) == 1,
+                  isTsunamiSafe: (shelter['tsunami'] ?? 0) == 1,
+                  onTap: () => onTapItem(shelter),
+                  onFavoriteToggle: () => onFavoriteToggle(shelter),
+                  onNavigatePressed: () => onNavigate(shelter),
+                ),
+              );
+            },
           );
         },
       ),
