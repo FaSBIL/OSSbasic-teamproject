@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shelter/screens/test02.dart';
 import '../component/input/MainInput.dart';
-import '../component/buttons/FavoriteButton.dart';
-import '../component/buttons/GpsButton.dart';
+// import '../component/buttons/FavoriteButton.dart';
 import '../component/buttons/NavButton.dart';
 import '../component/icon/IconUtils.dart';
 import '../component/icon/CustomIcon.dart';
@@ -39,7 +38,6 @@ class _TestScreenState extends State<TestScreen> {
       backgroundColor: AppColors.white,
       body: Stack(
         children: [
-          // メインコンテンツ（スクロール可能）
           Positioned.fill(
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(16, 150, 16, 100),
@@ -120,11 +118,13 @@ class _TestScreenState extends State<TestScreen> {
                         borderColor: AppColors.paleBlue,
                       ),
                       const SizedBox(width: 12),
-                      const NavButton(text: '안내 시작'),
+                      NavButton(text: '안내 시작', onPressed: () {
+                        print("click");
+                      }),
                     ],
                   ),
                   const SizedBox(height: 12),
-                  const FavoriteButton(),
+                  // const FavoriteButton(),s
                   const SizedBox(height: 24),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -205,7 +205,6 @@ class _TestScreenState extends State<TestScreen> {
             ),
           ),
 
-          // 入力フィールド（固定位置）
           Positioned(
             top: 75,
             left: 16,
