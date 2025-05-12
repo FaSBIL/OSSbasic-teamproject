@@ -46,3 +46,5 @@ app.*.map.json
 
 
 /backend/scripts/.env
+/frontend/apk_extract/
+/frontend/node_modules/

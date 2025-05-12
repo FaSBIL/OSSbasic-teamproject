@@ -39,6 +39,7 @@ dependencies:
   sqflite: ^2.4.2
   path_provider: ^2.1.5
   flutter_compass: ^0.8.0
+  flutter_map_mbtiles: ^1.0.4
 
 dev_dependencies:
   flutter_test:
@@ -56,11 +57,21 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  
   assets:
     - shelter_db/civilSheltersByRegion.db
     - shelter_db/earthquakeSheltersByRegion.db
     - shelter_db/tsunamiShelters.db
     - lib/assets/user_locations/user_locations.json
+    - assets/kr-map.mbtiles
+    # - assets/osm/8/
+    # - assets/osm/8/216/
+    # - assets/osm/8/217/
+    # - assets/osm/8/218/
+    # - assets/osm/8/219/
+    # - assets/osm/8/220/
+    # - assets/osm/8/221/
+
 
   fonts:
     - family: NotoSansKR
