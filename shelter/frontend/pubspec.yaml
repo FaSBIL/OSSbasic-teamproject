@@ -63,7 +63,7 @@ flutter:
     - shelter_db/earthquakeSheltersByRegion.db
     - shelter_db/tsunamiShelters.db
     - lib/assets/user_locations/user_locations.json
-    - assets/kr-map.mbtiles
+    # - assets/kr-map.mbtiles
     # - assets/osm/8/
     # - assets/osm/8/216/
     # - assets/osm/8/217/
