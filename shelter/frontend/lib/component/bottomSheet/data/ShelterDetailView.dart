@@ -7,13 +7,13 @@ import 'ShelterListItem.dart';
 import 'package:shelter/utils/distance_calculator.dart';
 
 class ShelterDetailView extends StatelessWidget {
-  final Map<String, dynamic> shelter;
+  final Map<String, dynamic> shelters;
   final void Function(Map<String, dynamic>) onFavoriteToggle;
   final void Function(Map<String, dynamic>) onNavigate;
 
   const ShelterDetailView({
     super.key,
-    required this.shelter,
+    required this.shelters,
     required this.onFavoriteToggle,
     required this.onNavigate,
   });
@@ -24,8 +24,8 @@ class ShelterDetailView extends StatelessWidget {
       children: [
         FutureBuilder<String>(
           future: DistanceCalculator.calculateDistance(
-            shelter['latitude'] ?? 0.0,
-            shelter['longitude'] ?? 0.0,
+            shelters['latitude'] ?? 0.0,
+            shelters['longitude'] ?? 0.0,
           ),
           builder: (context, snapshot) {
             String distanceText;
@@ -38,14 +38,14 @@ class ShelterDetailView extends StatelessWidget {
             }
 
             return ShelterListItem(
-              title: shelter['name'] ?? 'no Data',
-              address: shelter['address'] ?? 'no Data',
+              title: shelters['name'] ?? 'no Data',
+              address: shelters['address'] ?? 'no Data',
               distance: distanceText,
-              isFavorite: (shelter['isFavorite'] ?? 0) == 1,
-              isEarthquakeSafe: (shelter['earthquake'] ?? 0) == 1,
-              isTsunamiSafe: (shelter['tsunami'] ?? 0) == 1,
-              onFavoriteToggle: () => onFavoriteToggle(shelter),
-              onNavigatePressed: () => onNavigate(shelter),
+              isFavorite: (shelters['isFavorite'] ?? 0) == 1,
+              isEarthquakeSafe: (shelters['earthquake'] ?? 0) == 1,
+              isTsunamiSafe: (shelters['tsunami'] ?? 0) == 1,
+              onFavoriteToggle: () => onFavoriteToggle(shelters),
+              onNavigatePressed: () => onNavigate(shelters),
               onTap: () {},
             );
           },
@@ -60,14 +60,14 @@ class ShelterDetailView extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  shelter['address'] ?? 'no Data',
+                  shelters['address'] ?? 'no Data',
                   style: AppTextStyles.bodyGray,
                 ),
               ),
               GestureDetector(
                 onTap: () {
                   Clipboard.setData(
-                    ClipboardData(text: shelter['address'] ?? ''),
+                    ClipboardData(text: shelters['address'] ?? ''),
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('주소가 복사되었습니다.')),
