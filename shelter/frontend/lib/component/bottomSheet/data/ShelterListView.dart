@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'ShelterListItem.dart';
 import 'package:shelter/utils/distance_calculator.dart';
+import 'package:geolocator/geolocator.dart';
 
 class ShelterListView extends StatelessWidget {
   final ScrollController scrollController;
   final List<Map<String, dynamic>> shelters;
+  final Position? currentPosition;
   final void Function(Map<String, dynamic>) onTapItem;
   final void Function(Map<String, dynamic>) onFavoriteToggle;
   final void Function(Map<String, dynamic>) onNavigate;
@@ -13,6 +15,7 @@ class ShelterListView extends StatelessWidget {
     super.key,
     required this.scrollController,
     required this.shelters,
+    required this.currentPosition,
     required this.onTapItem,
     required this.onFavoriteToggle,
     required this.onNavigate,
@@ -25,10 +28,13 @@ class ShelterListView extends StatelessWidget {
         shelters.length,
         (index) {
           final shelter = shelters[index];
+
           return FutureBuilder<String>(
             future: DistanceCalculator.calculateDistance(
-              shelter['latitude'] ?? 0.0,
-              shelter['longitude'] ?? 0.0,
+              currentPosition!.latitude,
+              currentPosition!.longitude,
+              (shelter['latitude'] as num?)?.toDouble() ?? 0.0,
+              (shelter['longitude'] as num?)?.toDouble() ?? 0.0,
             ),
             builder: (context, snapshot) {
               String distanceText;

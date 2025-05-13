@@ -5,15 +5,18 @@ import 'package:shelter/theme/typography.dart';
 import 'package:flutter/services.dart';
 import 'ShelterListItem.dart';
 import 'package:shelter/utils/distance_calculator.dart';
+import 'package:geolocator/geolocator.dart';
 
 class ShelterDetailView extends StatelessWidget {
   final Map<String, dynamic> shelters;
+  final Position? currentPosition;
   final void Function(Map<String, dynamic>) onFavoriteToggle;
   final void Function(Map<String, dynamic>) onNavigate;
 
   const ShelterDetailView({
     super.key,
     required this.shelters,
+    required this.currentPosition,
     required this.onFavoriteToggle,
     required this.onNavigate,
   });
@@ -24,8 +27,10 @@ class ShelterDetailView extends StatelessWidget {
       children: [
         FutureBuilder<String>(
           future: DistanceCalculator.calculateDistance(
-            shelters['latitude'] ?? 0.0,
-            shelters['longitude'] ?? 0.0,
+            currentPosition!.latitude,
+            currentPosition!.longitude,
+            (shelters['latitude'] as num?)?.toDouble() ?? 0.0,
+            (shelters['longitude'] as num?)?.toDouble() ?? 0.0,
           ),
           builder: (context, snapshot) {
             String distanceText;
