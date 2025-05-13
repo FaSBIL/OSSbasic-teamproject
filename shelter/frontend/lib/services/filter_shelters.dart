@@ -10,9 +10,9 @@ class ShelterService {
 
   Future<void> initialize() async {
     // loadDatabase 유틸리티를 사용하여 DB 초기화
-    _civilDb = await loadDatabase('civilSheltersByRegion.db');
-    _earthquakeDb = await loadDatabase('earthquakeSheltersByRegion.db');
-    _tsunamiDb = await loadDatabase('tsunamiShelters.db');
+    _civilDb = await loadDatabase();
+    _earthquakeDb = await loadDatabase();
+    _tsunamiDb = await loadDatabase();
     print('[Service] Databases initialized'); // 초기화 완료 로그 추가
   }
 
