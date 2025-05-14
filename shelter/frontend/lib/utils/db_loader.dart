@@ -3,7 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-Future<Database> loadDatabase(String dbName) async {
+Future<Database> loadDatabase() async {
+  final dbName = 'shelters.db';
   final documentsDir = await getApplicationDocumentsDirectory();
   final dbPath = '${documentsDir.path}/$dbName';
 

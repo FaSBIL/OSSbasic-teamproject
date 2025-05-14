@@ -20,7 +20,7 @@ class _ShelterListScreenState extends State<ShelterListScreen> {
   // DB에서 서울 지역 shelter 데이터를 불러옴
   Future<void> loadData() async {
     try {
-      final db = await loadDatabase('civilSheltersByRegion.db');
+      final db = await loadDatabase();
       final rows = await db.query('civil_seoul'); // 테이블명에 맞게 수정
       await db.close();
 

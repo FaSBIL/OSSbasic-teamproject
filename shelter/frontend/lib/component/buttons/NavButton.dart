@@ -3,26 +3,25 @@ import '../../theme/color.dart';
 
 class NavButton extends StatelessWidget {
   final String text;
+  final VoidCallback onPressed;
 
   const NavButton({
     Key? key,
     required this.text,
+    required this.onPressed,
   }) : super(key: key);
-
-  void _handleNavPress(){
-    // 안내 시작 버튼 클릭 시 처리 로직 구현 예정
-  }
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: _handleNavPress,
+      onPressed: onPressed, // 외부에서 받은 콜백 사용
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.blue,
         foregroundColor: AppColors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 6.0),
+        minimumSize: const Size(80, 35),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(100.0),
+          borderRadius: BorderRadius.circular(50.0),
         ),
         textStyle: const TextStyle(
           fontSize: 14.0,

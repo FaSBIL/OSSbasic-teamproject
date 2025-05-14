@@ -59,11 +59,9 @@ dev_dependencies:
 flutter:
   
   assets:
-    - shelter_db/civilSheltersByRegion.db
-    - shelter_db/earthquakeSheltersByRegion.db
-    - shelter_db/tsunamiShelters.db
+    - shelter_db/shelters.db
     - lib/assets/user_locations/user_locations.json
-    - assets/kr-map.mbtiles
+    # - assets/kr-map.mbtiles
     # - assets/osm/8/
     # - assets/osm/8/216/
     # - assets/osm/8/217/
