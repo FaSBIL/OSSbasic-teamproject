@@ -61,6 +61,7 @@ flutter:
   assets:
     - shelter_db/shelters.db
     - lib/assets/user_locations/user_locations.json
+    - assets/mbtiles/korea_z8_17.mbtiles
     # - assets/kr-map.mbtiles
     # - assets/osm/8/
     # - assets/osm/8/216/

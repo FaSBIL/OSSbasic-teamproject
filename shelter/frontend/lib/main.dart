@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shelter/screens/settings/SettingsMainScreens.dart';
-import 'screens/test.dart';
+import 'screens/test/test.dart';
 import 'routes/AppRoutes.dart';
 import 'screens/location_screen.dart';
 import 'screens/home.dart';
+import 'screens/test/test03.dart';
+import 'package:shelter/screens/search/search_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
