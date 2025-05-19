@@ -1,56 +1,119 @@
 import 'dart:async';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 import '../utils/db_loader.dart';
 import '../models/shelter.dart';
 
 class ShelterService {
-  late Database _civilDb;
-  late Database _earthquakeDb;
-  late Database _tsunamiDb;
+  late Database _db;
 
   Future<void> initialize() async {
-    // loadDatabase 유틸리티를 사용하여 DB 초기화
-    _civilDb = await loadDatabase();
-    _earthquakeDb = await loadDatabase();
-    _tsunamiDb = await loadDatabase();
-    print('[Service] Databases initialized'); // 초기화 완료 로그 추가
+    _db = await loadDatabase();
+    print('[Service] shelters.db initialized');
   }
 
-  Future<List<Map<String, dynamic>>> getCivilShelters(String region) async {
-    if (_civilDb == null) {
-      throw Exception('Database not initialized');
-    }
-    return await _civilDb.query(
-      'civil_$region',
-      columns: ['name', 'address', 'latitude', 'longitude'],
-    );
-  }
-
-  Future<List<Map<String, dynamic>>> getEarthquakeShelters(
+  // 지역 + 유형 필터로 대피소 가져오기
+  Future<List<Shelter>> getSheltersByRegionAndType(
     String region,
+    String type,
   ) async {
-    return await _earthquakeDb.query(
-      'earthquake_$region',
+    final rows = await _db.query(
+      region.toLowerCase(),
+      where: '$type = ?',
+      whereArgs: [1],
       columns: ['name', 'address', 'latitude', 'longitude'],
     );
+    return rows.map((row) => Shelter.fromMap(row)).toList();
   }
 
-  Future<List<Map<String, dynamic>>> getTsunamiShelters(String region) async {
-    return await _tsunamiDb.query(
-      'tsunami_shelters',
-      columns: ['name', 'address', 'latitude', 'longitude'],
-    );
+  // 초성 추출 유틸
+  String getChosung(String text) {
+    const List<String> cho = [
+      'ㄱ',
+      'ㄲ',
+      'ㄴ',
+      'ㄷ',
+      'ㄸ',
+      'ㄹ',
+      'ㅁ',
+      'ㅂ',
+      'ㅃ',
+      'ㅅ',
+      'ㅆ',
+      'ㅇ',
+      'ㅈ',
+      'ㅉ',
+      'ㅊ',
+      'ㅋ',
+      'ㅌ',
+      'ㅍ',
+      'ㅎ',
+    ];
+    String result = '';
+    for (int i = 0; i < text.length; i++) {
+      int code = text.codeUnitAt(i) - 0xAC00;
+      if (code >= 0 && code <= 11171) {
+        result += cho[code ~/ 588];
+      } else {
+        result += text[i];
+      }
+    }
+    return result;
+  }
+
+  // 키워드 기반 대피소 통합 검색 (초성 포함, 유형 필터링 지원)
+  Future<List<Shelter>> searchShelters(String keyword, {String? type}) async {
+    const regionTables = [
+      'seoul',
+      'busan',
+      'daegu',
+      'incheon',
+      'gwangju',
+      'daejeon',
+      'ulsan',
+      'sejong',
+      'gyeonggi',
+      'gangwon',
+      'chungbuk',
+      'chungnam',
+      'jeonbuk',
+      'jeonnam',
+      'gyeongbuk',
+      'gyeongnam',
+      'jeju',
+    ];
+
+    final chosungKeyword = getChosung(keyword);
+    List<Shelter> result = [];
+
+    for (final region in regionTables) {
+      try {
+        final rows = await _db.query(
+          region,
+          columns: ['name', 'address', 'latitude', 'longitude'],
+          where: type != null ? '$type = ?' : null,
+          whereArgs: type != null ? [1] : null,
+        );
+
+        for (final row in rows) {
+          final name = row['name']?.toString() ?? '';
+          final address = row['address']?.toString() ?? '';
+
+          if (name.contains(keyword) ||
+              address.contains(keyword) ||
+              getChosung(name).contains(chosungKeyword) ||
+              getChosung(address).contains(chosungKeyword)) {
+            result.add(Shelter.fromMap(row));
+          }
+        }
+      } catch (e) {
+        print('❌ [$region] 검색 실패: $e');
+      }
+    }
+
+    return result;
   }
 
   Future<void> close() async {
-    await _civilDb.close();
-    await _earthquakeDb.close();
-    await _tsunamiDb.close();
-  }
-
-  Future<List<Shelter>> getCivilSheltersAsModel(String region) async {
-    final rows = await getCivilShelters(region); // 기존의 Map 형태
-    return rows.map((row) => Shelter.fromMap(row)).toList(); // 모델 객체로 변환
+    await _db.close();
   }
 }
