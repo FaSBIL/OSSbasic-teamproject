@@ -24,7 +24,7 @@ class SearchInput extends StatelessWidget {
     return SafeArea(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
           color: AppColors.lightGray,
           borderRadius: BorderRadius.circular(8),
@@ -33,7 +33,11 @@ class SearchInput extends StatelessWidget {
           children: [
             GestureDetector(
               onTap: onBackTap ?? () => Navigator.pop(context),
-              child: const Icon(AppIcons.arrowRight, size: 20, color: AppColors.black),
+              child: const Icon(
+                AppIcons.arrowRight,
+                size: 20,
+                color: AppColors.black,
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(

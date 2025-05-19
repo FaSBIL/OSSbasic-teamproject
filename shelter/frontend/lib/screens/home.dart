@@ -75,11 +75,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
       for (final region in allRegions) {
         try {
-          final shelters = await _shelterService.getCivilSheltersAsModel(
-            region,
-          );
+          final civilShelters = await _shelterService
+              .getSheltersByRegionAndType(region, 'civil');
+          final earthquakeShelters = await _shelterService
+              .getSheltersByRegionAndType(region, 'earthquake');
+          final tsunamiShelters = await _shelterService
+              .getSheltersByRegionAndType(region, 'tsunami');
+
+          final allShelters = [
+            ...civilShelters,
+            ...earthquakeShelters,
+            ...tsunamiShelters,
+          ];
+
           final filtered =
-              shelters.where((shelter) {
+              allShelters.where((shelter) {
                 final shelterLatLng = LatLng(
                   shelter.latitude,
                   shelter.longitude,
