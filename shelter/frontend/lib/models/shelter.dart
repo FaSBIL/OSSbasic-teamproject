@@ -3,6 +3,11 @@ class Shelter {
   final String address;
   final double latitude;
   final double longitude;
+
+  final bool earthquakeSafe;
+  final bool tsunamiSafe;
+  final bool isFavorite;
+
   final String? type;
 
   Shelter({
@@ -10,6 +15,9 @@ class Shelter {
     required this.address,
     required this.latitude,
     required this.longitude,
+    this.earthquakeSafe = false,
+    this.tsunamiSafe = false,
+    this.isFavorite = false,
     this.type,
   });
 
@@ -25,7 +33,6 @@ class Shelter {
           map['longitude'] is double
               ? map['longitude']
               : double.parse(map['longitude'].toString()),
-      type: map['type'],
     );
   }
 
@@ -34,6 +41,9 @@ class Shelter {
     String? address,
     double? latitude,
     double? longitude,
+    bool? earthquakeSafe,
+    bool? tsunamiSafe,
+    bool? isFavorite,
     String? type,
   }) {
     return Shelter(
@@ -41,6 +51,9 @@ class Shelter {
       address: address ?? this.address,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
+      earthquakeSafe: earthquakeSafe ?? this.earthquakeSafe,
+      tsunamiSafe: tsunamiSafe ?? this.tsunamiSafe,
+      isFavorite: isFavorite ?? this.isFavorite,
       type: type ?? this.type,
     );
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shelter/models/shelter.dart';
 import 'package:shelter/services/filter_shelters.dart';
-import 'package:shelter/screens/search/shelter_map_screen.dart';
+import 'package:shelter/screens/search/search_map_screen.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:shelter/services/user_location.dart';
 import 'package:shelter/theme/color.dart';
@@ -98,7 +98,7 @@ class _ShelterListScreenState extends State<ShelterListScreen> {
                   context,
                   MaterialPageRoute(
                     builder:
-                        (_) => ShelterMapScreen(
+                        (_) => SearchMapScreen(
                           region: widget.region,
                           shelters: _shelters,
                           currentPosition: _currentPosition,
@@ -135,6 +135,20 @@ class _ShelterListScreenState extends State<ShelterListScreen> {
                     ),
                     leading: const Icon(Icons.location_on_outlined),
                     trailing: const Icon(Icons.chevron_right),
+
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => SearchMapScreen(
+                                region: widget.region,
+                                currentPosition: _currentPosition,
+                                selectedShelter: shelter,
+                              ),
+                        ),
+                      );
+                    },
                   );
                 },
               ),

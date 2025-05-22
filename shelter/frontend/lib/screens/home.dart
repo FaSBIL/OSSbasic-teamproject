@@ -9,8 +9,13 @@ import 'package:shelter/map/user_marker.dart';
 import 'package:shelter/services/user_location.dart';
 import 'package:shelter/services/filter_shelters.dart';
 import 'package:shelter/models/shelter.dart';
-import 'package:shelter/widgets/shelter_detail_card.dart';
 import 'package:shelter/screens/search/search_screen.dart';
+import 'package:shelter/map/shelter_osm_map.dart';
+import 'package:shelter/component/bottomSheet/ShelterBottomSheet.dart';
+import 'package:shelter/component/bottomSheet/data/ShelterDetailView.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shelter/screens/navigation/navigation_preview_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,10 +32,31 @@ class _HomeScreenState extends State<HomeScreen> {
   final ShelterService _shelterService = ShelterService(); // 대피소 서비스
   Shelter? _selectedShelter; // 선택된 대피소 정보를 담는 변수
 
+  List<String> _recentSearches = [];
+
   @override
   void initState() {
     super.initState();
     _getUserLocation();
+    _loadRecentSearches();
+  }
+
+  void _loadRecentSearches() async {
+    final prefs = await SharedPreferences.getInstance();
+    final history = prefs.getStringList('recent_searches') ?? [];
+    setState(() {
+      _recentSearches = history;
+    });
+  }
+
+  void _saveRecentSearch(String keyword) async {
+    final prefs = await SharedPreferences.getInstance();
+    final history = prefs.getStringList('recent_searches') ?? [];
+    history.remove(keyword);
+    history.insert(0, keyword);
+    if (history.length > 10) history.removeLast();
+    await prefs.setStringList('recent_searches', history);
+    _loadRecentSearches();
   }
 
   void _getUserLocation() async {
@@ -133,35 +159,11 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Stack(
         children: [
           // 지도
-          FlutterMap(
+          ShelterOsmMap(
             mapController: _mapController,
-            options: MapOptions(
-              initialCenter: _currentPosition ?? LatLng(37.5665, 126.9780),
-              initialZoom: 13,
-            ),
-            children: [
-              TileLayer(
-                urlTemplate:
-                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                subdomains: ['a', 'b', 'c'],
-                userAgentPackageName: 'com.example.shelter_map',
-              ),
-              MarkerLayer(
-                markers: [
-                  if (_currentPosition != null)
-                    Marker(
-                      point: _currentPosition!,
-                      width: 60,
-                      height: 60,
-                      child: LocationMarker(
-                        size: 40,
-                        heading: 0.0, // 나중에 방향 값 쓸 거면 여기에 넣기
-                      ),
-                    ),
-                  ..._shelterMarkers,
-                ],
-              ),
-            ],
+            initialCenter: _currentPosition ?? LatLng(37.5665, 126.9780),
+            shelterMarkers: _shelterMarkers,
+            currentPosition: _currentPosition,
           ),
 
           //검색창
@@ -169,29 +171,103 @@ class _HomeScreenState extends State<HomeScreen> {
             top: 60,
             left: 16,
             right: 16,
-            child: MainInput(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const SearchScreen()),
-                );
-              },
-              searchText: '', // 또는 최근 검색어, 상태값 등
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                MainInput(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const SearchScreen()),
+                    );
+                  },
+                  searchText: '',
+                ),
+                const SizedBox(height: 10),
+                ..._recentSearches.map(
+                  (keyword) => Padding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: GestureDetector(
+                      onTap: () {
+                        _saveRecentSearch(keyword);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (_) => SearchScreen(initialKeyword: keyword),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        '• $keyword',
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
 
           // 현재 위치 버튼
-          Positioned(
-            bottom: 280,
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 300),
+            bottom: _selectedShelter != null ? 360 : 280,
             right: 16,
             child: GpsButton(mapController: _mapController),
           ),
-          if (_selectedShelter != null)
-            Positioned(
-              bottom: 80,
-              left: 16,
-              right: 16,
-              child: ShelterDetailCard(shelter: _selectedShelter!),
+
+          if (_selectedShelter != null && _currentPosition != null)
+            ShelterBottomSheet(
+              mode: SheetMode.detail,
+              child: ShelterDetailView(
+                shelters: {
+                  'name': _selectedShelter!.name,
+                  'address': _selectedShelter!.address,
+                  'latitude': _selectedShelter!.latitude,
+                  'longitude': _selectedShelter!.longitude,
+                  'earthquake': _selectedShelter!.earthquakeSafe ? 1 : 0,
+                  'tsunami': _selectedShelter!.tsunamiSafe ? 1 : 0,
+                  'isFavorite': _selectedShelter!.isFavorite ? 1 : 0,
+                },
+                currentPosition: Position(
+                  latitude: _currentPosition!.latitude,
+                  longitude: _currentPosition!.longitude,
+                  timestamp: DateTime.now(),
+                  accuracy: 0,
+                  altitude: 0,
+                  heading: 0,
+                  speed: 0,
+                  speedAccuracy: 0,
+                  altitudeAccuracy: 0,
+                  headingAccuracy: 0,
+                ),
+                onFavoriteToggle: (shelterMap) {
+                  setState(() {
+                    _selectedShelter = _selectedShelter!.copyWith(
+                      isFavorite: !_selectedShelter!.isFavorite,
+                    );
+                  });
+                },
+                onNavigate: (shelterMap) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (_) => NavigationPreviewScreen(
+                            start: _currentPosition!,
+                            destination: LatLng(
+                              _selectedShelter!.latitude,
+                              _selectedShelter!.longitude,
+                            ),
+                          ),
+                    ),
+                  );
+                },
+              ),
             ),
         ],
       ),
