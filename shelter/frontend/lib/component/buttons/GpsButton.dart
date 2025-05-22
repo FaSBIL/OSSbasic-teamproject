@@ -27,11 +27,7 @@ class GpsButton extends StatelessWidget {
         onTap: _handleGpsPress,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Icon(
-            Icons.my_location,
-            color: AppColors.lightBlue,
-            size: 24.0,
-          ),
+          child: Icon(Icons.my_location, color: AppColors.lightBlue, size: 32),
         ),
       ),
     );

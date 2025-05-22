@@ -40,6 +40,7 @@ dependencies:
   path_provider: ^2.1.5
   flutter_compass: ^0.8.0
   flutter_map_mbtiles: ^1.0.4
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_test:
@@ -61,6 +62,7 @@ flutter:
   assets:
     - shelter_db/shelters.db
     - lib/assets/user_locations/user_locations.json
+    - assets/mbtiles/korea_z8_17.mbtiles
     # - assets/kr-map.mbtiles
     # - assets/osm/8/
     # - assets/osm/8/216/

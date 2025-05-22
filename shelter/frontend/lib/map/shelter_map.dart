@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:shelter/map/user_marker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_map_mbtiles/flutter_map_mbtiles.dart';
 import 'package:flutter_compass/flutter_compass.dart';
-import 'package:shelter/map/location_marker.dart';
 
 class ShelterMap extends StatefulWidget {
   final LatLng? currentPosition;
@@ -35,7 +35,7 @@ class _ShelterMapState extends State<ShelterMap> {
 
   Future<MbTilesTileProvider> _loadTileProvider() async {
     // 1) Copy the MBTiles file out of assets
-    final data = await rootBundle.load('assets/kr-map.mbtiles');
+    final data = await rootBundle.load('assets/mbtiles/korea_z8_17.mbtiles');
     final dir = await getApplicationSupportDirectory();
     final file = File('${dir.path}/kr-map.mbtiles');
     if (!await file.exists()) {
@@ -68,7 +68,7 @@ class _ShelterMapState extends State<ShelterMap> {
             initialCenter: widget.currentPosition!,
             initialZoom: 8.0,
             minZoom: 8.0,
-            maxZoom: 14.0,
+            maxZoom: 17.0,
           ),
           children: [
             // Use the plain TileLayer with our MBTiles provider

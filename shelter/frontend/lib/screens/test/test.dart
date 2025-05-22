@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:shelter/screens/test02.dart';
-import '../component/input/MainInput.dart';
+import 'package:shelter/screens/test/test02.dart';
+import '../../component/input/MainInput.dart';
 // import '../component/buttons/FavoriteButton.dart';
-import '../component/buttons/NavButton.dart';
-import '../component/icon/IconUtils.dart';
-import '../component/icon/CustomIcon.dart';
-import '../component/list/ConfigItem.dart';
-import '../component/list/EvacuationSiteItem.dart';
-import '../component/list/FavoriteListItem.dart';
-import '../component/list/HistoryListItem.dart';
-import '../component/list/SettingsNavItem.dart';
-import '../component/list/ThemeModeItem.dart';
-import '../component/settingItem/ToggleSwitch.dart';
-import '../component/settingItem/VolumeSlider.dart';
-import '../theme/color.dart';
-import '../theme/typography.dart';
+import '../../component/buttons/NavButton.dart';
+import '../../component/icon/IconUtils.dart';
+import '../../component/icon/CustomIcon.dart';
+import '../../component/list/ConfigItem.dart';
+import '../../component/list/EvacuationSiteItem.dart';
+import '../../component/list/FavoriteListItem.dart';
+import '../../component/list/HistoryListItem.dart';
+import '../../component/list/SettingsNavItem.dart';
+import '../../component/list/ThemeModeItem.dart';
+import '../../component/settingItem/ToggleSwitch.dart';
+import '../../component/settingItem/VolumeSlider.dart';
+import '../../theme/color.dart';
+import '../../theme/typography.dart';
 
 class TestScreen extends StatefulWidget {
   const TestScreen({Key? key}) : super(key: key);
@@ -118,9 +118,12 @@ class _TestScreenState extends State<TestScreen> {
                         borderColor: AppColors.paleBlue,
                       ),
                       const SizedBox(width: 12),
-                      NavButton(text: '안내 시작', onPressed: () {
-                        print("click");
-                      }),
+                      NavButton(
+                        text: '안내 시작',
+                        onPressed: () {
+                          print("click");
+                        },
+                      ),
                     ],
                   ),
                   const SizedBox(height: 12),

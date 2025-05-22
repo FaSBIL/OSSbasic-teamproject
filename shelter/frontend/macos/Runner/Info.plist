@@ -28,5 +28,7 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSUserDefaults</key>
+	<string>YES</string>
 </dict>
 </plist>

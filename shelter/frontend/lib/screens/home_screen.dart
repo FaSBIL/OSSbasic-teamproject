@@ -7,6 +7,7 @@ import '../services/filter_shelters.dart';
 import '../map/shelter_map.dart';
 import '../widgets/shelter_filter_buttons.dart';
 import '../widgets/error_banner.dart';
+import 'package:shelter/models/shelter.dart';
 
 class HomeScreen extends StatefulWidget {
   final MapController _mapController = MapController();
@@ -122,21 +123,30 @@ class _HomeScreenState extends State<HomeScreen> {
       final regionCode = regionNameToCode[regionData['do']?.trim() ?? ''];
       if (regionCode == null) throw Exception('알 수 없는 지역');
 
-      List<Map<String, dynamic>> shelters = [];
+      List<Shelter> shelters = [];
       if (_selectedShelterType == 'civil') {
-        shelters = await _shelterService.getCivilShelters(regionCode);
+        shelters = await _shelterService.getSheltersByRegionAndType(
+          regionCode,
+          'civil',
+        );
       } else if (_selectedShelterType == 'earthquake') {
-        shelters = await _shelterService.getEarthquakeShelters(regionCode);
+        shelters = await _shelterService.getSheltersByRegionAndType(
+          regionCode,
+          'earthquake',
+        );
       } else if (_selectedShelterType == 'tsunami') {
-        shelters = await _shelterService.getTsunamiShelters(regionCode);
+        shelters = await _shelterService.getSheltersByRegionAndType(
+          regionCode,
+          'tsunami',
+        );
       }
 
       setState(() {
         _shelterMarkers =
             shelters
                 .map((shelter) {
-                  final lat = shelter['latitude'];
-                  final lng = shelter['longitude'];
+                  final lat = shelter.latitude;
+                  final lng = shelter.longitude;
                   return lat is num && lng is num
                       ? Marker(
                         width: 80,
