@@ -1,26 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shelter/component/icon/IconUtils.dart';
 import 'package:shelter/component/input/SearchInput.dart';
 import 'package:shelter/theme/color.dart';
 import 'package:shelter/routes/AppRoutes.dart';
-import 'package:shelter/screens/search/shelter_map_screen.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
+  final String? initialKeyword;
+
+  const SearchScreen({super.key, this.initialKeyword});
+
   @override
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<SearchScreen> {
   int _selectedTab = 0;
-  final List<Map<String, dynamic>> _recentSearches = [
-    {'type': 'star', 'text': '대피소 이름23'},
-    {'type': 'history', 'text': '청주시'},
-    {'type': 'history', 'text': '주소00000000000000000000'},
-    {'type': 'history', 'text': '서울'},
-    {'type': 'history', 'text': '인천'},
-    {'type': 'star', 'text': '대피소 이름50'},
-  ];
+  List<String> _recentSearches = [];
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialKeyword ?? '');
+    _loadRecentSearches();
+    if (widget.initialKeyword?.isNotEmpty ?? false) {
+      _addRecentSearch(widget.initialKeyword!);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadRecentSearches() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _recentSearches = prefs.getStringList('recent_searches') ?? [];
+    });
+  }
+
+  Future<void> _addRecentSearch(String keyword) async {
+    final prefs = await SharedPreferences.getInstance();
+    final updated = [keyword, ..._recentSearches.where((e) => e != keyword)];
+    await prefs.setStringList('recent_searches', updated.take(10).toList());
+    _loadRecentSearches();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,20 +56,23 @@ class _SearchScreenState extends State<SearchScreen> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 상단: 뒤로가기 + 검색창
+          // 검색창
           SafeArea(
             child: Column(
               children: [
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
                   child: SearchInput(
+                    controller: _controller,
                     onSubmitted: (value) {
-                      if (value.trim().isNotEmpty) {
+                      final keyword = value.trim();
+                      if (keyword.isNotEmpty) {
+                        _addRecentSearch(keyword);
                         Navigator.pushNamed(
                           context,
                           AppRoutes.searchResult,
-                          arguments: value.trim(),
-                        );
+                          arguments: keyword,
+                        ).then((_) => _loadRecentSearches());
                       }
                     },
                   ),
@@ -50,6 +80,8 @@ class _SearchScreenState extends State<SearchScreen> {
               ],
             ),
           ),
+
+          // 탭 버튼
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
@@ -62,6 +94,8 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
           const SizedBox(height: 16),
           const Divider(height: 1),
+
+          // 최근 검색
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Text(
@@ -75,32 +109,30 @@ class _SearchScreenState extends State<SearchScreen> {
               itemCount: _recentSearches.length,
               separatorBuilder: (c, i) => const Divider(height: 1),
               itemBuilder: (c, i) {
-                final item = _recentSearches[i];
+                final keyword = _recentSearches[i];
                 return ListTile(
                   leading: Container(
                     width: 30,
                     height: 30,
-                    decoration: BoxDecoration(
-                      color:
-                          item['type'] == 'star'
-                              ? AppColors.paleBlue
-                              : AppColors.lightGray,
+                    decoration: const BoxDecoration(
+                      color: AppColors.lightGray,
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
-                      item['type'] == 'star'
-                          ? Icons.star_rounded
-                          : Icons.watch_later_outlined,
-                      color:
-                          item['type'] == 'star'
-                              ? AppColors.blue
-                              : AppColors.gray,
+                    child: const Icon(
+                      Icons.watch_later_outlined,
+                      color: AppColors.gray,
                       size: 20,
                     ),
                   ),
-
-                  title: Text(item['text']),
-                  onTap: () {},
+                  title: Text(keyword),
+                  onTap: () {
+                    _addRecentSearch(keyword); // 순서 갱신
+                    Navigator.pushNamed(
+                      context,
+                      AppRoutes.searchResult,
+                      arguments: keyword,
+                    ).then((_) => _loadRecentSearches());
+                  },
                   dense: true,
                   contentPadding: const EdgeInsets.only(left: 8, right: 16),
                   visualDensity: VisualDensity.compact,

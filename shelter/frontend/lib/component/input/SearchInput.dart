@@ -21,6 +21,8 @@ class SearchInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final effectiveController = controller ?? TextEditingController();
+
     return SafeArea(
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -42,7 +44,7 @@ class SearchInput extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: TextField(
-                controller: controller,
+                controller: effectiveController,
                 onChanged: onChanged,
                 onSubmitted: onSubmitted,
                 style: AppTextStyles.body,
