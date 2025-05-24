@@ -3,9 +3,9 @@ import '../../theme/color.dart';
 
 class CustomIcon extends StatelessWidget {
   final IconData iconData;
-  final Color color;
-  final Color backgroundColor;
-  final Color borderColor;
+  final Color? color;
+  final Color? backgroundColor;
+  final Color? borderColor;
   final double size;
   final double borderWidth;
   final double padding;
@@ -16,12 +16,12 @@ class CustomIcon extends StatelessWidget {
   const CustomIcon({
     Key? key,
     required this.iconData,
-    this.color = AppColors.black,
+    this.color,
     this.size = 25.0,
     this.onTap,
     this.isClickable = false,
-    this.backgroundColor = AppColors.white,
-    this.borderColor = AppColors.white,
+    this.backgroundColor,
+    this.borderColor,
     this.borderWidth = 0.0,
     this.padding = 6.0,
     this.borderRadius = 100.0,
@@ -29,21 +29,25 @@ class CustomIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context){
+    final Color resolvedColor = color ?? AppColors.black(context);
+    final Color resolvedBackgroundColor = backgroundColor ?? AppColors.white(context);
+    final Color resolvedBorderColor = borderColor ?? AppColors.white(context);
+
     return GestureDetector(
       onTap: isClickable ? onTap : null,
       child: Container(
         padding: EdgeInsets.all(padding),
         decoration: BoxDecoration(
-          color: backgroundColor,
+          color: resolvedBackgroundColor,
           border: Border.all(
-            color: borderColor,
+            color: resolvedBorderColor,
             width: borderWidth,
           ),
           borderRadius: BorderRadius.circular(borderRadius),
         ),
         child: Icon(
           iconData,
-          color: color,
+          color: resolvedColor,
           size: size,
         ),
       ),
