@@ -45,9 +45,9 @@ class ShelterListItem extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text( title, style: AppTextStyles.subtitle),
+                Text( title, style: AppTextStyles.subtitle(context)),
                 const SizedBox(height: 6),
-                Text('$distance | $address', style: AppTextStyles.captionGray),
+                Text('$distance | $address', style: AppTextStyles.captionGray(context)),
                 const SizedBox(height: 14),
                 Row(
                   children: [

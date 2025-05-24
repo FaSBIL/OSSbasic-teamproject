@@ -14,7 +14,7 @@ class SettingsMainScreen extends StatelessWidget {
       backgroundColor: AppColors.white,
       appBar: AppBar(
         backgroundColor: AppColors.white,
-        title: const Text('설정', style: AppTextStyles.title),
+        title: Text('설정', style: AppTextStyles.title(context)),
         elevation: 0,
         iconTheme: const IconThemeData(color: AppColors.black),
       ),

@@ -37,7 +37,7 @@ class MainInput extends StatelessWidget {
             Expanded(
               child: Text(
                 searchText.isEmpty ? '대파소 검색' : searchText,
-                style: AppTextStyles.body.copyWith(
+                style: AppTextStyles.body(context).copyWith(
                   color: searchText.isEmpty
                       ? AppColors.gray
                       : AppColors.black,

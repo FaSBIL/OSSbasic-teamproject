@@ -17,7 +17,7 @@ class ThemeManager with ChangeNotifier {
   }
 
   // 새로운 테머 모드를 설정하고 SharedPreferences에 저장하는 함수
-  Future<void> setThemeeMode(ThemeMode mode) async {
+  Future<void> setThemeMode(ThemeMode mode) async {
     _themeMode = mode;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_key, ThemeMode.values.indexOf(mode));

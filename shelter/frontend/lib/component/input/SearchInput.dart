@@ -41,10 +41,10 @@ class SearchInput extends StatelessWidget {
                 controller: controller,
                 onChanged: onChanged,
                 onSubmitted: onSubmitted,
-                style: AppTextStyles.body,
+                style: AppTextStyles.body(context),
                 decoration: InputDecoration(
                   hintText: hintText,
-                  hintStyle: AppTextStyles.body.copyWith(color: AppColors.gray),
+                  hintStyle: AppTextStyles.body(context).copyWith(color: AppColors.gray),
                   border: InputBorder.none,
                   isDense: true,
                 ),

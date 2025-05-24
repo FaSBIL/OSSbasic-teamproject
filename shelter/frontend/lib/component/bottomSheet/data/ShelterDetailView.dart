@@ -66,7 +66,7 @@ class ShelterDetailView extends StatelessWidget {
               Expanded(
                 child: Text(
                   shelters['address'] ?? 'no Data',
-                  style: AppTextStyles.bodyGray,
+                  style: AppTextStyles.bodyGray(context),
                 ),
               ),
               GestureDetector(

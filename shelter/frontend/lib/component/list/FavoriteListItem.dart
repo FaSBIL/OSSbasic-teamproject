@@ -28,11 +28,11 @@ class FavoriteListItem extends StatelessWidget {
       ),
       title: Text(
         title,
-        style: AppTextStyles.subtitle,
+        style: AppTextStyles.subtitle(context),
       ),
       subtitle: Text(
         address,
-        style: AppTextStyles.bodyGray,
+        style: AppTextStyles.bodyGray(context),
       ),
       onTap: onTap,
     );

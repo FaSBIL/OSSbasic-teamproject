@@ -24,7 +24,7 @@ class _VoiceGuideScreenState extends State<VoiceGuideScreen> {
         backgroundColor: AppColors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: AppColors.black),
-        title: const Text('음성 안내', style: AppTextStyles.title),
+        title: Text('음성 안내', style: AppTextStyles.title(context)),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
@@ -34,7 +34,7 @@ class _VoiceGuideScreenState extends State<VoiceGuideScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('음성 안내', style: AppTextStyles.subtitle),
+                Text('음성 안내', style: AppTextStyles.subtitle(context)),
                 ToggleSwitch(
                   isOn: isVoiceGuideOn,
                   onChanged: (value) => setState(() => isVoiceGuideOn = value),
@@ -46,10 +46,10 @@ class _VoiceGuideScreenState extends State<VoiceGuideScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Expanded(
+                Expanded(
                   child: Text(
                     '음소거 시에도 음성 경보를 켜기',
-                    style: AppTextStyles.subtitle,
+                    style: AppTextStyles.subtitle(context),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -61,7 +61,7 @@ class _VoiceGuideScreenState extends State<VoiceGuideScreen> {
             ),
             const SizedBox(height: 32),
 
-            const Text('음량 조절', style: AppTextStyles.subtitle),
+            Text('음량 조절', style: AppTextStyles.subtitle(context)),
             const SizedBox(height: 12),
 
             VolumeSlider(

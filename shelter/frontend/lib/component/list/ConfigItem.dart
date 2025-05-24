@@ -18,11 +18,11 @@ class ConfigItem extends StatelessWidget {
     return BaseListItem(
       title: Text(
         label,
-        style: AppTextStyles.subtitle,
+        style: AppTextStyles.subtitle(context),
       ),
       trailing: Text(
         value,
-        style: AppTextStyles.subtitle.copyWith(color: AppColors.darkGray),
+        style: AppTextStyles.subtitle(context).copyWith(color: AppColors.darkGray),
       ),
     );
   }

@@ -21,7 +21,7 @@ class ThemeModeItem extends StatelessWidget {
     return BaseListItem(
       title: Text(
         label,
-        style: AppTextStyles.subtitle,
+        style: AppTextStyles.subtitle(context),
       ),
       trailing: SizedBox(
         width: 24,

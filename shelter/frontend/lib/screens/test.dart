@@ -104,7 +104,7 @@ class _TestScreenState extends State<TestScreen> {
                     ],
                   ),
                   const SizedBox(height: 24),
-                  Text("제목0내요요!!요요요0", style: AppTextStyles.caption),
+                  Text("제목0내요요!!요요요0", style: AppTextStyles.caption(context)),
                   const SizedBox(height: 12),
                   // const GpsButton(),
                   const SizedBox(height: 12),
@@ -129,7 +129,7 @@ class _TestScreenState extends State<TestScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      const Text('음성 안내', style: AppTextStyles.subtitle),
+                      Text('음성 안내', style:AppTextStyles.subtitle(context)),
                       const SizedBox(width: 12),
                       ToggleSwitch(
                         isOn: isSoundOn,

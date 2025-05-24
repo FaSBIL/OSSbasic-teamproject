@@ -19,7 +19,7 @@ class SettingsNavItem extends StatelessWidget {
     return BaseListItem(
       title: Text(
         label,
-        style: AppTextStyles.subtitle,
+        style: AppTextStyles.subtitle(context),
       ),
       trailing: const Icon(
         AppIcons.arrowLeft,

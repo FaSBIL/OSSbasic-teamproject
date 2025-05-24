@@ -22,7 +22,7 @@ class _BackgroundActivityScreenState extends State<BackgroundActivityScreen> {
         backgroundColor: AppColors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: AppColors.black),
-        title: const Text('백그라운드 동작', style: AppTextStyles.title),
+        title: Text('백그라운드 동작', style: AppTextStyles.title(context)),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 28),
@@ -32,7 +32,7 @@ class _BackgroundActivityScreenState extends State<BackgroundActivityScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('앱을 닫아도 네비게이션 계속', style: AppTextStyles.subtitle),
+                Text('앱을 닫아도 네비게이션 계속', style: AppTextStyles.subtitle(context)),
                 ToggleSwitch(
                   isOn: isBackgroundEnabled,
                   onChanged:
@@ -44,10 +44,10 @@ class _BackgroundActivityScreenState extends State<BackgroundActivityScreen> {
             ),
             const SizedBox(height: 16),
 
-            const Text(
+            Text(
               '백그라운드 동작을 활성화하면 앱을 닫아도 음성 안내가 계속됩니다.\n'
               '배터리 소모가 증가하므로 사용 상황에 따라 설정해 주세요.',
-              style: AppTextStyles.captionGray,
+              style: AppTextStyles.captionGray(context),
             ),
           ],
         ),

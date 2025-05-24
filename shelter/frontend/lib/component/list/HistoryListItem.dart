@@ -28,7 +28,7 @@ class HistoryListItem extends StatelessWidget {
       ),
       title: Text(
         title,
-        style: AppTextStyles.subtitle,
+        style: AppTextStyles.subtitle(context),
       )
     );
   }
