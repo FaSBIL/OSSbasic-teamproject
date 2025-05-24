@@ -20,8 +20,8 @@ const path = require('path');
 const sqlite3 = require('sqlite3').verbose();
 
 // Configuration
-const TILES_DIR = path.join(__dirname, 'OSM');           // folder containing z/x/y.png
-const MBTILES_FILE = path.join(__dirname, 'kr-map.mbtiles'); // output MBTiles file
+const TILES_DIR = path.join(__dirname, 'OSM/');           // folder containing z/x/y.png
+const MBTILES_FILE = path.join(__dirname, '16kr-map.mbtiles'); // output MBTiles file
 
 // Remove existing MBTiles if present
 if (fs.existsSync(MBTILES_FILE)) {
@@ -87,8 +87,8 @@ db.serialize(() => {
     ['name', 'Offline Tiles'],
     ['format', 'png'],
     ['version', '1'],
-    ['minzoom', '8'],
-    ['maxzoom', '14'],
+    ['minzoom', '16'],
+    ['maxzoom', '16'],
     ['bounds', '-180.0,-85.0511,180.0,85.0511'],
   ];
   metaEntries.forEach(([name, value]) => metadata.run(name, value));
