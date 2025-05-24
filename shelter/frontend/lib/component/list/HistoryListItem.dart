@@ -22,9 +22,9 @@ class HistoryListItem extends StatelessWidget {
     return BaseListItem(
       leading: CustomIcon(
         iconData: isFavorite ? AppIcons.star : AppIcons.history,
-        color: isFavorite ? AppColors.blue : AppColors.darkGray,
-        backgroundColor: isFavorite ? AppColors.paleBlue : AppColors.lightGray,
-        borderColor: isFavorite ? AppColors.paleBlue : AppColors.lightGray,
+        color: isFavorite ? AppColors.blue(context) : AppColors.darkGray(context),
+        backgroundColor: isFavorite ? AppColors.paleBlue(context) : AppColors.lightGray(context),
+        borderColor: isFavorite ? AppColors.paleBlue(context) : AppColors.lightGray(context),
       ),
       title: Text(
         title,

@@ -22,7 +22,7 @@ class ConfigItem extends StatelessWidget {
       ),
       trailing: Text(
         value,
-        style: AppTextStyles.subtitle(context).copyWith(color: AppColors.darkGray),
+        style: AppTextStyles.subtitle(context).copyWith(color: AppColors.darkGray(context)),
       ),
     );
   }

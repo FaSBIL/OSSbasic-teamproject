@@ -19,11 +19,11 @@ class _VoiceGuideScreenState extends State<VoiceGuideScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.white(context),
       appBar: AppBar(
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.white(context),
         elevation: 0,
-        iconTheme: const IconThemeData(color: AppColors.black),
+        iconTheme: IconThemeData(color: AppColors.black(context)),
         title: Text('음성 안내', style: AppTextStyles.title(context)),
       ),
       body: Padding(

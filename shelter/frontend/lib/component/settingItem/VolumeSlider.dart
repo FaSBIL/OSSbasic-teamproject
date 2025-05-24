@@ -5,8 +5,8 @@ class VolumeSlider extends StatelessWidget {
   final double value;
   final ValueChanged<double>? onChanged;
   final bool enabled;
-  final Color activeColor;
-  final Color inactiveColor;
+  final Color? activeColor;
+  final Color? inactiveColor;
   final double trackHeight;
 
   const VolumeSlider({
@@ -14,14 +14,17 @@ class VolumeSlider extends StatelessWidget {
     required this.value,
     required this.onChanged,
     this.enabled = true,
-    this.activeColor = AppColors.blue,
-    this.inactiveColor = AppColors.darkGray,
+    this.activeColor,
+    this.inactiveColor,
     this.trackHeight = 5.0,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final bool isDisabled = !enabled || onChanged == null;
+
+    final Color resolvedActiveColor = activeColor ?? AppColors.blue(context);
+    final Color resolvedInactiveColor = inactiveColor ?? AppColors.darkGray(context);
 
     return Opacity(
       opacity: isDisabled ? 0.5 : 1.0,
@@ -32,10 +35,10 @@ class VolumeSlider extends StatelessWidget {
             child: SliderTheme(
               data: SliderTheme.of(context).copyWith(
                 trackHeight: trackHeight,
-                activeTrackColor: activeColor,
-                inactiveTrackColor: inactiveColor.withAlpha(77),
-                thumbColor: AppColors.white,
-                overlayColor: AppColors.lightGray.withAlpha(50),
+                activeTrackColor: resolvedActiveColor,
+                inactiveTrackColor: resolvedInactiveColor.withAlpha(77),
+                thumbColor: AppColors.white(context),
+                overlayColor: AppColors.lightGray(context).withAlpha(50),
                 thumbShape: const _CustomThumbShape(),
               ),
               child: Slider(

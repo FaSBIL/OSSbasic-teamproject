@@ -30,9 +30,9 @@ class _FavoriteButtonState extends State<FavoriteButton>{
   Widget build(BuildContext context) {
     return CustomIcon(
       iconData: isFavorited ? AppIcons.star : AppIcons.starRound,
-      color: AppColors.blue,
-      backgroundColor:  AppColors.paleBlue,
-      borderColor: AppColors.paleBlue,
+      color: AppColors.blue(context),
+      backgroundColor:  AppColors.paleBlue(context),
+      borderColor: AppColors.paleBlue(context),
       onTap: _toggleFavorite,
       isClickable: true,
     );

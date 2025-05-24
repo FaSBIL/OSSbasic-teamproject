@@ -54,7 +54,7 @@ class BaseListItem extends StatelessWidget {
             ),
           ),
         ),
-        const Divider(height: 1, thickness: 1, color: AppColors.lightGray),
+        Divider(height: 1, thickness: 1, color: AppColors.lightGray(context)),
       ],
     );
   }

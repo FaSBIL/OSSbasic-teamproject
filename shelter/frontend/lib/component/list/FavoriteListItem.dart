@@ -22,9 +22,9 @@ class FavoriteListItem extends StatelessWidget {
     return BaseListItem(
       leading: CustomIcon(
         iconData: AppIcons.starRound,
-        backgroundColor: AppColors.paleBlue,
-        color: AppColors.blue,
-        borderColor: AppColors.paleBlue,
+        backgroundColor: AppColors.paleBlue(context),
+        color: AppColors.blue(context),
+        borderColor: AppColors.paleBlue(context),
       ),
       title: Text(
         title,

@@ -20,7 +20,7 @@ class MainInput extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: AppColors.white(context),
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
@@ -32,15 +32,15 @@ class MainInput extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(AppIcons.menu, color: AppColors.darkGray),
+            Icon(AppIcons.menu, color: AppColors.darkGray(context)),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
                 searchText.isEmpty ? '대파소 검색' : searchText,
                 style: AppTextStyles.body(context).copyWith(
                   color: searchText.isEmpty
-                      ? AppColors.gray
-                      : AppColors.black,
+                      ? AppColors.gray(context)
+                      : AppColors.black(context),
                 ),
               ),
             ),

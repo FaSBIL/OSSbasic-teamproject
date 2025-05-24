@@ -21,20 +21,20 @@ class ThemeModeScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.white(context),
       appBar: AppBar(
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.white(context),
         elevation: 0,
-        iconTheme: const IconThemeData(color: AppColors.black),
+        iconTheme: IconThemeData(color: AppColors.black(context)),
         title: Text('테마 모드', style: AppTextStyles.title(context)),
       ),
       body: ListView.separated(
         itemCount: modes.length,
         separatorBuilder:
-            (context, index) => const Divider(
+            (context, index) => Divider(
               height: 1,
               thickness: 1,
-              color: AppColors.lightGray,
+              color: AppColors.lightGray(context),
             ),
         itemBuilder: (context, index) {
           final isSelected = currentMode == modeValues[index];
@@ -44,7 +44,7 @@ class ThemeModeScreen extends StatelessWidget {
             title: Text(modes[index], style: AppTextStyles.subtitle(context)),
             trailing:
                 isSelected
-                    ? const Icon(AppIcons.check, color: AppColors.blue)
+                    ? Icon(AppIcons.check, color: AppColors.blue(context))
                     : null,
             onTap: () {
               themeManager.setThemeMode(modeValues[index]);

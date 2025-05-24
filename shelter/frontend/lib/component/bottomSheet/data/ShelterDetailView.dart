@@ -61,7 +61,7 @@ class ShelterDetailView extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(AppIcons.destination, color: AppColors.darkGray),
+              Icon(AppIcons.destination, color: AppColors.darkGray(context)),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -78,12 +78,12 @@ class ShelterDetailView extends StatelessWidget {
                     const SnackBar(content: Text('주소가 복사되었습니다.')),
                   );
                 },
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
                     '복사',
                     style: TextStyle(
-                      color: AppColors.blue,
+                      color: AppColors.blue(context),
                       fontSize: 14,
                     ),
                   ),

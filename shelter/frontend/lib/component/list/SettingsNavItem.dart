@@ -21,9 +21,9 @@ class SettingsNavItem extends StatelessWidget {
         label,
         style: AppTextStyles.subtitle(context),
       ),
-      trailing: const Icon(
+      trailing: Icon(
         AppIcons.arrowLeft,
-        color: AppColors.darkGray,
+        color: AppColors.darkGray(context),
         size: 20,
       ),
       onTap: onTap,

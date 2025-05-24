@@ -36,7 +36,7 @@ class ShelterListItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: AppColors.lightGray, width: 1.0,),),
+          border: Border(bottom: BorderSide(color: AppColors.lightGray(context), width: 1.0,),),
         ),
         padding: const  EdgeInsets.symmetric(vertical: 24.0, horizontal: 20),
         child: Column(
@@ -51,9 +51,9 @@ class ShelterListItem extends StatelessWidget {
                 const SizedBox(height: 14),
                 Row(
                   children: [
-                    if(isTsunamiSafe) const CustomIcon( iconData: AppIcons.tsunami, color: AppColors.darkGray),
+                    if(isTsunamiSafe) CustomIcon( iconData: AppIcons.tsunami, color: AppColors.darkGray(context)),
                     if(isTsunamiSafe) const SizedBox(width: 8),
-                    if(isEarthquakeSafe) const CustomIcon( iconData: AppIcons.earthquake, color: AppColors.darkGray),
+                    if(isEarthquakeSafe) CustomIcon( iconData: AppIcons.earthquake, color: AppColors.darkGray(context)),
                     if(isEarthquakeSafe) const SizedBox(width: 8),
                     FavoriteButton( onFavoriteToggle: onFavoriteToggle,),
                     const SizedBox(width: 8),

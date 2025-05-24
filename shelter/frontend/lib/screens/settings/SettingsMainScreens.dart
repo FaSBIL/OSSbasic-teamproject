@@ -11,16 +11,16 @@ class SettingsMainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.white(context),
       appBar: AppBar(
-        backgroundColor: AppColors.white,
+        backgroundColor: AppColors.white(context),
         title: Text('설정', style: AppTextStyles.title(context)),
         elevation: 0,
-        iconTheme: const IconThemeData(color: AppColors.black),
+        iconTheme: IconThemeData(color: AppColors.black(context)),
       ),
       body: Column(
         children: [
-          const Divider(height: 1, thickness: 1, color: AppColors.lightGray),
+          Divider(height: 1, thickness: 1, color: AppColors.lightGray(context)),
 
           Expanded(
             child: ListView(

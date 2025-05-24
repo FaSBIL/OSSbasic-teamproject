@@ -6,8 +6,8 @@ class ToggleSwitch extends StatelessWidget {
   final ValueChanged<bool>? onChanged;
   final double width;
   final double height;
-  final Color activeColor;
-  final Color inactiveColor;
+  final Color? activeColor;
+  final Color? inactiveColor;
   final Duration animationDuration;
 
 
@@ -17,14 +17,16 @@ class ToggleSwitch extends StatelessWidget {
     this.onChanged,
     this.width = 55,
     this.height = 35,
-    this.activeColor = AppColors.blue,
-    this.inactiveColor = AppColors.lightGray,
+    this.activeColor,
+    this.inactiveColor,
     this.animationDuration = const Duration(milliseconds: 200),
   }) :super(key: key);
 
   @override
   Widget build(BuildContext context){
     final bool isDisable = onChanged == null;
+    final Color resolvedActiveColor = activeColor ?? AppColors.blue(context);
+    final Color resolvedInactiveColor = inactiveColor ?? AppColors.lightGray(context);
 
     return GestureDetector(
       onTap: isDisable ? null : () => onChanged!(!isOn),
@@ -34,7 +36,7 @@ class ToggleSwitch extends StatelessWidget {
         height: height,
         padding: const EdgeInsets.all(4),
         decoration:  BoxDecoration(
-          color: isOn ? activeColor : inactiveColor,
+          color: isOn ? resolvedActiveColor : resolvedInactiveColor,
           borderRadius: BorderRadius.circular(height / 2),
         ),
         child: AnimatedAlign(
@@ -45,7 +47,7 @@ class ToggleSwitch extends StatelessWidget {
             width : height - 8,
             height : height - 8,
             decoration: BoxDecoration(
-              color: AppColors.white,
+              color: AppColors.white(context),
               shape: BoxShape.circle,
             ),
           )

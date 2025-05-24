@@ -29,13 +29,13 @@ class ShelterBottomSheet extends StatelessWidget {
       builder: (context, scrollController) {
         return Container(
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: AppColors.white(context),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
             boxShadow: [
               BoxShadow(
                 blurRadius: 12,
                 spreadRadius: 3,
-                color: AppColors.black.withOpacity(0.07),
+                color: AppColors.black(context).withOpacity(0.07),
                 offset: const Offset(0, -2),
               ),
             ],
@@ -48,7 +48,7 @@ class ShelterBottomSheet extends StatelessWidget {
                   width: 100,
                   height: 5,
                   decoration: BoxDecoration(
-                    color: AppColors.lightGray,
+                    color: AppColors.lightGray(context),
                     borderRadius: BorderRadius.circular(5.0),
                   ),
                 ),

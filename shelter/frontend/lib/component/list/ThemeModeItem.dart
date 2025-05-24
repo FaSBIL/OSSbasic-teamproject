@@ -27,7 +27,7 @@ class ThemeModeItem extends StatelessWidget {
         width: 24,
         height: 24,
         child: isSelected
-        ? Icon(AppIcons.check, color: AppColors.blue) : const SizedBox.shrink(),
+        ? Icon(AppIcons.check, color: AppColors.blue(context)) : const SizedBox.shrink(),
       ),
       onTap: onTap,
     );

@@ -16,8 +16,8 @@ class NavButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed, // 외부에서 받은 콜백 사용
       style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.blue,
-        foregroundColor: AppColors.white,
+        backgroundColor: AppColors.blue(context),
+        foregroundColor: AppColors.white(context),
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 6.0),
         minimumSize: const Size(80, 35),
         shape: RoundedRectangleBorder(

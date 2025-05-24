@@ -35,7 +35,7 @@ class _TestScreenState extends State<TestScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.white(context),
       body: Stack(
         children: [
           Positioned.fill(
@@ -50,32 +50,32 @@ class _TestScreenState extends State<TestScreen> {
                     children: [
                       CustomIcon(
                         iconData: AppIcons.starRound,
-                        backgroundColor: AppColors.paleBlue,
-                        color: AppColors.blue,
-                        borderColor: AppColors.paleBlue,
+                        backgroundColor: AppColors.paleBlue(context),
+                        color: AppColors.blue(context),
+                        borderColor: AppColors.paleBlue(context),
                       ),
                       CustomIcon(
                         iconData: AppIcons.location,
-                        backgroundColor: AppColors.paleBlue,
-                        color: AppColors.blue,
-                        borderColor: AppColors.paleBlue,
+                        backgroundColor: AppColors.paleBlue(context),
+                        color: AppColors.blue(context),
+                        borderColor: AppColors.paleBlue(context),
                       ),
                       CustomIcon(
                         iconData: AppIcons.history,
-                        backgroundColor: AppColors.lightGray,
-                        color: AppColors.darkGray,
+                        backgroundColor: AppColors.lightGray(context),
+                        color: AppColors.darkGray(context),
                       ),
                       CustomIcon(
                         iconData: AppIcons.tsunami,
-                        color: AppColors.black,
+                        color: AppColors.black(context),
                       ),
                       CustomIcon(
                         iconData: AppIcons.earthquake,
-                        color: AppColors.black,
+                        color: AppColors.black(context),
                       ),
                       CustomIcon(
                         iconData: AppIcons.menu,
-                        color: AppColors.black,
+                        color: AppColors.black(context),
                         size: 28.0,
                         isClickable: true,
                         borderRadius: 3.0,
@@ -97,7 +97,7 @@ class _TestScreenState extends State<TestScreen> {
                       ),
                       CustomIcon(
                         iconData: AppIcons.check,
-                        color: AppColors.blue,
+                        color: AppColors.blue(context),
                         size: 28,
                         borderRadius: 3.0,
                       ),
@@ -113,9 +113,9 @@ class _TestScreenState extends State<TestScreen> {
                     children: [
                       CustomIcon(
                         iconData: AppIcons.star,
-                        backgroundColor: AppColors.paleBlue,
-                        color: AppColors.blue,
-                        borderColor: AppColors.paleBlue,
+                        backgroundColor: AppColors.paleBlue(context),
+                        color: AppColors.blue(context),
+                        borderColor: AppColors.paleBlue(context),
                       ),
                       const SizedBox(width: 12),
                       NavButton(text: '안내 시작', onPressed: () {

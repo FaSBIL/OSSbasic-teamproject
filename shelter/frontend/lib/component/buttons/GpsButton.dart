@@ -21,7 +21,7 @@ class GpsButton extends StatelessWidget {
     return Material(
       elevation: 1.5,
       shape: const CircleBorder(),
-      color: AppColors.white,
+      color: AppColors.white(context),
       child: InkWell(
         customBorder: const CircleBorder(),
         onTap: _handleGpsPress,
@@ -29,7 +29,7 @@ class GpsButton extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Icon(
             Icons.my_location,
-            color: AppColors.lightBlue,
+            color: AppColors.lightBlue(context),
             size: 24.0,
           ),
         ),

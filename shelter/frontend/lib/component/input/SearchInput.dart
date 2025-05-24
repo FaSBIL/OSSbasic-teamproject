@@ -26,14 +26,14 @@ class SearchInput extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 16),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: AppColors.lightGray,
+          color: AppColors.lightGray(context),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
           children: [
             GestureDetector(
               onTap: onBackTap ?? () => Navigator.pop(context),
-              child: const Icon(AppIcons.arrowRight, size: 20, color: AppColors.black),
+              child: Icon(AppIcons.arrowRight, size: 20, color: AppColors.black(context)),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -44,7 +44,7 @@ class SearchInput extends StatelessWidget {
                 style: AppTextStyles.body(context),
                 decoration: InputDecoration(
                   hintText: hintText,
-                  hintStyle: AppTextStyles.body(context).copyWith(color: AppColors.gray),
+                  hintStyle: AppTextStyles.body(context).copyWith(color: AppColors.gray(context)),
                   border: InputBorder.none,
                   isDense: true,
                 ),
