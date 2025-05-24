@@ -1,10 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter_map_mbtiles/flutter_map_mbtiles.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:shelter/map/location_marker.dart';
 
@@ -25,24 +24,30 @@ class ShelterMap extends StatefulWidget {
 }
 
 class _ShelterMapState extends State<ShelterMap> {
-  late final Future<MbTilesTileProvider> _tileProviderFuture;
+  late final Future<MbTilesTileProvider> _providerFuture;
 
   @override
   void initState() {
     super.initState();
-    _tileProviderFuture = _loadTileProvider();
+    _providerFuture = _loadTileProvider();
   }
 
   Future<MbTilesTileProvider> _loadTileProvider() async {
-    // 1) Copy the MBTiles file out of assets
-    final data = await rootBundle.load('assets/kr-map.mbtiles');
-    final dir = await getApplicationSupportDirectory();
-    final file = File('${dir.path}/kr-map.mbtiles');
-    if (!await file.exists()) {
-      await file.writeAsBytes(data.buffer.asUint8List(), flush: true);
+    // 앱 전용 외부 저장소 경로 가져오기
+    final dir = await getExternalStorageDirectory();
+    if (dir == null) {
+      throw '앱 전용 외부 저장소 경로를 찾을 수 없습니다.';
     }
-    // 2) Create the tile provider with a named `path:` argument
-    return await MbTilesTileProvider.fromPath(path: file.path);
+
+    // mbtiles 파일 위치: files 폴더 밑에 저장된 파일명
+    final mbtilesPath = '${dir.path}/8_16kr-map.mbtiles';
+    final mbtilesFile = File(mbtilesPath);
+    if (!await mbtilesFile.exists()) {
+      throw '파일이 없습니다: $mbtilesPath';
+    }
+
+    // TileProvider 생성
+    return await MbTilesTileProvider.fromPath(path: mbtilesPath);
   }
 
   @override
@@ -52,29 +57,32 @@ class _ShelterMapState extends State<ShelterMap> {
     }
 
     return FutureBuilder<MbTilesTileProvider>(
-      future: _tileProviderFuture,
-      builder: (context, snap) {
+      future: _providerFuture,
+      builder: (ctx, snap) {
         if (snap.connectionState != ConnectionState.done) {
           return const Center(child: CircularProgressIndicator());
         }
-        if (snap.hasError || !snap.hasData) {
+        if (snap.hasError) {
           return Center(child: Text('타일 로드 오류: ${snap.error}'));
         }
 
+        final provider = snap.data!;
         return FlutterMap(
           mapController: widget.mapController,
           options: MapOptions(
-            // use the new initialCenter/initialZoom names
+            // 초기 중심 및 줌 설정
             initialCenter: widget.currentPosition!,
             initialZoom: 8.0,
             minZoom: 8.0,
-            maxZoom: 14.0,
+            maxZoom: 16.0,
           ),
           children: [
-            // Use the plain TileLayer with our MBTiles provider
-            TileLayer(tileProvider: snap.data!, tms: true),
-
-            // And your existing markers, but switch to `child:` instead of `builder:`
+            TileLayer(
+              tileProvider: provider,
+              tms: true,
+              minZoom: 8,
+              maxZoom: 16,
+            ),
             MarkerLayer(
               markers: [
                 Marker(
@@ -88,7 +96,6 @@ class _ShelterMapState extends State<ShelterMap> {
                             LocationMarker(heading: s.data ?? 0.0, size: 40),
                   ),
                 ),
-
                 ...widget.shelterMarkers,
               ],
             ),
@@ -100,8 +107,7 @@ class _ShelterMapState extends State<ShelterMap> {
 
   @override
   void dispose() {
-    // make sure to close the MBTiles DB
-    _tileProviderFuture.then((p) => p.dispose());
+    _providerFuture.then((p) => p.dispose());
     super.dispose();
   }
 }

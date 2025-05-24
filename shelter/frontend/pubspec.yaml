@@ -40,6 +40,7 @@ dependencies:
   path_provider: ^2.1.5
   flutter_compass: ^0.8.0
   flutter_map_mbtiles: ^1.0.4
+  permission_handler: ^12.0.0+1
 
 dev_dependencies:
   flutter_test:
@@ -63,9 +64,9 @@ flutter:
     - shelter_db/earthquakeSheltersByRegion.db
     - shelter_db/tsunamiShelters.db
     - lib/assets/user_locations/user_locations.json
-    - assets/kr-map.mbtiles
-    # - assets/osm/8/
-    # - assets/osm/8/216/
+    #- assets/kr-map.mbtiles
+    #- assets/15kr-map.mbtiles
+    #- assets/16kr-map.mbtiles
     # - assets/osm/8/217/
     # - assets/osm/8/218/
     # - assets/osm/8/219/
