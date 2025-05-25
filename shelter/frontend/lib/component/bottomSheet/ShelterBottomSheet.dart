@@ -17,13 +17,14 @@ class ShelterBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final initialSize = mode == SheetMode.list ? 0.5 : 0.4;
     final snapSizes = mode == SheetMode.list
-        ? [0.085, 0.5, 0.95]
-        : [0.085, 0.35, 0.95];
+        ? [0.06, 0.5, 0.95]
+        : [0.06, 0.4];
+    final maxSize = mode == SheetMode.list ? 0.95 : initialSize;
 
     return DraggableScrollableSheet(
       initialChildSize: initialSize,
-      minChildSize: 0.085,
-      maxChildSize: 0.95,
+      minChildSize: 0.06,
+      maxChildSize: maxSize,
       snap: true,
       snapSizes: snapSizes,
       builder: (context, scrollController) {
