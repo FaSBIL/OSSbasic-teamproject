@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../services/voice_service.dart';
 import '../../theme/color.dart';
 import '../../theme/typography.dart';
 import '../../component/settingItem/ToggleSwitch.dart';
@@ -15,6 +16,16 @@ class _VoiceGuideScreenState extends State<VoiceGuideScreen> {
   bool isVoiceGuideOn = true;
   bool isMutedModeOn = false;
   double volume = 0.5;
+
+  final VoiceService voiceService = VoiceService();
+
+  @override
+  void initState(){
+    super.initState();
+    voiceService.initialize().then((_){
+      voiceService.setVolume(volume);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +48,15 @@ class _VoiceGuideScreenState extends State<VoiceGuideScreen> {
                 Text('음성 안내', style: AppTextStyles.subtitle(context)),
                 ToggleSwitch(
                   isOn: isVoiceGuideOn,
-                  onChanged: (value) => setState(() => isVoiceGuideOn = value),
+                  onChanged:(value) {
+                    setState((){
+                      isVoiceGuideOn = value;
+                    });
+
+                    if(!value) {
+                      voiceService.stop(); // OFF시 불러오기 중단
+                    }
+                  },
                 ),
               ],
             ),
@@ -55,7 +74,9 @@ class _VoiceGuideScreenState extends State<VoiceGuideScreen> {
                 ),
                 ToggleSwitch(
                   isOn: isMutedModeOn,
-                  onChanged: (value) => setState(() => isMutedModeOn = value),
+                  onChanged: (value){
+                    isMutedModeOn = value;
+                  }
                 ),
               ],
             ),
@@ -66,8 +87,14 @@ class _VoiceGuideScreenState extends State<VoiceGuideScreen> {
 
             VolumeSlider(
               value: volume,
-              onChanged: (value) => setState(() => volume = value),
               enabled: isVoiceGuideOn,
+              onChanged: (value) {
+                setState((){
+                  volume = value;
+                });
+                voiceService.setVolume(value);
+                voiceService.speak("안내를 시작합니다"); // 시험 음성
+              },
             ),
           ],
         ),
