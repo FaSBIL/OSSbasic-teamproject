@@ -10,12 +10,12 @@ import 'package:shelter/services/user_location.dart';
 import 'package:shelter/services/filter_shelters.dart';
 import 'package:shelter/models/shelter.dart';
 import 'package:shelter/screens/search/search_screen.dart';
-import 'package:shelter/map/shelter_osm_map.dart';
 import 'package:shelter/component/bottomSheet/ShelterBottomSheet.dart';
 import 'package:shelter/component/bottomSheet/data/ShelterDetailView.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shelter/screens/navigation/navigation_preview_screen.dart';
+import 'package:shelter/screens/settings/SettingsMainScreens.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -184,6 +184,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const SearchScreen()),
+                    );
+                  },
+                  onMenuTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const SettingsMainScreen(),
+                      ),
                     );
                   },
                   searchText: '',

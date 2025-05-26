@@ -5,11 +5,13 @@ import '../icon/IconUtils.dart';
 
 class MainInput extends StatelessWidget {
   final VoidCallback onTap;
+  final VoidCallback? onMenuTap;
   final String searchText;
 
   const MainInput({
     Key? key,
     required this.onTap,
+    this.onMenuTap,
     this.searchText = '',
   }) : super(key: key);
 
@@ -32,15 +34,16 @@ class MainInput extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(AppIcons.menu, color: AppColors.darkGray),
+            GestureDetector(
+              onTap: onMenuTap,
+              child: Icon(AppIcons.menu, color: AppColors.darkGray),
+            ),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
                 searchText.isEmpty ? '대파소 검색' : searchText,
                 style: AppTextStyles.body.copyWith(
-                  color: searchText.isEmpty
-                      ? AppColors.gray
-                      : AppColors.black,
+                  color: searchText.isEmpty ? AppColors.gray : AppColors.black,
                 ),
               ),
             ),

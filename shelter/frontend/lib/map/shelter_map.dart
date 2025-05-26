@@ -93,7 +93,7 @@ class _ShelterMapState extends State<ShelterMap> {
           options: MapOptions(
             initialCenter:
                 widget.initialCenter ?? widget.currentPosition ?? fallback,
-            initialZoom: 13.0,
+            initialZoom: 15.0,
             minZoom: 8.0,
             maxZoom: 16.0,
             onTap: (_, __) {

@@ -63,7 +63,7 @@ flutter:
   assets:
     - shelter_db/shelters.db
     - lib/assets/user_locations/user_locations.json
-    # - assets/mbtiles/8_16kr-map.mbtiles
+    - assets/mbtiles/8_16kr-map.mbtiles
 
 
   fonts:
