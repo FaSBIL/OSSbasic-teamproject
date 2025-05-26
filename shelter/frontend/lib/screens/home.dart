@@ -69,8 +69,9 @@ class _HomeScreenState extends State<HomeScreen> {
         _currentPosition = currentLatLng;
       });
 
-      _mapController.move(currentLatLng, 16.0); // 가까운 줌레벨로 설정
-
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _mapController.move(currentLatLng, 16.0);
+      });
       await _shelterService.initialize();
 
       // 반경 거리 계산용 도구
@@ -159,11 +160,15 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Stack(
         children: [
           // 지도
-          ShelterOsmMap(
-            mapController: _mapController,
-            initialCenter: _currentPosition ?? LatLng(37.5665, 126.9780),
-            shelterMarkers: _shelterMarkers,
+          ShelterMap(
             currentPosition: _currentPosition,
+            shelterMarkers: _shelterMarkers,
+            mapController: _mapController,
+            onMapTap: () {
+              setState(() {
+                _selectedShelter = null;
+              });
+            },
           ),
 
           //검색창
