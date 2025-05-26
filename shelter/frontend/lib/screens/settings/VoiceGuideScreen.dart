@@ -75,7 +75,10 @@ class _VoiceGuideScreenState extends State<VoiceGuideScreen> {
                 ToggleSwitch(
                   isOn: isMutedModeOn,
                   onChanged: (value){
-                    isMutedModeOn = value;
+                    setState((){
+                      isMutedModeOn = value;
+                    });
+                    voiceService.isMutedModeEnabled = value;
                   }
                 ),
               ],
