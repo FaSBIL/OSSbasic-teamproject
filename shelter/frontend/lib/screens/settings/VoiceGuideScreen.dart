@@ -3,6 +3,7 @@ import '../../theme/color.dart';
 import '../../theme/typography.dart';
 import '../../component/settingItem/ToggleSwitch.dart';
 import '../../component/settingItem/VolumeSlider.dart';
+import '../../controllers/tts_controller.dart';
 
 class VoiceGuideScreen extends StatefulWidget {
   const VoiceGuideScreen({super.key});
@@ -12,9 +13,31 @@ class VoiceGuideScreen extends StatefulWidget {
 }
 
 class _VoiceGuideScreenState extends State<VoiceGuideScreen> {
+  final TTSController _ttsController = TTSController();
+
   bool isVoiceGuideOn = true;
+  bool isLoading = true;
   bool isMutedModeOn = false;
   double volume = 0.5;
+
+  @override
+  void initState(){
+    super.initState();
+    _initSettings();
+  }
+
+  Future<void> _initSettings() async{
+    await _ttsController.initTTS();
+    setState((){
+      isVoiceGuideOn = _ttsController.isVoiceEnabled;
+      isLoading = false;
+    });
+  }
+
+  void _onVoiceToggle(bool value) async{
+    setState(() => isVoiceGuideOn = value);
+    await _ttsController.setVoiceEnabled(value);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,10 +58,12 @@ class _VoiceGuideScreenState extends State<VoiceGuideScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('음성 안내', style: AppTextStyles.subtitle),
-                ToggleSwitch(
-                  isOn: isVoiceGuideOn,
-                  onChanged: (value) => setState(() => isVoiceGuideOn = value),
-                ),
+                isLoading
+                  ? CircularProgressIndicator()
+                  : ToggleSwitch(
+                    isOn: isVoiceGuideOn,
+                    onChanged: _onVoiceToggle,
+                  ),
               ],
             ),
             const SizedBox(height: 20),
