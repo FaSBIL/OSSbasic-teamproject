@@ -38,6 +38,14 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
     _selectedShelter = widget.selectedShelter;
   }
 
+  Color _getMarkerColor(Shelter shelter) {
+    if (shelter.earthquakeSafe) return Colors.purple; // 지진
+    if (shelter.tsunamiSafe) return Colors.green; // 해일
+    if (!shelter.earthquakeSafe && !shelter.tsunamiSafe)
+      return AppColors.blue; // 민방위
+    return Colors.grey;
+  }
+
   LatLng _calculateCenter() {
     if (_selectedShelter != null) {
       return LatLng(_selectedShelter!.latitude, _selectedShelter!.longitude);
@@ -70,7 +78,11 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                   _selectedShelter = shelter;
                 });
               },
-              child: Icon(Icons.location_on, color: Colors.green, size: 30),
+              child: Icon(
+                Icons.location_on,
+                color: _getMarkerColor(shelter),
+                size: 30,
+              ),
             ),
           );
         }).toList();
