@@ -22,6 +22,15 @@ class Shelter {
   });
 
   factory Shelter.fromMap(Map<String, dynamic> map) {
+    String? type;
+    if (map['civil'] == 1) {
+      type = 'civil';
+    } else if (map['earthquake'] == 1) {
+      type = 'earthquake';
+    } else if (map['tsunami'] == 1) {
+      type = 'tsunami';
+    }
+
     return Shelter(
       name: map['name'],
       address: map['address'],
@@ -33,6 +42,10 @@ class Shelter {
           map['longitude'] is double
               ? map['longitude']
               : double.parse(map['longitude'].toString()),
+      earthquakeSafe: map['earthquake'] == 1,
+      tsunamiSafe: map['tsunami'] == 1,
+      isFavorite: map['isFavorite'] == 1,
+      type: type,
     );
   }
 
