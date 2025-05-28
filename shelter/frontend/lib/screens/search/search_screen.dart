@@ -49,6 +49,21 @@ class _SearchScreenState extends State<SearchScreen> {
     _loadRecentSearches();
   }
 
+  Future<void> _deleteRecentSearch(String keyword) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // 현재 목록에서 해당 키워드 제거
+    final updated = _recentSearches.where((item) => item != keyword).toList();
+
+    // 업데이트된 리스트 저장
+    await prefs.setStringList('recent_searches', updated);
+
+    // 화면 갱신
+    setState(() {
+      _recentSearches = updated;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,6 +140,18 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                   ),
                   title: Text(keyword),
+
+                  trailing: IconButton(
+                    icon: const Icon(
+                      Icons.close,
+                      color: AppColors.gray,
+                      size: 20,
+                    ),
+                    onPressed: () {
+                      _deleteRecentSearch(keyword); // 삭제 함수 호출
+                    },
+                  ),
+
                   onTap: () {
                     _addRecentSearch(keyword); // 순서 갱신
                     Navigator.pushNamed(
