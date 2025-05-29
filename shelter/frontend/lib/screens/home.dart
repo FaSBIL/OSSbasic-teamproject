@@ -17,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shelter/screens/navigation/navigation_screen.dart';
 import 'package:shelter/screens/settings/SettingsMainScreens.dart';
 import 'package:shelter/theme/color.dart';
+import 'package:shelter/utils/favorite_utils.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -259,11 +260,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   altitudeAccuracy: 0,
                   headingAccuracy: 0,
                 ),
-                onFavoriteToggle: (shelterMap) {
-                  setState(() {
-                    _selectedShelter = _selectedShelter!.copyWith(
-                      isFavorite: !_selectedShelter!.isFavorite,
-                    );
+                onFavoriteToggle: (shelterMap) async {
+                  await toggleFavoriteAndRefresh(context, shelterMap, () {
+                    setState(() {
+                      _selectedShelter = _selectedShelter!.copyWith(
+                        isFavorite: !_selectedShelter!.isFavorite,
+                      );
+                    });
                   });
                 },
                 onNavigate: (shelterMap) {
