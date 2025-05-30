@@ -30,6 +30,7 @@ class _VoiceGuideScreenState extends State<VoiceGuideScreen> {
     await _ttsController.initTTS();
     setState((){
       isVoiceGuideOn = _ttsController.isVoiceEnabled;
+      volume = _ttsController.currentVolume;
       isLoading = false;
     });
   }
@@ -91,7 +92,11 @@ class _VoiceGuideScreenState extends State<VoiceGuideScreen> {
 
             VolumeSlider(
               value: volume,
-              onChanged: (value) => setState(() => volume = value),
+              onChanged: (value) async {
+                setState(() => volume = value);
+                await _ttsController.setVolume(value);
+                await _ttsController.speak("안내를 시작합니다.");
+              },
               enabled: isVoiceGuideOn,
             ),
           ],
