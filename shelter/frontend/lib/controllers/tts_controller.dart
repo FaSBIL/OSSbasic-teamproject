@@ -5,6 +5,10 @@ import '../utils/device_audio_status.dart';
 
 // TTS (텍스트 음성 변환) 제어용 클래스
 class TTSController {
+  static final TTSController _instance = TTSController._internal();
+  factory TTSController() => _instance;
+  TTSController._internal();
+  
   final FlutterTts _flutterTts = FlutterTts();
   bool _isVoiceEnabled = true;
   double _currentVolume = 1.0;
