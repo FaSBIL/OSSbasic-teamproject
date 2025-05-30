@@ -47,7 +47,7 @@ class _BackgroundActivityScreenState extends State<BackgroundActivityScreen> {
             const Text(
               '백그라운드 동작을 활성화하면 앱을 닫아도 음성 안내가 계속됩니다.\n'
               '배터리 소모가 증가하므로 사용 상황에 따라 설정해 주세요.',
-              style: AppTextStyles.captionGray,
+              style: AppTextStyles.bodyGray,
             ),
           ],
         ),
