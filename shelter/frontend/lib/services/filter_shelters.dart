@@ -22,7 +22,16 @@ class ShelterService {
       whereArgs: [1],
       columns: ['name', 'address', 'latitude', 'longitude'],
     );
-    return rows.map((row) => Shelter.fromMap(row)).toList();
+
+    return rows.map((row) {
+      return Shelter.fromMap({
+        ...row,
+        'type': type,
+        'civil': type == 'civil' ? 1 : 0,
+        'earthquake': type == 'earthquake' ? 1 : 0,
+        'tsunami': type == 'tsunami' ? 1 : 0,
+      });
+    }).toList();
   }
 
   // 초성 추출 유틸
@@ -102,7 +111,15 @@ class ShelterService {
               address.contains(keyword) ||
               getChosung(name).contains(chosungKeyword) ||
               getChosung(address).contains(chosungKeyword)) {
-            result.add(Shelter.fromMap(row));
+            result.add(
+              Shelter.fromMap({
+                ...row,
+                'type': type,
+                'civil': type == 'civil' ? 1 : 0,
+                'earthquake': type == 'earthquake' ? 1 : 0,
+                'tsunami': type == 'tsunami' ? 1 : 0,
+              }),
+            );
           }
         }
       } catch (e) {

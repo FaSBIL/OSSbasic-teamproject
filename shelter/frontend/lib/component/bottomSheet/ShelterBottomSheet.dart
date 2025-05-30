@@ -6,22 +6,23 @@ enum SheetMode { list, detail }
 class ShelterBottomSheet extends StatelessWidget {
   final Widget child;
   final SheetMode mode;
+  final DraggableScrollableController? controller;
 
   const ShelterBottomSheet({
     super.key,
     required this.child,
     required this.mode,
+    this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
-    final initialSize = mode == SheetMode.list ? 0.5 : 0.4;
-    final snapSizes = mode == SheetMode.list
-        ? [0.06, 0.5, 0.95]
-        : [0.06, 0.4];
+    final initialSize = mode == SheetMode.list ? 0.4 : 0.4;
+    final snapSizes = mode == SheetMode.list ? [0.06, 0.4, 0.95] : [0.06, 0.4];
     final maxSize = mode == SheetMode.list ? 0.95 : initialSize;
 
     return DraggableScrollableSheet(
+      controller: controller,
       initialChildSize: initialSize,
       minChildSize: 0.06,
       maxChildSize: maxSize,
@@ -59,7 +60,7 @@ class ShelterBottomSheet extends StatelessWidget {
                 child: SingleChildScrollView(
                   controller: scrollController,
                   child: Padding(
-                    padding: const EdgeInsets.only(top:5, bottom:30),
+                    padding: const EdgeInsets.only(top: 5, bottom: 30),
                     child: child,
                   ),
                 ),

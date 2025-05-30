@@ -1,25 +1,116 @@
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:shelter/theme/color.dart';
+import 'package:shelter/utils/distance_calculator.dart' as calc;
+import 'package:flutter_map/flutter_map.dart';
+import 'package:shelter/map/shelter_map.dart';
+import 'package:shelter/component/bottomSheet/ShelterBottomSheet.dart';
+import 'package:shelter/component/bottomSheet/data/ShelterDetailView.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:shelter/models/shelter.dart';
 
-class NavigationScreen extends StatelessWidget {
+Position createMockPosition(LatLng latLng) {
+  return Position(
+    latitude: latLng.latitude,
+    longitude: latLng.longitude,
+    timestamp: DateTime.now(),
+    accuracy: 1.0,
+    altitude: 0.0,
+    heading: 0.0,
+    speed: 0.0,
+    speedAccuracy: 0.0,
+    altitudeAccuracy: 0.0,
+    headingAccuracy: 0.0,
+  );
+}
+
+class NavigationScreen extends StatefulWidget {
   final LatLng start;
   final LatLng destination;
+  final Shelter shelter;
 
   const NavigationScreen({
     super.key,
     required this.start,
     required this.destination,
+    required this.shelter,
   });
+
+  @override
+  State<NavigationScreen> createState() => _NavigationScreenState();
+}
+
+class _NavigationScreenState extends State<NavigationScreen> {
+  String distance = '계산 중...';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDistance();
+  }
+
+  Future<void> _loadDistance() async {
+    final result = await calc.DistanceCalculator.calculateDistanceWithTime(
+      widget.start.latitude,
+      widget.start.longitude,
+      widget.destination.latitude,
+      widget.destination.longitude,
+    );
+
+    setState(() {
+      distance = result;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('실시간 길 안내')),
-      body: Center(
-        child: Text(
-          '길 안내 기능은 추후 구현 할 예정.\n\n출발지: ${start.latitude}, ${start.longitude}\n도착지: ${destination.latitude}, ${destination.longitude}',
-          textAlign: TextAlign.center,
-        ),
+      backgroundColor: AppColors.white,
+      appBar: AppBar(title: Text('경로 미리보기')),
+      body: Stack(
+        children: [
+          // 지도
+          Positioned.fill(
+            child: ShelterMap(
+              currentPosition: widget.start,
+              mapController: MapController(),
+              initialCenter: widget.start,
+              shelterMarkers: [
+                Marker(
+                  width: 60,
+                  height: 60,
+                  point: widget.start,
+                  child: const Icon(Icons.my_location, color: AppColors.blue),
+                ),
+                Marker(
+                  width: 60,
+                  height: 60,
+                  point: widget.destination,
+                  child: const Icon(Icons.location_on, color: AppColors.blue),
+                ),
+              ],
+            ),
+          ),
+
+          // 바텀시트
+          ShelterBottomSheet(
+            mode: SheetMode.detail,
+            child: ShelterDetailView(
+              shelters: {
+                'name': widget.shelter.name,
+                'address': widget.shelter.address,
+                'latitude': widget.shelter.latitude,
+                'longitude': widget.shelter.longitude,
+                'earthquake': widget.shelter.earthquakeSafe ? 1 : 0,
+                'tsunami': widget.shelter.tsunamiSafe ? 1 : 0,
+                'isFavorite': widget.shelter.isFavorite ? 1 : 0,
+              },
+              currentPosition: createMockPosition(widget.start),
+              onFavoriteToggle: (_) {},
+              onNavigate: (_) {},
+            ),
+          ),
+        ],
       ),
     );
   }

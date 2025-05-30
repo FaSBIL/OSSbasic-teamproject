@@ -4,6 +4,10 @@ import 'package:shelter/component/icon/IconUtils.dart';
 import 'package:shelter/component/input/SearchInput.dart';
 import 'package:shelter/theme/color.dart';
 import 'package:shelter/routes/AppRoutes.dart';
+import 'package:shelter/screens/Faivorite/favorite_shelter_screen.dart';
+import 'package:sqflite/sqlite_api.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:shelter/services/favorite_service.dart';
 
 class SearchScreen extends StatefulWidget {
   final String? initialKeyword;
@@ -18,12 +22,14 @@ class _SearchScreenState extends State<SearchScreen> {
   int _selectedTab = 0;
   List<String> _recentSearches = [];
   late final TextEditingController _controller;
+  int _favoriteCount = 0;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.initialKeyword ?? '');
     _loadRecentSearches();
+    _loadFavoriteCount();
     if (widget.initialKeyword?.isNotEmpty ?? false) {
       _addRecentSearch(widget.initialKeyword!);
     }
@@ -47,6 +53,63 @@ class _SearchScreenState extends State<SearchScreen> {
     final updated = [keyword, ..._recentSearches.where((e) => e != keyword)];
     await prefs.setStringList('recent_searches', updated.take(10).toList());
     _loadRecentSearches();
+  }
+
+  Future<void> _deleteRecentSearch(String keyword) async {
+    final prefs = await SharedPreferences.getInstance();
+
+    // 현재 목록에서 해당 키워드 제거
+    final updated = _recentSearches.where((item) => item != keyword).toList();
+
+    // 업데이트된 리스트 저장
+    await prefs.setStringList('recent_searches', updated);
+
+    // 화면 갱신
+    setState(() {
+      _recentSearches = updated;
+    });
+  }
+
+  Future<void> _loadFavoriteCount() async {
+    final regionTables = [
+      'seoul',
+      'busan',
+      'daegu',
+      'incheon',
+      'gwangju',
+      'daejeon',
+      'ulsan',
+      'sejong',
+      'gyeonggi',
+      'gangwon',
+      'chungbuk',
+      'chungnam',
+      'jeonbuk',
+      'jeonnam',
+      'gyeongbuk',
+      'gyeongnam',
+      'jeju',
+    ];
+
+    int total = 0;
+    final db = await FavoriteService().getDatabase();
+
+    for (final table in regionTables) {
+      try {
+        final count =
+            Sqflite.firstIntValue(
+              await db.rawQuery(
+                'SELECT COUNT(*) FROM $table WHERE isFavorite = 1',
+              ),
+            ) ??
+            0;
+        total += count;
+      } catch (_) {} // 존재하지 않는 테이블 에러 무시
+    }
+
+    setState(() {
+      _favoriteCount = total;
+    });
   }
 
   @override
@@ -86,7 +149,7 @@ class _SearchScreenState extends State<SearchScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                _tabBtn(Icons.star_rounded, '즐겨찾기', '등록 10개', 0),
+                _tabBtn(Icons.star_rounded, '즐겨찾기', '등록 $_favoriteCount개', 0),
                 const SizedBox(width: 16),
                 _tabBtn(Icons.dns_rounded, '대피소 일람', '지역별 대피소', 1),
               ],
@@ -125,6 +188,18 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                   ),
                   title: Text(keyword),
+
+                  trailing: IconButton(
+                    icon: const Icon(
+                      Icons.close,
+                      color: AppColors.gray,
+                      size: 20,
+                    ),
+                    onPressed: () {
+                      _deleteRecentSearch(keyword); // 삭제 함수 호출
+                    },
+                  ),
+
                   onTap: () {
                     _addRecentSearch(keyword); // 순서 갱신
                     Navigator.pushNamed(
@@ -152,7 +227,12 @@ class _SearchScreenState extends State<SearchScreen> {
       child: GestureDetector(
         onTap: () {
           setState(() => _selectedTab = idx);
-          if (idx == 1) {
+          if (idx == 0) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const FavoriteShelterScreen()),
+            );
+          } else if (idx == 1) {
             Navigator.pushNamed(context, AppRoutes.shelterRegion);
           }
         },
