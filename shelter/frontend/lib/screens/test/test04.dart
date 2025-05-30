@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../controllers/tts_controller.dart';
 import '../settings/VoiceGuideScreen.dart';
+import '../../utils/device_audio_status.dart';
 
 class VoiceGuideMinimalTestScreen extends StatefulWidget {
   const VoiceGuideMinimalTestScreen({super.key});
@@ -45,6 +46,11 @@ class _VoiceGuideMinimalTestScreenState extends State<VoiceGuideMinimalTestScree
 
     setState(() => _isReady = false);
     await _loadVoiceSetting(); // ← 再読込
+  }
+
+  void checkRingerMode() async {
+    final mode = await DeviceAudioStatus.getRingerMode();
+    print('現在のモード: $mode');
   }
 
   @override

@@ -31,6 +31,7 @@ class _VoiceGuideScreenState extends State<VoiceGuideScreen> {
     setState((){
       isVoiceGuideOn = _ttsController.isVoiceEnabled;
       volume = _ttsController.currentVolume;
+      isMutedModeOn = _ttsController.allowVoiceInSilentMode;
       isLoading = false;
     });
   }
@@ -83,7 +84,7 @@ class _VoiceGuideScreenState extends State<VoiceGuideScreen> {
                   isOn: isMutedModeOn,
                   onChanged: (value) async {
                     await _ttsController.setAllowVoiceInSilentMode(value);
-                    setState(() {});
+                    setState(() => isMutedModeOn = value);
                   }
                 ),
               ],

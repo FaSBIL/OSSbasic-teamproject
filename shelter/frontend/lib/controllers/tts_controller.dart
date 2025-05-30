@@ -1,6 +1,7 @@
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
+import '../utils/device_audio_status.dart';
 
 // TTS (텍스트 음성 변환) 제어용 클래스
 class TTSController {
@@ -52,15 +53,18 @@ class TTSController {
 
   // 주어진 텍스트를 음성으로 읽음
   Future<void> speak(String text) async {
-    if(!_isVoiceEnabled) return;
-    if(!_allowVoiceInSilentMode){
-      // Android: 사일런트 모드인지 체크(Platform Channel)
-      // iOS: 체크불능 → 항상재생 or skip 2택
-      if(await _isInSilentMode()){
+    if(!_isVoiceEnabled) {
+      print('[DEBUG] 음성 안내 OFF 상태이므로 재생하지 않음');
+      return;
+    }
+
+    final isSilent = await _isInSilentMode();
+    if(isSilent && !_allowVoiceInSilentMode){
       print('[DEBUG]매너 모드 중이므로 건너뛰기');
       return;
-      }
     }
+
+    print('[DEBUG] 음성 안내 재생 시작');
     await _flutterTts.speak(text);
   }
 
@@ -74,7 +78,7 @@ class TTSController {
       final mode = await DeviceAudioStatus.getRingerMode();
       return mode == 'silent' || mode == 'vibrate';
     } else if (Platform.isIOS) {
-      // iOS에서는 취득할 수 없기 때문에 false를 반환합니다(즉, 항상 재생가능하다고 판단)
+      // iOS에서는 시스템 상 매너모드 감지가 불가능하므로 항상 false 반환
       return false;
     }
     return false;
