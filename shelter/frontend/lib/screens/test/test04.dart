@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../../controllers/tts_controller.dart';
 import '../settings/VoiceGuideScreen.dart';
 
 class VoiceGuideMinimalTestScreen extends StatefulWidget {
@@ -11,8 +10,7 @@ class VoiceGuideMinimalTestScreen extends StatefulWidget {
 }
 
 class _VoiceGuideMinimalTestScreenState extends State<VoiceGuideMinimalTestScreen> {
-  final FlutterTts _flutterTts = FlutterTts();
-  bool _isVoiceEnabled = true;
+  final TTSController _ttsController = TTSController();
   bool _isReady = false;
 
   @override
@@ -22,28 +20,21 @@ class _VoiceGuideMinimalTestScreenState extends State<VoiceGuideMinimalTestScree
   }
 
   Future<void> _loadVoiceSetting() async {
-    final prefs = await SharedPreferences.getInstance();
-    _isVoiceEnabled = prefs.getBool('voiceEnabled') ?? true;
+    await _ttsController.initTTS(); // ← 音量・音声ON/OFFの読み込み済み
     setState(() {
       _isReady = true;
     });
   }
 
   void _speak() async {
-    final prefs = await SharedPreferences.getInstance();
-    final isVoiceEnabled = prefs.getBool('voiceEnabled') ?? true;
-    if (!_isVoiceEnabled) {
-    print('[DEBUG] 음성 OFF로 재생되지 않음');
-    return;
+    if (!_ttsController.isVoiceEnabled) {
+      print('[DEBUG] 음성 OFF로 재생되지 않음');
+      return;
     }
 
     print('[DEBUG] 음성 재생을 시작함');
 
-    await _flutterTts.setLanguage("ko-KR");
-    await _flutterTts.setSpeechRate(0.5);
-    await _flutterTts.setVolume(1.0);
-    await _flutterTts.setPitch(1.0);
-    await _flutterTts.speak("안내를 시작합니다.");
+    await _ttsController.speak("현재 위치부터 목적지까지 안내를 시작합니다.");
   }
 
   void _goToSetting() async {
@@ -52,8 +43,8 @@ class _VoiceGuideMinimalTestScreenState extends State<VoiceGuideMinimalTestScree
       MaterialPageRoute(builder: (_) => const VoiceGuideScreen()),
     );
 
-    setState(() => _isReady = false); // 로딩 상태로 해서
-    await _loadVoiceSetting();        // ← 완전히 읽기 완료될 때까지 기다립니다
+    setState(() => _isReady = false);
+    await _loadVoiceSetting(); // ← 再読込
   }
 
   @override
