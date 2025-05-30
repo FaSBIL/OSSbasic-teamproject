@@ -81,7 +81,10 @@ class _VoiceGuideScreenState extends State<VoiceGuideScreen> {
                 ),
                 ToggleSwitch(
                   isOn: isMutedModeOn,
-                  onChanged: (value) => setState(() => isMutedModeOn = value),
+                  onChanged: (value) async {
+                    await _ttsController.setAllowVoiceInSilentMode(value);
+                    setState(() {});
+                  }
                 ),
               ],
             ),
