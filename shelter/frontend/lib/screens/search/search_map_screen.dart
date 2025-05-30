@@ -8,6 +8,7 @@ import 'package:shelter/component/bottomSheet/data/ShelterDetailView.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shelter/map/shelter_map.dart';
 import 'package:shelter/theme/color.dart';
+import 'package:shelter/utils/favorite_utils.dart';
 
 class SearchMapScreen extends StatefulWidget {
   final String region;
@@ -148,7 +149,15 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                   altitudeAccuracy: 0,
                   headingAccuracy: 0,
                 ),
-                onFavoriteToggle: (_) {},
+                onFavoriteToggle: (shelterMap) async {
+                  await toggleFavoriteAndRefresh(context, shelterMap, () {
+                    setState(() {
+                      _selectedShelter = _selectedShelter!.copyWith(
+                        isFavorite: !_selectedShelter!.isFavorite,
+                      );
+                    });
+                  });
+                },
                 onNavigate: (_) {
                   Navigator.pushNamed(
                     context,
