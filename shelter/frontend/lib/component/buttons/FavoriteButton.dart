@@ -4,10 +4,12 @@ import '../icon/CustomIcon.dart';
 import '../icon/IconUtils.dart';
 
 class FavoriteButton extends StatefulWidget {
+  final bool isFavorited; // 외부에서 즐겨찾기 상태 전달받음
   final VoidCallback onFavoriteToggle;
 
   const FavoriteButton({
     Key? key,
+    required this.isFavorited,
     required this.onFavoriteToggle,
   }) : super(key: key);
 
@@ -15,11 +17,11 @@ class FavoriteButton extends StatefulWidget {
   State<FavoriteButton> createState() => _FavoriteButtonState();
 }
 
-class _FavoriteButtonState extends State<FavoriteButton>{
+class _FavoriteButtonState extends State<FavoriteButton> {
   bool isFavorited = false;
-  
-  void _toggleFavorite(){
-    setState((){
+
+  void _toggleFavorite() {
+    setState(() {
       isFavorited = !isFavorited;
     });
 
@@ -29,9 +31,10 @@ class _FavoriteButtonState extends State<FavoriteButton>{
   @override
   Widget build(BuildContext context) {
     return CustomIcon(
-      iconData: isFavorited ? AppIcons.star : AppIcons.starRound,
+      iconData:
+          widget.isFavorited ? AppIcons.star : AppIcons.starRound, // 외부 상태 반영
       color: AppColors.blue,
-      backgroundColor:  AppColors.paleBlue,
+      backgroundColor: AppColors.paleBlue,
       borderColor: AppColors.paleBlue,
       onTap: _toggleFavorite,
       isClickable: true,

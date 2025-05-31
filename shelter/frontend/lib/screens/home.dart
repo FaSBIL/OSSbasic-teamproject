@@ -17,13 +17,37 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shelter/screens/navigation/navigation_screen.dart';
 import 'package:shelter/screens/settings/SettingsMainScreens.dart';
 import 'package:shelter/theme/color.dart';
-import 'package:shelter/utils/favorite_utils.dart';
+import 'package:shelter/services/favorite_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
+}
+
+String getTableName(Shelter shelter) {
+  final address = shelter.address;
+
+  if (address.contains('서울')) return 'seoul';
+  if (address.contains('부산')) return 'busan';
+  if (address.contains('대전')) return 'daejeon';
+  if (address.contains('광주')) return 'gwangju';
+  if (address.contains('인천')) return 'incheon';
+  if (address.contains('대구')) return 'daegu';
+  if (address.contains('울산')) return 'ulsan';
+  if (address.contains('세종')) return 'sejong';
+  if (address.contains('경기도') || address.contains('경기')) return 'gyeonggi';
+  if (address.contains('강원도') || address.contains('강원')) return 'gangwon';
+  if (address.contains('충청북도') || address.contains('충북')) return 'chungbuk';
+  if (address.contains('충청남도') || address.contains('충남')) return 'chungnam';
+  if (address.contains('전라북도') || address.contains('전북')) return 'jeonbuk';
+  if (address.contains('전라남도') || address.contains('전남')) return 'jeonnam';
+  if (address.contains('경상북도') || address.contains('경북')) return 'gyeongbuk';
+  if (address.contains('경상남도') || address.contains('경남')) return 'gyeongnam';
+  if (address.contains('제주')) return 'jeju';
+
+  throw Exception('❌ getTableName: 알 수 없는 주소 형식입니다 -> ${shelter.address}');
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -37,13 +61,10 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Shelter> _nearbyShelters = [];
   bool _showNearbyList = false;
 
-  List<String> _recentSearches = [];
-
   @override
   void initState() {
     super.initState();
     _getUserLocation();
-    _loadRecentSearches();
   }
 
   Color _getMarkerColor(Shelter shelter) {
@@ -52,24 +73,6 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!shelter.earthquakeSafe && !shelter.tsunamiSafe)
       return AppColors.blue; // 민방위
     return Colors.grey;
-  }
-
-  void _loadRecentSearches() async {
-    final prefs = await SharedPreferences.getInstance();
-    final history = prefs.getStringList('recent_searches') ?? [];
-    setState(() {
-      _recentSearches = history;
-    });
-  }
-
-  void _saveRecentSearch(String keyword) async {
-    final prefs = await SharedPreferences.getInstance();
-    final history = prefs.getStringList('recent_searches') ?? [];
-    history.remove(keyword);
-    history.insert(0, keyword);
-    if (history.length > 10) history.removeLast();
-    await prefs.setStringList('recent_searches', history);
-    _loadRecentSearches();
   }
 
   void _getUserLocation() async {
@@ -160,10 +163,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 point: LatLng(shelter.latitude, shelter.longitude),
                 child: GestureDetector(
                   onTap: () {
+                    final tappedShelter = _nearbyShelters.firstWhere(
+                      (s) =>
+                          s.name == shelter.name &&
+                          s.address == shelter.address,
+                      orElse: () => shelter,
+                    );
+
                     setState(() {
-                      _selectedShelter = shelter;
+                      _selectedShelter = tappedShelter;
                     });
                   },
+
                   child: Icon(
                     Icons.location_pin,
                     color: _getMarkerColor(shelter),
@@ -261,14 +272,37 @@ class _HomeScreenState extends State<HomeScreen> {
                   headingAccuracy: 0,
                 ),
                 onFavoriteToggle: (shelterMap) async {
-                  await toggleFavoriteAndRefresh(context, shelterMap, () {
-                    setState(() {
-                      _selectedShelter = _selectedShelter!.copyWith(
-                        isFavorite: !_selectedShelter!.isFavorite,
-                      );
-                    });
+                  final name = _selectedShelter!.name;
+                  final address = _selectedShelter!.address;
+                  final tableName = getTableName(_selectedShelter!);
+
+                  // DB에서 isFavorite 토글
+                  await FavoriteService().toggleFavorite(tableName, name);
+
+                  // 새로운 상태 조회
+                  final isNowFavorite = await FavoriteService().isFavorite(
+                    tableName,
+                    name,
+                  );
+
+                  final updatedShelter = _selectedShelter!.copyWith(
+                    isFavorite: isNowFavorite,
+                  );
+
+                  setState(() {
+                    _selectedShelter = updatedShelter;
+
+                    _nearbyShelters =
+                        _nearbyShelters.map((shelter) {
+                          if (shelter.name == name &&
+                              shelter.address == address) {
+                            return updatedShelter;
+                          }
+                          return shelter;
+                        }).toList();
                   });
                 },
+
                 onNavigate: (shelterMap) {
                   Navigator.push(
                     context,
@@ -311,8 +345,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       title: Text(shelter.name),
                       subtitle: Text(shelter.address),
                       onTap: () {
+                        final tappedShelter = _nearbyShelters.firstWhere(
+                          (s) =>
+                              s.name == shelter.name &&
+                              s.address == shelter.address,
+                          orElse: () => shelter,
+                        );
+
                         setState(() {
-                          _selectedShelter = shelter;
+                          _selectedShelter = tappedShelter;
                           _showNearbyList = false;
                         });
                       },
