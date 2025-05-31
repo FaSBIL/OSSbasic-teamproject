@@ -42,12 +42,6 @@ class SettingsMainScreen extends StatelessWidget {
                       ),
                 ),
                 SettingsNavItem(
-                  label: '테마 모드',
-                  onTap:
-                      () => Navigator.pushNamed(context, AppRoutes.themeMode),
-                ),
-
-                SettingsNavItem(
                   label: '위치 서비스',
                   onTap:
                       () => Navigator.pushNamed(
