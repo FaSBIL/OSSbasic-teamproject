@@ -6,6 +6,9 @@ import 'package:shelter/map/user_marker.dart';
 import 'package:shelter/component/bottomSheet/ShelterBottomSheet.dart';
 import 'package:shelter/component/bottomSheet/data/ShelterDetailView.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:shelter/map/shelter_map.dart';
+import 'package:shelter/theme/color.dart';
+import 'package:shelter/utils/favorite_utils.dart';
 
 class SearchMapScreen extends StatefulWidget {
   final String region;
@@ -28,10 +31,20 @@ class SearchMapScreen extends StatefulWidget {
 class _SearchMapScreenState extends State<SearchMapScreen> {
   late Shelter? _selectedShelter;
 
+  final MapController _mapController = MapController();
+
   @override
   void initState() {
     super.initState();
     _selectedShelter = widget.selectedShelter;
+  }
+
+  Color _getMarkerColor(Shelter shelter) {
+    if (shelter.earthquakeSafe) return Colors.purple; // 지진
+    if (shelter.tsunamiSafe) return Colors.green; // 해일
+    if (!shelter.earthquakeSafe && !shelter.tsunamiSafe)
+      return AppColors.blue; // 민방위
+    return Colors.grey;
   }
 
   LatLng _calculateCenter() {
@@ -54,79 +67,61 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
   Widget build(BuildContext context) {
     final center = _calculateCenter();
 
+    final List<Marker> markers =
+        widget.shelters.map((shelter) {
+          return Marker(
+            width: 60,
+            height: 60,
+            point: LatLng(shelter.latitude, shelter.longitude),
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _selectedShelter = shelter;
+                });
+              },
+              child: Icon(
+                Icons.location_on,
+                color: _getMarkerColor(shelter),
+                size: 30,
+              ),
+            ),
+          );
+        }).toList();
+
+    if (_selectedShelter != null) {
+      markers.add(
+        Marker(
+          width: 60,
+          height: 60,
+          point: LatLng(
+            _selectedShelter!.latitude,
+            _selectedShelter!.longitude,
+          ),
+          child: const Icon(Icons.location_on, color: AppColors.blue, size: 40),
+        ),
+      );
+    }
+
+    if (widget.currentPosition != null) {
+      markers.add(
+        Marker(
+          width: 60,
+          height: 60,
+          point: widget.currentPosition!,
+          child: const LocationMarker(),
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(title: Text('${widget.region} 대피소 지도')),
       body: Stack(
         children: [
-          FlutterMap(
-            options: MapOptions(
-              initialCenter: center,
-              initialZoom: _selectedShelter != null ? 16 : 13,
-            ),
-            children: [
-              TileLayer(
-                urlTemplate:
-                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                subdomains: ['a', 'b', 'c'],
-              ),
-              MarkerLayer(
-                markers: [
-                  if (_selectedShelter != null)
-                    Marker(
-                      width: 60,
-                      height: 60,
-                      point: LatLng(
-                        _selectedShelter!.latitude,
-                        _selectedShelter!.longitude,
-                      ),
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _selectedShelter = _selectedShelter;
-                          });
-                        },
-                        child: const Icon(
-                          Icons.location_on,
-                          color: Colors.red,
-                          size: 35,
-                        ),
-                      ),
-                    ),
-
-                  ...widget.shelters.map((shelter) {
-                    return Marker(
-                      width: 60,
-                      height: 60,
-                      point: LatLng(shelter.latitude, shelter.longitude),
-                      child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _selectedShelter = shelter;
-                          });
-                        },
-                        child: Icon(
-                          Icons.location_on,
-                          color:
-                              _selectedShelter == shelter
-                                  ? Colors.red
-                                  : Colors.green,
-                          size: _selectedShelter == shelter ? 35 : 30,
-                        ),
-                      ),
-                    );
-                  }),
-
-                  // 3. 현재 위치 마커
-                  if (widget.currentPosition != null)
-                    Marker(
-                      width: 60,
-                      height: 60,
-                      point: widget.currentPosition!,
-                      child: const LocationMarker(),
-                    ),
-                ],
-              ),
-            ],
+          ShelterMap(
+            currentPosition: widget.currentPosition,
+            shelterMarkers: markers,
+            mapController: _mapController,
+            initialCenter: center,
           ),
 
           if (_selectedShelter != null && widget.currentPosition != null)
@@ -154,7 +149,15 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                   altitudeAccuracy: 0,
                   headingAccuracy: 0,
                 ),
-                onFavoriteToggle: (_) {},
+                onFavoriteToggle: (shelterMap) async {
+                  await toggleFavoriteAndRefresh(context, shelterMap, () {
+                    setState(() {
+                      _selectedShelter = _selectedShelter!.copyWith(
+                        isFavorite: !_selectedShelter!.isFavorite,
+                      );
+                    });
+                  });
+                },
                 onNavigate: (_) {
                   Navigator.pushNamed(
                     context,
