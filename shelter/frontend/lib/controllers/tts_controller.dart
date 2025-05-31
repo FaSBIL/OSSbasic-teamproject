@@ -2,6 +2,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:io';
 import '../utils/device_audio_status.dart';
+import 'package:flutter/services.dart';
 
 // TTS (텍스트 음성 변환) 제어용 클래스
 class TTSController {
@@ -28,6 +29,8 @@ class TTSController {
     await _flutterTts.setSpeechRate(0.5);
     await _flutterTts.setVolume(_currentVolume);
     await _flutterTts.setPitch(1.0);
+
+    await AudioSessionHandler.configureAudioSession();
   }
 
   bool get isVoiceEnabled => _isVoiceEnabled;
@@ -101,5 +104,18 @@ class TTSController {
       return false;
     }
     return false;
+  }
+}
+
+
+class AudioSessionHandler {
+  static const _channel = MethodChannel('audio_session');
+
+  static Future<void> configureAudioSession() async {
+    try {
+      await _channel.invokeMethod('configureAudioSession');
+    } on PlatformException catch (e) {
+      print('AudioSession configuration failed: $e');
+    }
   }
 }
