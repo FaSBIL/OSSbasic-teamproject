@@ -3,7 +3,7 @@ import '../../theme/color.dart';
 import '../icon/CustomIcon.dart';
 import '../icon/IconUtils.dart';
 
-class FavoriteButton extends StatefulWidget {
+class FavoriteButton extends StatelessWidget {
   final bool isFavorited; // 외부에서 즐겨찾기 상태 전달받음
   final VoidCallback onFavoriteToggle;
 
@@ -14,29 +14,13 @@ class FavoriteButton extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<FavoriteButton> createState() => _FavoriteButtonState();
-}
-
-class _FavoriteButtonState extends State<FavoriteButton> {
-  bool isFavorited = false;
-
-  void _toggleFavorite() {
-    setState(() {
-      isFavorited = !isFavorited;
-    });
-
-    widget.onFavoriteToggle();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return CustomIcon(
-      iconData:
-          widget.isFavorited ? AppIcons.star : AppIcons.starRound, // 외부 상태 반영
+      iconData: isFavorited ? AppIcons.star : AppIcons.starRound,
       color: AppColors.blue,
       backgroundColor: AppColors.paleBlue,
       borderColor: AppColors.paleBlue,
-      onTap: _toggleFavorite,
+      onTap: onFavoriteToggle,
       isClickable: true,
     );
   }

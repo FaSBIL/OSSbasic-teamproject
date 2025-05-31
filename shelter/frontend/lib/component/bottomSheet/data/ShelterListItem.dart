@@ -5,6 +5,7 @@ import 'package:shelter/component/buttons/FavoriteButton.dart';
 import 'package:shelter/component/buttons/NavButton.dart';
 import 'package:shelter/component/icon/CustomIcon.dart';
 import 'package:shelter/component/icon/IconUtils.dart';
+import 'package:shelter/utils/favorite_utils.dart';
 
 class ShelterListItem extends StatelessWidget {
   final String title;
@@ -65,10 +66,14 @@ class ShelterListItem extends StatelessWidget {
                         color: AppColors.darkGray,
                       ),
                     if (isEarthquakeSafe) const SizedBox(width: 8),
-                    FavoriteButton(
-                      isFavorited: isFavorite,
-                      onFavoriteToggle: onFavoriteToggle,
+                    Builder(
+                      builder:
+                          (context) => FavoriteButton(
+                            isFavorited: isFavorite,
+                            onFavoriteToggle: onFavoriteToggle,
+                          ),
                     ),
+
                     const SizedBox(width: 8),
                     NavButton(text: '안내 시작', onPressed: onNavigatePressed),
                   ],
