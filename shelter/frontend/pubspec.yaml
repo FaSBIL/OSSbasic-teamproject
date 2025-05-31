@@ -45,6 +45,7 @@ dependencies:
   flutter_background_service: ^5.1.0
   flutter_background_service_android: ^6.3.0
   permission_handler: ^11.0.0
+  provider: ^6.1.0
 
 dev_dependencies:
   flutter_test:
@@ -62,11 +63,11 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-  
   assets:
     - shelter_db/shelters.db
     - lib/assets/user_locations/user_locations.json
-    - assets/mbtiles/8_16kr-map.mbtiles
+    - assets/shelter_db/shelters.db
+    # - assets/mbtiles/8_16kr-map.mbtiles
 
 
   fonts:
