@@ -13,11 +13,12 @@ import 'package:shelter/screens/search/search_screen.dart';
 import 'package:shelter/component/bottomSheet/ShelterBottomSheet.dart';
 import 'package:shelter/component/bottomSheet/data/ShelterDetailView.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shelter/screens/navigation/navigation_screen.dart';
 import 'package:shelter/screens/settings/SettingsMainScreens.dart';
 import 'package:shelter/theme/color.dart';
 import 'package:shelter/services/favorite_service.dart';
+import 'package:provider/provider.dart';
+import 'package:shelter/provider/favorite_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -65,6 +66,29 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _getUserLocation();
+
+    Future.microtask(() {
+      final provider = context.read<FavoriteProvider>();
+      provider.loadFavorites([
+        'seoul',
+        'busan',
+        'daegu',
+        'incheon',
+        'gwangju',
+        'daejeon',
+        'ulsan',
+        'sejong',
+        'gyeonggi',
+        'gangwon',
+        'chungbuk',
+        'chungnam',
+        'jeonbuk',
+        'jeonnam',
+        'gyeongbuk',
+        'gyeongnam',
+        'jeju',
+      ]);
+    });
   }
 
   Color _getMarkerColor(Shelter shelter) {
@@ -249,78 +273,94 @@ class _HomeScreenState extends State<HomeScreen> {
           if (_selectedShelter != null && _currentPosition != null)
             ShelterBottomSheet(
               mode: SheetMode.detail,
-              child: ShelterDetailView(
-                shelters: {
-                  'name': _selectedShelter!.name,
-                  'address': _selectedShelter!.address,
-                  'latitude': _selectedShelter!.latitude,
-                  'longitude': _selectedShelter!.longitude,
-                  'earthquake': _selectedShelter!.earthquakeSafe ? 1 : 0,
-                  'tsunami': _selectedShelter!.tsunamiSafe ? 1 : 0,
-                  'isFavorite': _selectedShelter!.isFavorite ? 1 : 0,
-                },
-                currentPosition: Position(
-                  latitude: _currentPosition!.latitude,
-                  longitude: _currentPosition!.longitude,
-                  timestamp: DateTime.now(),
-                  accuracy: 0,
-                  altitude: 0,
-                  heading: 0,
-                  speed: 0,
-                  speedAccuracy: 0,
-                  altitudeAccuracy: 0,
-                  headingAccuracy: 0,
-                ),
-                onFavoriteToggle: (shelterMap) async {
-                  final name = _selectedShelter!.name;
-                  final address = _selectedShelter!.address;
-                  final tableName = getTableName(_selectedShelter!);
-
-                  // DB에서 isFavorite 토글
-                  await FavoriteService().toggleFavorite(tableName, name);
-
-                  // 새로운 상태 조회
-                  final isNowFavorite = await FavoriteService().isFavorite(
-                    tableName,
-                    name,
+              child: Builder(
+                builder: (context) {
+                  final provider = context.watch<FavoriteProvider>();
+                  final isFavorite = provider.isFavorite(
+                    _selectedShelter!.name,
                   );
 
-                  final updatedShelter = _selectedShelter!.copyWith(
-                    isFavorite: isNowFavorite,
-                  );
-
-                  setState(() {
-                    _selectedShelter = updatedShelter;
-
-                    _nearbyShelters =
-                        _nearbyShelters.map((shelter) {
-                          if (shelter.name == name &&
-                              shelter.address == address) {
-                            return updatedShelter;
-                          }
-                          return shelter;
-                        }).toList();
-                  });
-                },
-
-                onNavigate: (shelterMap) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (_) => NavigationScreen(
-                            start: _currentPosition!,
-                            destination: LatLng(
-                              _selectedShelter!.latitude,
-                              _selectedShelter!.longitude,
-                            ),
-                            shelter: _selectedShelter!,
-                          ),
+                  return ShelterDetailView(
+                    shelters: {
+                      'name': _selectedShelter!.name,
+                      'address': _selectedShelter!.address,
+                      'latitude': _selectedShelter!.latitude,
+                      'longitude': _selectedShelter!.longitude,
+                      'earthquake': _selectedShelter!.earthquakeSafe ? 1 : 0,
+                      'tsunami': _selectedShelter!.tsunamiSafe ? 1 : 0,
+                      'isFavorite': isFavorite ? 1 : 0,
+                    },
+                    // ... 아래 onFavoriteToggle는 아래에서 설명 ...
+                    currentPosition: Position(
+                      latitude: _currentPosition!.latitude,
+                      longitude: _currentPosition!.longitude,
+                      timestamp: DateTime.now(),
+                      accuracy: 0,
+                      altitude: 0,
+                      heading: 0,
+                      speed: 0,
+                      speedAccuracy: 0,
+                      altitudeAccuracy: 0,
+                      headingAccuracy: 0,
                     ),
+                    onFavoriteToggle: (shelterMap) async {
+                      final provider = context.read<FavoriteProvider>();
+                      final tableName = getTableName(_selectedShelter!);
+                      final name = _selectedShelter!.name;
+
+                      await provider.toggleFavorite(tableName, name);
+
+                      final isNowFavorite = provider.isFavorite(name);
+                      setState(() {
+                        _selectedShelter = _selectedShelter!.copyWith(
+                          isFavorite: isNowFavorite,
+                        );
+                        _nearbyShelters =
+                            _nearbyShelters.map((shelter) {
+                              if (shelter.name == name &&
+                                  shelter.address ==
+                                      _selectedShelter!.address) {
+                                return shelter.copyWith(
+                                  isFavorite: isNowFavorite,
+                                );
+                              }
+                              return shelter;
+                            }).toList();
+                      });
+
+                      // 사용자 피드백
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            isNowFavorite
+                                ? '즐겨찾기에 추가되었습니다.'
+                                : '즐겨찾기에서 제거되었습니다.',
+                          ),
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
+                    },
+                    onNavigate: (shelterMap) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => NavigationScreen(
+                                start: _currentPosition!,
+                                destination: LatLng(
+                                  _selectedShelter!.latitude,
+                                  _selectedShelter!.longitude,
+                                ),
+                                shelter: _selectedShelter!,
+                              ),
+                        ),
+                      );
+                    },
                   );
                 },
               ),
             ),
+
           if (_showNearbyList && _selectedShelter == null)
             ShelterBottomSheet(
               mode: SheetMode.list,

@@ -8,6 +8,9 @@ import 'package:shelter/component/bottomSheet/ShelterBottomSheet.dart';
 import 'package:shelter/component/bottomSheet/data/ShelterDetailView.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shelter/models/shelter.dart';
+import 'package:shelter/utils/favorite_utils.dart';
+import 'package:provider/provider.dart';
+import 'package:shelter/provider/favorite_provider.dart';
 
 Position createMockPosition(LatLng latLng) {
   return Position(
@@ -95,19 +98,43 @@ class _NavigationScreenState extends State<NavigationScreen> {
           // 바텀시트
           ShelterBottomSheet(
             mode: SheetMode.detail,
-            child: ShelterDetailView(
-              shelters: {
-                'name': widget.shelter.name,
-                'address': widget.shelter.address,
-                'latitude': widget.shelter.latitude,
-                'longitude': widget.shelter.longitude,
-                'earthquake': widget.shelter.earthquakeSafe ? 1 : 0,
-                'tsunami': widget.shelter.tsunamiSafe ? 1 : 0,
-                'isFavorite': widget.shelter.isFavorite ? 1 : 0,
+            child: Builder(
+              builder: (context) {
+                final provider = context.watch<FavoriteProvider>();
+                final isFavorite = provider.isFavorite(widget.shelter.name);
+
+                return ShelterDetailView(
+                  shelters: {
+                    'name': widget.shelter.name,
+                    'address': widget.shelter.address,
+                    'latitude': widget.shelter.latitude,
+                    'longitude': widget.shelter.longitude,
+                    'earthquake': widget.shelter.earthquakeSafe ? 1 : 0,
+                    'tsunami': widget.shelter.tsunamiSafe ? 1 : 0,
+                    'isFavorite': isFavorite ? 1 : 0,
+                  },
+                  currentPosition: createMockPosition(widget.start),
+                  onFavoriteToggle: (shelterMap) async {
+                    final provider = context.read<FavoriteProvider>();
+                    final tableName = getTableName(shelterMap);
+                    final name = shelterMap['name'];
+
+                    await provider.toggleFavorite(tableName, name);
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          provider.isFavorite(name)
+                              ? '즐겨찾기에 추가되었습니다.'
+                              : '즐겨찾기에서 제거되었습니다.',
+                        ),
+                        duration: const Duration(seconds: 1),
+                      ),
+                    );
+                  },
+                  onNavigate: (_) {},
+                );
               },
-              currentPosition: createMockPosition(widget.start),
-              onFavoriteToggle: (_) {},
-              onNavigate: (_) {},
             ),
           ),
         ],
