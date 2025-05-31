@@ -10,12 +10,14 @@ import 'package:shelter/services/user_location.dart';
 import 'package:shelter/services/filter_shelters.dart';
 import 'package:shelter/models/shelter.dart';
 import 'package:shelter/screens/search/search_screen.dart';
-import 'package:shelter/map/shelter_osm_map.dart';
 import 'package:shelter/component/bottomSheet/ShelterBottomSheet.dart';
 import 'package:shelter/component/bottomSheet/data/ShelterDetailView.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shelter/screens/navigation/navigation_preview_screen.dart';
+import 'package:shelter/screens/navigation/navigation_screen.dart';
+import 'package:shelter/screens/settings/SettingsMainScreens.dart';
+import 'package:shelter/theme/color.dart';
+import 'package:shelter/utils/favorite_utils.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -32,6 +34,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final ShelterService _shelterService = ShelterService(); // 대피소 서비스
   Shelter? _selectedShelter; // 선택된 대피소 정보를 담는 변수
 
+  List<Shelter> _nearbyShelters = [];
+  bool _showNearbyList = false;
+
   List<String> _recentSearches = [];
 
   @override
@@ -39,6 +44,14 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _getUserLocation();
     _loadRecentSearches();
+  }
+
+  Color _getMarkerColor(Shelter shelter) {
+    if (shelter.earthquakeSafe) return Colors.purple; // 지진
+    if (shelter.tsunamiSafe) return Colors.green; // 해일
+    if (!shelter.earthquakeSafe && !shelter.tsunamiSafe)
+      return AppColors.blue; // 민방위
+    return Colors.grey;
   }
 
   void _loadRecentSearches() async {
@@ -69,8 +82,9 @@ class _HomeScreenState extends State<HomeScreen> {
         _currentPosition = currentLatLng;
       });
 
-      _mapController.move(currentLatLng, 16.0); // 가까운 줌레벨로 설정
-
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _mapController.move(currentLatLng, 16.0);
+      });
       await _shelterService.initialize();
 
       // 반경 거리 계산용 도구
@@ -130,6 +144,13 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
 
+      nearbyShelters.sort((a, b) {
+        final distA = distance(currentLatLng, LatLng(a.latitude, a.longitude));
+        final distB = distance(currentLatLng, LatLng(b.latitude, b.longitude));
+        return distA.compareTo(distB);
+      });
+      nearbyShelters = nearbyShelters.take(10).toList();
+
       setState(() {
         _shelterMarkers =
             nearbyShelters.map((shelter) {
@@ -143,10 +164,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       _selectedShelter = shelter;
                     });
                   },
-                  child: const Icon(Icons.location_pin, color: Colors.green),
+                  child: Icon(
+                    Icons.location_pin,
+                    color: _getMarkerColor(shelter),
+                    size: 40,
+                  ),
                 ),
               );
             }).toList();
+
+        _nearbyShelters = nearbyShelters.take(10).toList();
+        _showNearbyList = true;
       });
     } catch (e) {
       print('❌ 위치 또는 대피소 로딩 실패: $e');
@@ -159,11 +187,15 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Stack(
         children: [
           // 지도
-          ShelterOsmMap(
-            mapController: _mapController,
-            initialCenter: _currentPosition ?? LatLng(37.5665, 126.9780),
-            shelterMarkers: _shelterMarkers,
+          ShelterMap(
             currentPosition: _currentPosition,
+            shelterMarkers: _shelterMarkers,
+            mapController: _mapController,
+            onMapTap: () {
+              setState(() {
+                _selectedShelter = null;
+              });
+            },
           ),
 
           //검색창
@@ -181,41 +213,24 @@ class _HomeScreenState extends State<HomeScreen> {
                       MaterialPageRoute(builder: (_) => const SearchScreen()),
                     );
                   },
+                  onMenuTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const SettingsMainScreen(),
+                      ),
+                    );
+                  },
                   searchText: '',
                 ),
                 const SizedBox(height: 10),
-                ..._recentSearches.map(
-                  (keyword) => Padding(
-                    padding: const EdgeInsets.only(bottom: 6),
-                    child: GestureDetector(
-                      onTap: () {
-                        _saveRecentSearch(keyword);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (_) => SearchScreen(initialKeyword: keyword),
-                          ),
-                        );
-                      },
-                      child: Text(
-                        '• $keyword',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
 
           // 현재 위치 버튼
-          AnimatedPositioned(
-            duration: const Duration(milliseconds: 300),
-            bottom: _selectedShelter != null ? 360 : 280,
+          Positioned(
+            bottom: 360,
             right: 16,
             child: GpsButton(mapController: _mapController),
           ),
@@ -245,11 +260,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   altitudeAccuracy: 0,
                   headingAccuracy: 0,
                 ),
-                onFavoriteToggle: (shelterMap) {
-                  setState(() {
-                    _selectedShelter = _selectedShelter!.copyWith(
-                      isFavorite: !_selectedShelter!.isFavorite,
-                    );
+                onFavoriteToggle: (shelterMap) async {
+                  await toggleFavoriteAndRefresh(context, shelterMap, () {
+                    setState(() {
+                      _selectedShelter = _selectedShelter!.copyWith(
+                        isFavorite: !_selectedShelter!.isFavorite,
+                      );
+                    });
                   });
                 },
                 onNavigate: (shelterMap) {
@@ -257,16 +274,51 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                       builder:
-                          (_) => NavigationPreviewScreen(
+                          (_) => NavigationScreen(
                             start: _currentPosition!,
                             destination: LatLng(
                               _selectedShelter!.latitude,
                               _selectedShelter!.longitude,
                             ),
+                            shelter: _selectedShelter!,
                           ),
                     ),
                   );
                 },
+              ),
+            ),
+          if (_showNearbyList && _selectedShelter == null)
+            ShelterBottomSheet(
+              mode: SheetMode.list,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(16, 8, 16, 4),
+                    child: Text(
+                      '현재 위치에서 가까운 대피소',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.black,
+                      ),
+                    ),
+                  ),
+                  const Divider(height: 1),
+                  ..._nearbyShelters.map((shelter) {
+                    return ListTile(
+                      title: Text(shelter.name),
+                      subtitle: Text(shelter.address),
+                      onTap: () {
+                        setState(() {
+                          _selectedShelter = shelter;
+                          _showNearbyList = false;
+                        });
+                      },
+                    );
+                  }).toList(),
+                ],
               ),
             ),
         ],
