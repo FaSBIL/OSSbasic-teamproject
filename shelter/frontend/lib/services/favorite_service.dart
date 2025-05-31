@@ -1,13 +1,15 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:shelter/models/shelter.dart';
+import 'package:path_provider/path_provider.dart';
 
 class FavoriteService {
   static const dbFileName = 'shelters.db';
 
   Future<Database> _getDatabase() async {
-    final dbPath = await getDatabasesPath();
-    return openDatabase(join(dbPath, dbFileName));
+    final dir = await getApplicationDocumentsDirectory();
+    final dbPath = join(dir.path, dbFileName);
+    return openDatabase(dbPath);
   }
 
   Future<Database> getDatabase() {
@@ -31,7 +33,7 @@ class FavoriteService {
   }
 
   /// 즐겨찾기 토글
-  Future<void> toggleFavorite(String tableName, String name) async {
+  Future<int> toggleFavorite(String tableName, String name) async {
     final db = await _getDatabase();
     final current = await isFavorite(tableName, name);
     final newValue = current ? 0 : 1;
@@ -42,6 +44,8 @@ class FavoriteService {
       where: 'name = ?',
       whereArgs: [name],
     );
+
+    return newValue; // 변경된 값 리턴
   }
 
   /// 해당 테이블에서 즐겨찾기된 shelter 목록 반환
