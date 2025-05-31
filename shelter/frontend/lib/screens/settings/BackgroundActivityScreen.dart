@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import '../../theme/color.dart';
 import '../../theme/typography.dart';
 import '../../component/settingItem/ToggleSwitch.dart';
+import '../../controllers/tts_controller.dart';
 
 class BackgroundActivityScreen extends StatefulWidget {
   const BackgroundActivityScreen({super.key});
@@ -12,7 +14,21 @@ class BackgroundActivityScreen extends StatefulWidget {
 }
 
 class _BackgroundActivityScreenState extends State<BackgroundActivityScreen> {
+  final TTSController _ttsController = TTSController();
   bool isBackgroundEnabled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initSetting(); // 초기화 
+  }
+
+  Future<void> _initSetting() async {
+    await _ttsController.loadBackgroundSetting();
+    setState(() {
+      isBackgroundEnabled = _ttsController.isBackgroundEnabled;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,10 +51,15 @@ class _BackgroundActivityScreenState extends State<BackgroundActivityScreen> {
                 const Text('앱을 닫아도 네비게이션 계속', style: AppTextStyles.subtitle),
                 ToggleSwitch(
                   isOn: isBackgroundEnabled,
-                  onChanged:
-                      (value) => setState(() {
-                        isBackgroundEnabled = value;
-                      }),
+                  onChanged: (value) async {
+                    setState(() => isBackgroundEnabled = value);
+                    await _ttsController.saveBackgroundSetting(value);
+                    if(value) {
+                      FlutterBackgroundService().startService();
+                    }else {
+                      FlutterBackgroundService().invoke('stopService');
+                    }
+                  },
                 ),
               ],
             ),

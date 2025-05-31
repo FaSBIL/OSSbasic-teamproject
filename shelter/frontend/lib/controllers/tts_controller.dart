@@ -8,11 +8,12 @@ class TTSController {
   static final TTSController _instance = TTSController._internal();
   factory TTSController() => _instance;
   TTSController._internal();
-  
+
   final FlutterTts _flutterTts = FlutterTts();
   bool _isVoiceEnabled = true;
   double _currentVolume = 1.0;
   bool _allowVoiceInSilentMode = false;
+  bool _isBackgroundEnabled = false;
 
 
   /// TTS 초기화: 언어, 속도, 볼륨, 피치 설정
@@ -32,6 +33,7 @@ class TTSController {
   bool get isVoiceEnabled => _isVoiceEnabled;
   double get currentVolume => _currentVolume;
   bool get allowVoiceInSilentMode => _allowVoiceInSilentMode;
+  bool get isBackgroundEnabled => _isBackgroundEnabled;
 
   Future<void> setVoiceEnabled(bool enabled) async {
     _isVoiceEnabled = enabled;
@@ -53,6 +55,19 @@ class TTSController {
     _allowVoiceInSilentMode = allowed;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('allowVoiceInSilentMode', allowed);
+  }
+
+  // 백그라운드 설정 가져오기
+  Future<void> loadBackgroundSetting() async {
+    final prefs = await SharedPreferences.getInstance();
+    _isBackgroundEnabled = prefs.getBool('isBackgroundEnabled') ?? false;
+  }
+
+  // 백그라운드 설정 저장
+  Future<void> saveBackgroundSetting(bool enabled) async {
+    _isBackgroundEnabled = enabled;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isBackgroundEnabled', enabled);
   }
 
   // 주어진 텍스트를 음성으로 읽음
