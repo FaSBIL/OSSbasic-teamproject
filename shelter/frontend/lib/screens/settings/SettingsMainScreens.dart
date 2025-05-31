@@ -41,23 +41,6 @@ class SettingsMainScreen extends StatelessWidget {
                         AppRoutes.backgroundActivity,
                       ),
                 ),
-                SettingsNavItem(
-                  label: '테마 모드',
-                  onTap:
-                      () => Navigator.pushNamed(context, AppRoutes.themeMode),
-                ),
-
-                SettingsNavItem(
-                  label: '위치 서비스',
-                  onTap:
-                      () => Navigator.pushNamed(
-                        context,
-                        AppRoutes.location,
-                      ), // 위치 화면으로 이동
-                ),
-
-                const SizedBox(height: 8),
-
                 const ConfigItem(label: 'GPS', value: 'ON'),
                 const ConfigItem(label: '앱 정보', value: 'version 1.0'),
               ],

@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:shelter/screens/settings/SettingsMainScreens.dart';
-import 'screens/test/test.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:shelter/controllers/tts_controller.dart';
+import 'screens/test/test04.dart';
 import 'routes/AppRoutes.dart';
-import 'screens/location_screen.dart';
 import 'screens/home.dart';
-import 'screens/test/test03.dart';
-import 'package:shelter/screens/search/search_screen.dart';
+import './services/background_service.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  final ttsController = TTSController();
+  await ttsController.loadBackgroundSetting();
+
+  if(ttsController.isBackgroundEnabled){
+    await initializeService();
+    FlutterBackgroundService().startService();
+  }
   runApp(const MyApp());
 }
 
