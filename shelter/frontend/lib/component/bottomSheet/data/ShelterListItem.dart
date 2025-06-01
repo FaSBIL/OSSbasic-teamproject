@@ -16,6 +16,7 @@ class ShelterListItem extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback onFavoriteToggle;
   final VoidCallback onNavigatePressed;
+  final String navButtonText;
 
   const ShelterListItem({
     super.key,
@@ -28,6 +29,7 @@ class ShelterListItem extends StatelessWidget {
     required this.onTap,
     required this.onFavoriteToggle,
     required this.onNavigatePressed,
+    required this.navButtonText,
   });
 
   @override
@@ -58,7 +60,7 @@ class ShelterListItem extends StatelessWidget {
                     FavoriteButton( onFavoriteToggle: onFavoriteToggle,),
                     const SizedBox(width: 8),
                     NavButton(
-                      text: '안내 시작',
+                      text: navButtonText,
                       onPressed: onNavigatePressed,
                     ),
                   ],

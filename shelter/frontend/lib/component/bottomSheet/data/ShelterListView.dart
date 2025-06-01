@@ -10,6 +10,7 @@ class ShelterListView extends StatelessWidget {
   final void Function(Map<String, dynamic>) onTapItem;
   final void Function(Map<String, dynamic>) onFavoriteToggle;
   final void Function(Map<String, dynamic>) onNavigate;
+  final String navButtonText;
 
   const ShelterListView({
     super.key,
@@ -19,6 +20,7 @@ class ShelterListView extends StatelessWidget {
     required this.onTapItem,
     required this.onFavoriteToggle,
     required this.onNavigate,
+    required this.navButtonText,
   });
 
   @override
@@ -58,6 +60,7 @@ class ShelterListView extends StatelessWidget {
                   onTap: () => onTapItem(shelter),
                   onFavoriteToggle: () => onFavoriteToggle(shelter),
                   onNavigatePressed: () => onNavigate(shelter),
+                  navButtonText: navButtonText,
                 ),
               );
             },
