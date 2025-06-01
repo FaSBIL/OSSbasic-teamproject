@@ -18,8 +18,8 @@ class ShelterBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final initialSize = mode == SheetMode.list ? 0.4 : 0.35;
-    final snapSizes = mode == SheetMode.list ? [0.06, 0.4, 0.95] : [0.06, 0.35];
-    final maxSize = mode == SheetMode.list ? 0.95 : initialSize;
+    final snapSizes = mode == SheetMode.list ? [0.06, 0.4, 0.86] : [0.06, 0.35];
+    final maxSize = mode == SheetMode.list ? 0.86 : initialSize;
     final paddingSize = mode == SheetMode.list ? EdgeInsets.only(top: 5, bottom: 30) : EdgeInsets.only(top: 5, bottom: 45);
 
     return DraggableScrollableSheet(
