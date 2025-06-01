@@ -26,7 +26,6 @@ String getTableName(Map<String, dynamic> shelter) {
   return 'seoul'; // 기본값 (없을 경우)
 }
 
-/// 즐겨찾기 상태를 토글하고 DB에 반영하며 UI 업데이트 콜백 실행
 Future<void> toggleFavoriteAndRefresh(
   BuildContext context,
   Map<String, dynamic> shelter,
@@ -34,15 +33,14 @@ Future<void> toggleFavoriteAndRefresh(
 ) async {
   final tableName = getTableName(shelter);
   final name = shelter['name'];
-  final current = shelter['isFavorite'] ?? 0;
-  final newValue = current == 1 ? 0 : 1;
 
-  await FavoriteService().toggleFavorite(tableName, name);
+  // 즐겨찾기 토글 → newValue(1 or 0)로 반환받기
+  final newValue = await FavoriteService().toggleFavorite(tableName, name);
 
-  // UI 업데이트 콜백 실행
+  // UI 업데이트
   onUpdated();
 
-  // 사용자 피드백 스낵바
+  // 사용자 피드백
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Text(newValue == 1 ? '즐겨찾기에 추가되었습니다.' : '즐겨찾기에서 제거되었습니다.'),
