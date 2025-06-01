@@ -134,6 +134,7 @@ class _BottomSheetTestScreenState extends State<BottomSheetTestScreen> {
                       onTapItem: (shelter) {
                         print('onTap click: ${shelter['name']}');
                       },
+                      navButtonText: '안내 시작',
                     ),
                   ),
           ),
