@@ -9,6 +9,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:shelter/map/shelter_map.dart';
 import 'package:shelter/theme/color.dart';
 import 'package:shelter/utils/favorite_utils.dart';
+import 'package:shelter/component/input/MainInput.dart';
+import 'package:shelter/screens/settings/SettingsMainScreens.dart';
+import 'package:shelter/screens/search/search_screen.dart';
 
 class SearchMapScreen extends StatefulWidget {
   final String region;
@@ -114,7 +117,6 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text('${widget.region} 대피소 지도')),
       body: Stack(
         children: [
           ShelterMap(
@@ -122,6 +124,36 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
             shelterMarkers: markers,
             mapController: _mapController,
             initialCenter: center,
+          ),
+
+          //검색창
+          Positioned(
+            top: 60,
+            left: 16,
+            right: 16,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                MainInput(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const SearchScreen()),
+                    );
+                  },
+                  onMenuTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const SettingsMainScreen(),
+                      ),
+                    );
+                  },
+                  searchText: _selectedShelter?.name ?? '검색 결과',
+                ),
+                const SizedBox(height: 10),
+              ],
+            ),
           ),
 
           if (_selectedShelter != null && widget.currentPosition != null)
