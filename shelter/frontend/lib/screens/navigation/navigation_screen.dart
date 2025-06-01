@@ -4,6 +4,8 @@ import 'package:shelter/theme/color.dart';
 import 'package:shelter/utils/distance_calculator.dart' as calc;
 import 'package:flutter_map/flutter_map.dart';
 import 'package:shelter/map/shelter_map.dart';
+import '../../services/dijkstra_service.dart';
+import '../../utils/db_loader.dart' as loader;
 import 'package:shelter/component/bottomSheet/ShelterBottomSheet.dart';
 import 'package:shelter/component/bottomSheet/data/ShelterDetailView.dart';
 import 'package:geolocator/geolocator.dart';
@@ -11,6 +13,7 @@ import 'package:shelter/models/shelter.dart';
 import 'package:shelter/utils/favorite_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:shelter/provider/favorite_provider.dart';
+
 
 Position createMockPosition(LatLng latLng) {
   return Position(
@@ -44,12 +47,17 @@ class NavigationScreen extends StatefulWidget {
 }
 
 class _NavigationScreenState extends State<NavigationScreen> {
+  final DijkstraService _dijkstraService = DijkstraService();
+  final MapController _mapController = MapController();
+
   String distance = '계산 중...';
+  List<LatLng> _path = [];
 
   @override
   void initState() {
     super.initState();
     _loadDistance();
+    _calculatePath();
   }
 
   Future<void> _loadDistance() async {
@@ -60,9 +68,56 @@ class _NavigationScreenState extends State<NavigationScreen> {
       widget.destination.longitude,
     );
 
-    setState(() {
-      distance = result;
-    });
+    if (mounted) {
+      setState(() {
+        distance = result;
+      });
+    }
+  }
+
+  Future<void> _calculatePath() async {
+    try {
+      await _dijkstraService.loadRegionData(
+        widget.start.latitude,
+        widget.start.longitude,
+      );
+
+      final int? startNode = await _dijkstraService.findClosestNode(
+        widget.start.latitude,
+        widget.start.longitude,
+      );
+      final int? endNode = await _dijkstraService.findClosestNode(
+        widget.destination.latitude,
+        widget.destination.longitude,
+      );
+
+      if (startNode == null || endNode == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('경로 탐색에 실패했습니다.')),
+          );
+        }
+        return;
+      }
+
+      final List<int> nodePath =
+          await _dijkstraService.findShortestPath(startNode, endNode);
+      final List<LatLng> latLngPath =
+          await _dijkstraService.getLatLngListFromNodeIds(nodePath);
+
+     if (mounted) {
+        setState(() {
+          _path = latLngPath;
+        });
+      }
+    } catch (e) {
+      print('[경로 탐색 실패] $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('경로 탐색 중 오류가 발생했습니다.')),
+        );
+      }
+    }
   }
 
   @override
@@ -92,6 +147,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   child: const Icon(Icons.location_on, color: AppColors.blue),
                 ),
               ],
+              path: _path, 
             ),
           ),
 

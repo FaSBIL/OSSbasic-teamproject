@@ -17,6 +17,7 @@ class ShelterMap extends StatefulWidget {
   final void Function()? onMapTap;
   final void Function(LatLng latLng)? onShelterTap;
   final LatLng? initialCenter;
+  final List<LatLng>? path;
 
   const ShelterMap({
     super.key,
@@ -26,6 +27,7 @@ class ShelterMap extends StatefulWidget {
     this.onMapTap,
     this.onShelterTap,
     this.initialCenter,
+    this.path,
   });
 
   @override
@@ -80,6 +82,16 @@ class _ShelterMapState extends State<ShelterMap> {
   @override
   Widget build(BuildContext context) {
     final LatLng fallback = LatLng(36.5, 127.5); // currentPosition 없을 때 기본 위치
+    if (widget.path != null && widget.path!.isNotEmpty)
+      PolylineLayer(
+        polylines: [
+         Polyline(
+           points: widget.path!,
+           color: Colors.red,
+            strokeWidth: 4,
+         )
+        ],
+     );
 
     return FutureBuilder<MbTilesTileProvider>(
       future: _tileProviderFuture,
@@ -125,10 +137,21 @@ class _ShelterMapState extends State<ShelterMap> {
                 ...widget.shelterMarkers,
               ],
             ),
+            if (widget.path != null && widget.path!.isNotEmpty)
+    PolylineLayer(
+      polylines: [
+        Polyline(
+          points: widget.path!,
+          color: Colors.lightBlue,
+          strokeWidth: 4,
+        )
+      ],
+    ),
           ],
         );
       },
     );
+    
   }
 
   @override
