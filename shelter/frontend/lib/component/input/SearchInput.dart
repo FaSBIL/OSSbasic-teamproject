@@ -25,8 +25,7 @@ class SearchInput extends StatelessWidget {
 
     return SafeArea(
       child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
           color: AppColors.lightGray,
           borderRadius: BorderRadius.circular(8),
@@ -53,6 +52,7 @@ class SearchInput extends StatelessWidget {
                   hintStyle: AppTextStyles.body.copyWith(color: AppColors.gray),
                   border: InputBorder.none,
                   isDense: true,
+                  contentPadding: EdgeInsets.zero,
                 ),
               ),
             ),

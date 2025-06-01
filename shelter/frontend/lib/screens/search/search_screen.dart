@@ -123,8 +123,9 @@ class _SearchScreenState extends State<SearchScreen> {
           SafeArea(
             child: Column(
               children: [
+                SizedBox(height: 10),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+                  padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
                   child: SearchInput(
                     controller: _controller,
                     onSubmitted: (value) {

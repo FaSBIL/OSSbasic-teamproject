@@ -56,11 +56,13 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Marker> _shelterMarkers = [];
   final MapController _mapController = MapController();
 
+  final DraggableScrollableController _sheetController =
+      DraggableScrollableController();
+
   final ShelterService _shelterService = ShelterService(); // 대피소 서비스
   Shelter? _selectedShelter; // 선택된 대피소 정보를 담는 변수
 
   List<Shelter> _nearbyShelters = [];
-  bool _showNearbyList = false;
 
   @override
   void initState() {
@@ -209,7 +211,6 @@ class _HomeScreenState extends State<HomeScreen> {
             }).toList();
 
         _nearbyShelters = nearbyShelters.take(10).toList();
-        _showNearbyList = true;
       });
     } catch (e) {
       print('❌ 위치 또는 대피소 로딩 실패: $e');
@@ -235,7 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
           //검색창
           Positioned(
-            top: 60,
+            top: 70,
             left: 16,
             right: 16,
             child: Column(
@@ -273,6 +274,7 @@ class _HomeScreenState extends State<HomeScreen> {
           if (_selectedShelter != null && _currentPosition != null)
             ShelterBottomSheet(
               mode: SheetMode.detail,
+              controller: _sheetController,
               child: Builder(
                 builder: (context) {
                   final provider = context.watch<FavoriteProvider>();
@@ -359,11 +361,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               ),
-            ),
-
-          if (_showNearbyList && _selectedShelter == null)
+            )
+          else
             ShelterBottomSheet(
               mode: SheetMode.list,
+              controller: _sheetController,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -391,10 +393,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               s.address == shelter.address,
                           orElse: () => shelter,
                         );
-
                         setState(() {
                           _selectedShelter = tappedShelter;
-                          _showNearbyList = false;
                         });
                       },
                     );
