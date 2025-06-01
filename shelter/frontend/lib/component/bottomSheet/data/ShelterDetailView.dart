@@ -77,18 +77,15 @@ class ShelterDetailView extends StatelessWidget {
                   Clipboard.setData(
                     ClipboardData(text: shelters['address'] ?? ''),
                   );
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('주소가 복사되었습니다.')),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(const SnackBar(content: Text('주소가 복사되었습니다.')));
                 },
                 child: const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
                     '복사',
-                    style: TextStyle(
-                      color: AppColors.blue,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: AppColors.blue, fontSize: 14),
                   ),
                 ),
               ),

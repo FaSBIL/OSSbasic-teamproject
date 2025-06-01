@@ -5,6 +5,7 @@ import 'package:shelter/component/buttons/FavoriteButton.dart';
 import 'package:shelter/component/buttons/NavButton.dart';
 import 'package:shelter/component/icon/CustomIcon.dart';
 import 'package:shelter/component/icon/IconUtils.dart';
+import 'package:shelter/utils/favorite_utils.dart';
 
 class ShelterListItem extends StatelessWidget {
   final String title;
@@ -38,26 +39,43 @@ class ShelterListItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: AppColors.lightGray, width: 1.0,),),
+          border: Border(
+            bottom: BorderSide(color: AppColors.lightGray, width: 1.0),
+          ),
         ),
-        padding: const  EdgeInsets.symmetric(vertical: 24.0, horizontal: 20),
+        padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text( title, style: AppTextStyles.subtitle),
+                Text(title, style: AppTextStyles.subtitle),
                 const SizedBox(height: 6),
                 Text('$distance | $address', style: AppTextStyles.captionGray),
                 const SizedBox(height: 14),
                 Row(
                   children: [
-                    if(isTsunamiSafe) const CustomIcon( iconData: AppIcons.tsunami, color: AppColors.darkGray),
-                    if(isTsunamiSafe) const SizedBox(width: 8),
-                    if(isEarthquakeSafe) const CustomIcon( iconData: AppIcons.earthquake, color: AppColors.darkGray),
-                    if(isEarthquakeSafe) const SizedBox(width: 8),
-                    FavoriteButton( onFavoriteToggle: onFavoriteToggle,),
+                    if (isTsunamiSafe)
+                      const CustomIcon(
+                        iconData: AppIcons.tsunami,
+                        color: AppColors.darkGray,
+                      ),
+                    if (isTsunamiSafe) const SizedBox(width: 8),
+                    if (isEarthquakeSafe)
+                      const CustomIcon(
+                        iconData: AppIcons.earthquake,
+                        color: AppColors.darkGray,
+                      ),
+                    if (isEarthquakeSafe) const SizedBox(width: 8),
+                    Builder(
+                      builder:
+                          (context) => FavoriteButton(
+                            isFavorited: isFavorite,
+                            onFavoriteToggle: onFavoriteToggle,
+                          ),
+                    ),
+
                     const SizedBox(width: 8),
                     NavButton(
                       text: navButtonText,
@@ -72,4 +90,4 @@ class ShelterListItem extends StatelessWidget {
       ),
     );
   }
-} 
+}

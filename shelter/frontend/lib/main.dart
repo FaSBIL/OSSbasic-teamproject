@@ -5,18 +5,45 @@ import 'screens/test/test04.dart';
 import 'routes/AppRoutes.dart';
 import 'screens/home.dart';
 import './services/background_service.dart';
+import 'package:provider/provider.dart';
+import 'package:shelter/provider/favorite_provider.dart';
+import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+
+Future<void> copyDatabaseFromAssets() async {
+  final dir = await getApplicationDocumentsDirectory();
+  final dbPath = '${dir.path}/shelters.db';
+
+  if (await File(dbPath).exists()) {
+    print('[DB] 이미 복사됨');
+    return;
+  }
+
+  // assets에서 읽어서 내부저장소에 복사
+  final data = await rootBundle.load('assets/shelter_db/shelters.db');
+  final bytes = data.buffer.asUint8List();
+  await File(dbPath).writeAsBytes(bytes, flush: true);
+
+  print('[DB] 복사 완료');
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  await copyDatabaseFromAssets();
   final ttsController = TTSController();
   await ttsController.loadBackgroundSetting();
 
-  if(ttsController.isBackgroundEnabled){
+  if (ttsController.isBackgroundEnabled) {
     await initializeService();
     FlutterBackgroundService().startService();
   }
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => FavoriteProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

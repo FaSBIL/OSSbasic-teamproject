@@ -13,6 +13,8 @@ import 'package:shelter/component/input/MainInput.dart';
 import 'package:shelter/screens/settings/SettingsMainScreens.dart';
 import 'package:shelter/screens/search/search_screen.dart';
 import 'package:shelter/utils/navigation_animation.dart';
+import 'package:provider/provider.dart';
+import 'package:shelter/provider/favorite_provider.dart';
 
 class SearchMapScreen extends StatefulWidget {
   final String region;
@@ -158,51 +160,78 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
           if (_selectedShelter != null && widget.currentPosition != null)
             ShelterBottomSheet(
               mode: SheetMode.detail,
-              child: ShelterDetailView(
-                shelters: {
-                  'name': _selectedShelter!.name,
-                  'address': _selectedShelter!.address,
-                  'latitude': _selectedShelter!.latitude,
-                  'longitude': _selectedShelter!.longitude,
-                  'earthquake': _selectedShelter!.earthquakeSafe ? 1 : 0,
-                  'tsunami': _selectedShelter!.tsunamiSafe ? 1 : 0,
-                  'isFavorite': _selectedShelter!.isFavorite ? 1 : 0,
-                },
-                currentPosition: Position(
-                  latitude: widget.currentPosition!.latitude,
-                  longitude: widget.currentPosition!.longitude,
-                  timestamp: DateTime.now(),
-                  accuracy: 0,
-                  altitude: 0,
-                  heading: 0,
-                  speed: 0,
-                  speedAccuracy: 0,
-                  altitudeAccuracy: 0,
-                  headingAccuracy: 0,
-                ),
-                onFavoriteToggle: (shelterMap) async {
-                  await toggleFavoriteAndRefresh(context, shelterMap, () {
-                    setState(() {
-                      _selectedShelter = _selectedShelter!.copyWith(
-                        isFavorite: !_selectedShelter!.isFavorite,
-                      );
-                    });
-                  });
-                },
-                onNavigate: (_) {
-                  Navigator.pushNamed(
-                    context,
-                    '/navigationPreview',
-                    arguments: {
-                      'start': widget.currentPosition,
-                      'destination': LatLng(
-                        _selectedShelter!.latitude,
-                        _selectedShelter!.longitude,
-                      ),
+              child: Builder(
+                builder: (context) {
+                  final favoriteProvider = context.watch<FavoriteProvider>();
+                  final isFavorite = favoriteProvider.isFavorite(
+                    _selectedShelter!.name,
+                  );
+
+                  return ShelterDetailView(
+                    shelters: {
+                      'name': _selectedShelter!.name,
+                      'address': _selectedShelter!.address,
+                      'latitude': _selectedShelter!.latitude,
+                      'longitude': _selectedShelter!.longitude,
+                      'earthquake': _selectedShelter!.earthquakeSafe ? 1 : 0,
+                      'tsunami': _selectedShelter!.tsunamiSafe ? 1 : 0,
+                      'isFavorite': isFavorite ? 1 : 0,
                     },
+                    currentPosition: Position(
+                      latitude: widget.currentPosition!.latitude,
+                      longitude: widget.currentPosition!.longitude,
+                      timestamp: DateTime.now(),
+                      accuracy: 0,
+                      altitude: 0,
+                      heading: 0,
+                      speed: 0,
+                      speedAccuracy: 0,
+                      altitudeAccuracy: 0,
+                      headingAccuracy: 0,
+                    ),
+                    onFavoriteToggle: (shelterMap) async {
+                      final provider = context.read<FavoriteProvider>();
+                      final tableName = getTableName(shelterMap);
+                      final name = _selectedShelter!.name;
+
+                      await provider.toggleFavorite(tableName, name);
+
+                      // 상태 갱신
+                      setState(() {
+                        _selectedShelter = _selectedShelter!.copyWith(
+                          isFavorite: provider.isFavorite(name),
+                        );
+                      });
+
+                      // 사용자 피드백
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            provider.isFavorite(name)
+                                ? '즐겨찾기에 추가되었습니다.'
+                                : '즐겨찾기에서 제거되었습니다.',
+                          ),
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
+                    },
+                    onNavigate: (_) {
+                      Navigator.pushNamed(
+                        context,
+                        '/navigation',
+                        arguments: {
+                          'start': widget.currentPosition,
+                          'destination': LatLng(
+                            _selectedShelter!.latitude,
+                            _selectedShelter!.longitude,
+                          ),
+                          'shelter': _selectedShelter,
+                        },
+                      );
+                    },
+                    navButtonText: '경로 보기',
                   );
                 },
-                navButtonText: '경로 보기',
               ),
             ),
         ],
