@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'dart:convert'; // LineSplitter, utf8 등에 필요
+import 'dart:convert';
 
 void main(List<String> args) async {
   const lcovPath = 'coverage/lcov.info';
@@ -14,7 +14,7 @@ void main(List<String> args) async {
   }
 
   // ---------- lcov 파싱 ----------
-  final Map<String, _FileStat> stats = {}; // path  →  통계
+  final Map<String, _FileStat> stats = {}; // path → 통계
   String? currentPath;
 
   await for (final line in lcovFile
@@ -22,8 +22,8 @@ void main(List<String> args) async {
       .transform(utf8.decoder)
       .transform(const LineSplitter())) {
     if (line.startsWith('SF:')) {
-      final path = line.substring(3); // 확실히 non-null
-      stats[path] = _FileStat(); // 🅱 Map 키는 String
+      final path = line.substring(3);
+      stats[path] = _FileStat();
       currentPath = path;
     } else if (line.startsWith('LF:') && currentPath != null) {
       stats[currentPath]!.found = int.parse(line.substring(3));
@@ -40,12 +40,18 @@ void main(List<String> args) async {
   }
 
   // ---------- 표 출력 ----------
-  const nameWidth = 60;
+  const nameWidth = 80; // ← 경로까지 보이도록 폭 확장
   String pad(String s, int w, [bool right = false]) =>
       right ? s.padLeft(w) : s.padRight(w);
 
+  String shorten(String path, int width) {
+    // 너무 길면 … 로 앞부분 생략
+    if (path.length <= width) return path;
+    return '...' + path.substring(path.length - width + 3);
+  }
+
   stdout.writeln(
-    '${pad("Name", nameWidth)}│${pad("Stmts", 7, true)}│'
+    '${pad("Name (with path)", nameWidth)}│${pad("Stmts", 7, true)}│'
     '${pad("Miss", 6, true)}│${pad("Cover", 6, true)}',
   );
   stdout.writeln('─' * (nameWidth + 23));
@@ -54,12 +60,12 @@ void main(List<String> args) async {
       stats.entries.toList()..sort((a, b) => a.key.compareTo(b.key));
 
   for (final e in entries) {
-    final fileName = e.key.replaceAll('\\', '/').split('/').last;
+    final dispPath = shorten(e.key.replaceAll('\\', '/'), nameWidth);
     final miss = e.value.found - e.value.hit;
     final pctStr = '${_pct(e.value.hit, e.value.found)}%';
 
     stdout.writeln(
-      '${pad(fileName, nameWidth)}│${pad("${e.value.found}", 7, true)}│'
+      '${pad(dispPath, nameWidth)}│${pad("${e.value.found}", 7, true)}│'
       '${pad("$miss", 6, true)}│${pad(pctStr, 6, true)}',
     );
   }
@@ -75,8 +81,8 @@ void main(List<String> args) async {
 
 /// 파일별 라인 통계
 class _FileStat {
-  int found = 0; // 총 라인 수
-  int hit = 0; // 커버된 라인 수
+  int found = 0;
+  int hit = 0;
 }
 
 /// 퍼센트(정수) 계산
