@@ -12,6 +12,7 @@ class ShelterDetailView extends StatelessWidget {
   final Position? currentPosition;
   final void Function(Map<String, dynamic>) onFavoriteToggle;
   final void Function(Map<String, dynamic>) onNavigate;
+  final String navButtonText;
 
   const ShelterDetailView({
     super.key,
@@ -19,6 +20,7 @@ class ShelterDetailView extends StatelessWidget {
     required this.currentPosition,
     required this.onFavoriteToggle,
     required this.onNavigate,
+    this.navButtonText = '안내 시작',
   });
 
   @override
@@ -52,6 +54,7 @@ class ShelterDetailView extends StatelessWidget {
               onFavoriteToggle: () => onFavoriteToggle(shelters),
               onNavigatePressed: () => onNavigate(shelters),
               onTap: () {},
+              navButtonText: navButtonText,
             );
           },
         ),
@@ -74,18 +77,15 @@ class ShelterDetailView extends StatelessWidget {
                   Clipboard.setData(
                     ClipboardData(text: shelters['address'] ?? ''),
                   );
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('주소가 복사되었습니다.')),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(const SnackBar(content: Text('주소가 복사되었습니다.')));
                 },
                 child: const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
                     '복사',
-                    style: TextStyle(
-                      color: AppColors.blue,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: AppColors.blue, fontSize: 14),
                   ),
                 ),
               ),

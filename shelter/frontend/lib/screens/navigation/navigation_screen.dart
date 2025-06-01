@@ -14,7 +14,6 @@ import 'package:shelter/utils/favorite_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:shelter/provider/favorite_provider.dart';
 
-
 Position createMockPosition(LatLng latLng) {
   return Position(
     latitude: latLng.latitude,
@@ -93,19 +92,21 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
       if (startNode == null || endNode == null) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('경로 탐색에 실패했습니다.')),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(const SnackBar(content: Text('경로 탐색에 실패했습니다.')));
         }
         return;
       }
 
-      final List<int> nodePath =
-          await _dijkstraService.findShortestPath(startNode, endNode);
-      final List<LatLng> latLngPath =
-          await _dijkstraService.getLatLngListFromNodeIds(nodePath);
+      final List<int> nodePath = await _dijkstraService.findShortestPath(
+        startNode,
+        endNode,
+      );
+      final List<LatLng> latLngPath = await _dijkstraService
+          .getLatLngListFromNodeIds(nodePath);
 
-     if (mounted) {
+      if (mounted) {
         setState(() {
           _path = latLngPath;
         });
@@ -113,9 +114,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
     } catch (e) {
       print('[경로 탐색 실패] $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('경로 탐색 중 오류가 발생했습니다.')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('경로 탐색 중 오류가 발생했습니다.')));
       }
     }
   }
@@ -147,7 +148,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   child: const Icon(Icons.location_on, color: AppColors.blue),
                 ),
               ],
-              path: _path, 
+              path: _path,
             ),
           ),
 
@@ -189,6 +190,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                     );
                   },
                   onNavigate: (_) {},
+                  navButtonText: '경로안내',
                 );
               },
             ),

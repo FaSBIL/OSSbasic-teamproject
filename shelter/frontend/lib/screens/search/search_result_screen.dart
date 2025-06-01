@@ -5,6 +5,8 @@ import 'package:shelter/screens/search/search_map_screen.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:shelter/theme/color.dart';
 import 'package:shelter/services/user_location.dart';
+import 'package:shelter/provider/favorite_provider.dart';
+import 'package:provider/provider.dart';
 
 class SearchResultScreen extends StatefulWidget {
   final String keyword;
@@ -39,15 +41,23 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     final position = await UserLocationService().getCurrentLocation();
     final currentLatLng = LatLng(position.latitude, position.longitude);
 
+    final favoriteProvider = Provider.of<FavoriteProvider>(
+      context,
+      listen: false,
+    );
+
     Navigator.push(
       context,
       MaterialPageRoute(
         builder:
-            (_) => SearchMapScreen(
-              region: shelter.address,
-              shelters: [shelter],
-              currentPosition: currentLatLng, // 현재 위치 전달
-              selectedShelter: shelter,
+            (context) => ChangeNotifierProvider.value(
+              value: favoriteProvider,
+              child: SearchMapScreen(
+                region: shelter.address,
+                shelters: [shelter],
+                currentPosition: currentLatLng,
+                selectedShelter: shelter,
+              ),
             ),
       ),
     );
