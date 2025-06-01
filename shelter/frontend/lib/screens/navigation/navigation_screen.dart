@@ -190,7 +190,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
                     );
                   },
                   onNavigate: (_) {},
-                  navButtonText: '경로안내',
+                  navButtonText: '안내 시작',
                 );
               },
             ),
