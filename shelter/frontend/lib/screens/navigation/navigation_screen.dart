@@ -125,7 +125,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
-      appBar: AppBar(title: Text('경로 미리보기')),
+      appBar: AppBar(backgroundColor: AppColors.white, title: Text('경로 미리보기')),
       body: Stack(
         children: [
           // 지도

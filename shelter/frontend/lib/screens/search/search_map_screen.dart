@@ -116,7 +116,11 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text('${widget.region} 대피소 지도')),
+      backgroundColor: AppColors.white,
+      appBar: AppBar(
+        backgroundColor: AppColors.white,
+        title: Text('${widget.region} 대피소 지도'),
+      ),
       body: Stack(
         children: [
           ShelterMap(
