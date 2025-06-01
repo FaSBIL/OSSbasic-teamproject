@@ -187,13 +187,14 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                     onNavigate: (_) {
                       Navigator.pushNamed(
                         context,
-                        '/navigationPreview',
+                        '/navigation',
                         arguments: {
                           'start': widget.currentPosition,
                           'destination': LatLng(
                             _selectedShelter!.latitude,
                             _selectedShelter!.longitude,
                           ),
+                          'shelter': _selectedShelter,
                         },
                       );
                     },
