@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shelter/routes/AppRoutes.dart';
 import 'package:shelter/screens/settings/SettingsMainScreens.dart';
@@ -19,7 +20,7 @@ void main() {
   });
 
   group('AppRoutes.routes 맵 검증', () {
-    test('모든 경로 상수가 routes 맵의 키로 존재', () {
+    test('모든 경로 상수가 routes 맵에 키로 존재하고, builder가 WidgetBuilder 타입인지 확인', () {
       final routeMap = AppRoutes.routes;
       expect(
         routeMap.keys.toSet(),
@@ -32,32 +33,64 @@ void main() {
           AppRoutes.searchResult,
         }),
       );
+
+      expect(routeMap[AppRoutes.settings], isNotNull);
+      expect(routeMap[AppRoutes.settings], isA<WidgetBuilder>());
+      expect(routeMap[AppRoutes.voiceGuide], isA<WidgetBuilder>());
+      expect(routeMap[AppRoutes.backgroundActivity], isA<WidgetBuilder>());
+      expect(routeMap[AppRoutes.location], isA<WidgetBuilder>());
+      expect(routeMap[AppRoutes.shelterRegion], isA<WidgetBuilder>());
+      expect(routeMap[AppRoutes.searchResult], isA<WidgetBuilder>());
     });
 
-    // test('각 경로가 올바른 위젯 빌더와 매핑되는지 확인', () {
+    // testWidgets('"settings" 경로로 네비게이트 시 SettingsMainScreens가 렌더링되는지 확인', (
+    //   WidgetTester tester,
+    // ) async {
     //   final routeMap = AppRoutes.routes;
 
-    //   // SettingsMainScreens
-    //   final settingsBuilder = routeMap[AppRoutes.settings];
-    //   expect(settingsBuilder, isNotNull);
-    //   expect(settingsBuilder!(null), isA<SettingsMainScreens>());
+    //   await tester.pumpWidget(
+    //     MaterialApp(
+    //       initialRoute: '/',
+    //       routes: {
+    //         '/': (context) => const Scaffold(body: Text('Home')),
+    //         ...routeMap,
+    //       },
+    //     ),
+    //   );
 
-    //   // VoiceGuideScreen
-    //   final voiceBuilder = routeMap[AppRoutes.voiceGuide];
-    //   expect(voiceBuilder!(null), isA<VoiceGuideScreen>());
+    //   await tester.runAsync(() async {
+    //     Navigator.of(
+    //       tester.element(find.text('Home')),
+    //     ).pushNamed(AppRoutes.settings);
+    //     await tester.pumpAndSettle();
+    //   });
 
-    //   // BackgroundActivityScreen
-    //   final backgroundBuilder = routeMap[AppRoutes.backgroundActivity];
-    //   expect(backgroundBuilder!(null), isA<BackgroundActivityScreen>());
+    //   expect(find.byType(SettingsMainScreens), findsOneWidget);
+    // });
 
-    //   // ShelterRegionScreen
-    //   final regionBuilder = routeMap[AppRoutes.shelterRegion];
-    //   expect(regionBuilder!(null), isA<ShelterRegionScreen>());
+    // testWidgets('"searchResult" 경로로 네비게이트 시 SearchResultScreen이 렌더링되는지 확인', (
+    //   WidgetTester tester,
+    // ) async {
+    //   final routeMap = AppRoutes.routes;
 
-    //   // SearchResultScreen (이 위젯은 생성자에 인자를 받기 때문에, null을 넣어도 객체는 생성됨)
-    //   final searchBuilder = routeMap[AppRoutes.searchResult];
-    //   final maybeSearchWidget = searchBuilder!({'keyword': '테스트'});
-    //   expect(maybeSearchWidget, isA<SearchResultScreen>());
+    //   await tester.pumpWidget(
+    //     MaterialApp(
+    //       initialRoute: '/',
+    //       routes: {
+    //         '/': (context) => const Scaffold(body: Text('Home')),
+    //         ...routeMap,
+    //       },
+    //     ),
+    //   );
+
+    //   await tester.runAsync(() async {
+    //     Navigator.of(
+    //       tester.element(find.text('Home')),
+    //     ).pushNamed(AppRoutes.searchResult, arguments: {'keyword': '테스트'});
+    //     await tester.pumpAndSettle();
+    //   });
+
+    //   expect(find.byType(SearchResultScreen), findsOneWidget);
     // });
   });
 }
