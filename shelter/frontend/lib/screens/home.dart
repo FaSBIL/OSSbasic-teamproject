@@ -285,6 +285,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   );
                 },
+                navButtonText: '경로 보기',
               ),
             ),
           if (_showNearbyList && _selectedShelter == null)
