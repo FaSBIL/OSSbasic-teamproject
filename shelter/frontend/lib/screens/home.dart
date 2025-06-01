@@ -360,6 +360,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   );
                 },
+                navButtonText: '경로 보기',
               ),
             )
           else

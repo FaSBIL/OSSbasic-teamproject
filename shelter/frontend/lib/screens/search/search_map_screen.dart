@@ -204,6 +204,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                     },
                   );
                 },
+                navButtonText: '경로 보기',
               ),
             ),
         ],

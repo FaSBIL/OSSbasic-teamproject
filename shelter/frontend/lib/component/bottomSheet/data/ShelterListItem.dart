@@ -30,7 +30,7 @@ class ShelterListItem extends StatelessWidget {
     required this.onTap,
     required this.onFavoriteToggle,
     required this.onNavigatePressed,
-    this.navButtonText = '안내 시작',
+    required this.navButtonText,
   });
 
   @override

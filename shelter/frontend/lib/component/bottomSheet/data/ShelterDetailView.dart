@@ -20,7 +20,7 @@ class ShelterDetailView extends StatelessWidget {
     required this.currentPosition,
     required this.onFavoriteToggle,
     required this.onNavigate,
-    this.navButtonText = '안내 시작',
+    required this.navButtonText,
   });
 
   @override
