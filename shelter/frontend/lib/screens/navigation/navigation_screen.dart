@@ -132,7 +132,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
           Positioned.fill(
             child: ShelterMap(
               currentPosition: widget.start,
-              mapController: MapController(),
+              mapController: _mapController,
               initialCenter: widget.start,
               shelterMarkers: [
                 Marker(
