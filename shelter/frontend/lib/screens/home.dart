@@ -18,6 +18,7 @@ import 'package:shelter/screens/navigation/navigation_screen.dart';
 import 'package:shelter/screens/settings/SettingsMainScreens.dart';
 import 'package:shelter/theme/color.dart';
 import 'package:shelter/utils/favorite_utils.dart';
+import 'package:shelter/utils/navigation_animation.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -216,9 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onMenuTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const SettingsMainScreen(),
-                      ),
+                      slideFromLeft(const SettingsMainScreen()),
                     );
                   },
                   searchText: '',

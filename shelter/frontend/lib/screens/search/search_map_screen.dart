@@ -12,6 +12,7 @@ import 'package:shelter/utils/favorite_utils.dart';
 import 'package:shelter/component/input/MainInput.dart';
 import 'package:shelter/screens/settings/SettingsMainScreens.dart';
 import 'package:shelter/screens/search/search_screen.dart';
+import 'package:shelter/utils/navigation_animation.dart';
 
 class SearchMapScreen extends StatefulWidget {
   final String region;
@@ -144,9 +145,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                   onMenuTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const SettingsMainScreen(),
-                      ),
+                        slideFromLeft(const SettingsMainScreen()),
                     );
                   },
                   searchText: _selectedShelter?.name ?? '검색 결과',
