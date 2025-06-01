@@ -48,7 +48,9 @@ class _BottomSheetTestScreenState extends State<BottomSheetTestScreen> {
       }
 
       Position position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
       );
 
       setState(() {
@@ -64,10 +66,7 @@ class _BottomSheetTestScreenState extends State<BottomSheetTestScreen> {
   Future<void> loadData() async {
     try {
       final db = await loadDatabase();
-      final rows = await db.query(
-        'seoul',
-        limit: 10,
-      );
+      final rows = await db.query('seoul', limit: 10);
       await db.close();
 
       setState(() {
@@ -86,57 +85,57 @@ class _BottomSheetTestScreenState extends State<BottomSheetTestScreen> {
       body: Stack(
         children: [
           FlutterMap(
-            options: MapOptions(
-              initialCenter: LatLng(37.5665, 126.9780),
-            ),
+            options: MapOptions(initialCenter: LatLng(37.5665, 126.9780)),
             children: [
               TileLayer(
-                urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                urlTemplate:
+                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
                 subdomains: ['a', 'b', 'c'],
                 userAgentPackageName: 'com.example.osm_map',
               ),
               MarkerLayer(
-                markers: shelters.map((shelter) {
-                  return Marker(
-                    point: LatLng(
-                      shelter['latitude'] ?? 0.0,
-                      shelter['longitude'] ?? 0.0,
-                    ),
-                    width: 80,
-                    height: 80,
-                    child: const Icon(
-                      Icons.location_on,
-                      color: Colors.red,
-                      size: 40,
-                    ),
-                  );
-                }).toList(),
+                markers:
+                    shelters.map((shelter) {
+                      return Marker(
+                        point: LatLng(
+                          shelter['latitude'] ?? 0.0,
+                          shelter['longitude'] ?? 0.0,
+                        ),
+                        width: 80,
+                        height: 80,
+                        child: const Icon(
+                          Icons.location_on,
+                          color: Colors.red,
+                          size: 40,
+                        ),
+                      );
+                    }).toList(),
               ),
             ],
           ),
 
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: shelters.isEmpty
-                ? const CircularProgressIndicator()
-                : ShelterBottomSheet(
-                    mode: SheetMode.detail,
-                    child: ShelterListView(
-                      scrollController: ScrollController(),
-                      shelters: shelters,
-                      currentPosition: currentPosition,
-                      onFavoriteToggle: (updatedShelter) {
-                        print('favorite Button: ${updatedShelter['name']}');
-                      },
-                      onNavigate: (updatedShelter) {
-                        print('nav Start: ${updatedShelter['name']}');
-                      },
-                      onTapItem: (shelter) {
-                        print('onTap click: ${shelter['name']}');
-                      },
-                    ),
-                  ),
-          ),
+          // Align(
+          //   alignment: Alignment.bottomCenter,
+          //   child: shelters.isEmpty
+          //       ? const CircularProgressIndicator()
+          //       : ShelterBottomSheet(
+          //           mode: SheetMode.detail,
+          //           child: ShelterListView(
+          //             scrollController: ScrollController(),
+          //             shelters: shelters,
+          //             currentPosition: currentPosition,
+          //             onFavoriteToggle: (updatedShelter) {
+          //               print('favorite Button: ${updatedShelter['name']}');
+          //             },
+          //             onNavigate: (updatedShelter) {
+          //               print('nav Start: ${updatedShelter['name']}');
+          //             },
+          //             onTapItem: (shelter) {
+          //               print('onTap click: ${shelter['name']}');
+          //             },
+          //           ),
+          //         ),
+          // ),
         ],
       ),
     );
