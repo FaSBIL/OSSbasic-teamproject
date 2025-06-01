@@ -164,6 +164,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
               currentPosition: createMockPosition(widget.start),
               onFavoriteToggle: (_) {},
               onNavigate: (_) {},
+              navButtonText: '안내 시작',
             ),
           ),
         ],

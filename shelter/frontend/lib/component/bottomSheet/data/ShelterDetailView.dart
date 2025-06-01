@@ -12,6 +12,7 @@ class ShelterDetailView extends StatelessWidget {
   final Position? currentPosition;
   final void Function(Map<String, dynamic>) onFavoriteToggle;
   final void Function(Map<String, dynamic>) onNavigate;
+  final String navButtonText;
 
   const ShelterDetailView({
     super.key,
@@ -19,6 +20,7 @@ class ShelterDetailView extends StatelessWidget {
     required this.currentPosition,
     required this.onFavoriteToggle,
     required this.onNavigate,
+    required this.navButtonText,
   });
 
   @override
@@ -52,6 +54,7 @@ class ShelterDetailView extends StatelessWidget {
               onFavoriteToggle: () => onFavoriteToggle(shelters),
               onNavigatePressed: () => onNavigate(shelters),
               onTap: () {},
+              navButtonText: navButtonText,
             );
           },
         ),
