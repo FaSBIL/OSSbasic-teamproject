@@ -7,12 +7,14 @@ class MainInput extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback? onMenuTap;
   final String searchText;
+  final IconData menuIcon;
 
   const MainInput({
     Key? key,
     required this.onTap,
     this.onMenuTap,
     this.searchText = '',
+    this.menuIcon = AppIcons.menu,
   }) : super(key: key);
 
   @override
@@ -36,7 +38,7 @@ class MainInput extends StatelessWidget {
           children: [
             GestureDetector(
               onTap: onMenuTap,
-              child: Icon(AppIcons.menu, color: AppColors.darkGray),
+              child: Icon(menuIcon, color: AppColors.darkGray),
             ),
             const SizedBox(width: 12),
             Expanded(

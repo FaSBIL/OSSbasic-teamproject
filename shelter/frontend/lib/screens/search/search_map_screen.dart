@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:shelter/component/icon/IconUtils.dart';
 import 'package:shelter/models/shelter.dart';
 import 'package:shelter/map/user_marker.dart';
 import 'package:shelter/component/bottomSheet/ShelterBottomSheet.dart';
@@ -15,6 +16,7 @@ import 'package:shelter/screens/search/search_screen.dart';
 import 'package:shelter/utils/navigation_animation.dart';
 import 'package:provider/provider.dart';
 import 'package:shelter/provider/favorite_provider.dart';
+import '../../screens/home.dart' as home;
 
 class SearchMapScreen extends StatefulWidget {
   final String region;
@@ -138,6 +140,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 MainInput(
+                  menuIcon: AppIcons.arrowRight,
                   onTap: () {
                     Navigator.push(
                       context,
@@ -147,7 +150,7 @@ class _SearchMapScreenState extends State<SearchMapScreen> {
                   onMenuTap: () {
                     Navigator.push(
                       context,
-                        slideFromLeft(const SettingsMainScreen()),
+                        slideFromLeft(const home.HomeScreen()),
                     );
                   },
                   searchText: _selectedShelter?.name ?? '검색 결과',
