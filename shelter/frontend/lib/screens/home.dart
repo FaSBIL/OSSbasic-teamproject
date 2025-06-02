@@ -16,6 +16,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:shelter/screens/navigation/navigation_screen.dart';
 import 'package:shelter/screens/settings/SettingsMainScreens.dart';
 import 'package:shelter/theme/color.dart';
+import 'package:shelter/utils/favorite_utils.dart';
+import 'package:shelter/utils/navigation_animation.dart';
 import 'package:shelter/services/favorite_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shelter/provider/favorite_provider.dart';
@@ -252,9 +254,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onMenuTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const SettingsMainScreen(),
-                      ),
+                      slideFromLeft(const SettingsMainScreen()),
                     );
                   },
                   searchText: '',

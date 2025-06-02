@@ -114,28 +114,29 @@ class _BottomSheetTestScreenState extends State<BottomSheetTestScreen> {
             ],
           ),
 
-          // Align(
-          //   alignment: Alignment.bottomCenter,
-          //   child: shelters.isEmpty
-          //       ? const CircularProgressIndicator()
-          //       : ShelterBottomSheet(
-          //           mode: SheetMode.detail,
-          //           child: ShelterListView(
-          //             scrollController: ScrollController(),
-          //             shelters: shelters,
-          //             currentPosition: currentPosition,
-          //             onFavoriteToggle: (updatedShelter) {
-          //               print('favorite Button: ${updatedShelter['name']}');
-          //             },
-          //             onNavigate: (updatedShelter) {
-          //               print('nav Start: ${updatedShelter['name']}');
-          //             },
-          //             onTapItem: (shelter) {
-          //               print('onTap click: ${shelter['name']}');
-          //             },
-          //           ),
-          //         ),
-          // ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: shelters.isEmpty
+                ? const CircularProgressIndicator()
+                : ShelterBottomSheet(
+                    mode: SheetMode.detail,
+                    child: ShelterListView(
+                      scrollController: ScrollController(),
+                      shelters: shelters,
+                      currentPosition: currentPosition,
+                      onFavoriteToggle: (updatedShelter) {
+                        print('favorite Button: ${updatedShelter['name']}');
+                      },
+                      onNavigate: (updatedShelter) {
+                        print('nav Start: ${updatedShelter['name']}');
+                      },
+                      onTapItem: (shelter) {
+                        print('onTap click: ${shelter['name']}');
+                      },
+                      navButtonText: '안내 시작',
+                    ),
+                  ),
+          ),
         ],
       ),
     );

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:shelter/models/shelter.dart';
 import 'package:shelter/screens/search/search_map_screen.dart';
 import 'package:shelter/services/favorite_service.dart';
 import 'package:shelter/theme/color.dart';
 import 'package:shelter/component/icon/favorite_icon_static.dart';
+import 'package:shelter/services/user_location.dart';
 
 class FavoriteShelterScreen extends StatefulWidget {
   const FavoriteShelterScreen({super.key});
@@ -15,6 +17,7 @@ class FavoriteShelterScreen extends StatefulWidget {
 class _FavoriteShelterScreenState extends State<FavoriteShelterScreen> {
   List<Shelter> _favoriteShelters = [];
   bool _isLoading = true;
+  LatLng? _currentPosition;
 
   @override
   void initState() {
@@ -44,10 +47,13 @@ class _FavoriteShelterScreenState extends State<FavoriteShelterScreen> {
     ];
 
     final favoriteList = <Shelter>[];
-
+    final position = await UserLocationService().getCurrentLocation();
+    _currentPosition = LatLng(position.latitude, position.longitude);
+    
     for (final table in regionTables) {
       final shelters = await FavoriteService().getFavoriteShelterObjects(table);
       favoriteList.addAll(shelters);
+      _currentPosition = LatLng(position.latitude, position.longitude);
     }
 
     setState(() {
@@ -100,6 +106,7 @@ class _FavoriteShelterScreenState extends State<FavoriteShelterScreen> {
                                 region: '즐겨찾기',
                                 shelters: [shelter],
                                 selectedShelter: shelter,
+                                currentPosition: _currentPosition,
                               ),
                         ),
                       );
