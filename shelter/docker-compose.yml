@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    container_name: shelter_backend
+    working_dir: /usr/src/app
+    # 호스트의 backend/ 전체를 컨테이너 /usr/src/app 에 마운트
+    volumes:
+      - ../backend:/usr/src/app
+      # node_modules 폴더는 컨테이너 내부 볼륨으로 잡아야
+      # 호스트와 충돌 없이 의존성 설치가 가능합니다.
+      - /usr/src/app/node_modules
+    ports:
+      - "3000:3000"   # 백엔드가 3000번 포트(예: Express.js)로 실행된다고 가정
+    environment:
+      - NODE_ENV=development
+    command: >
+      sh -c "npm install && npm run dev"
+      #  • 만약 개발용 스크립트가 "npm start"라면
+      #    `"npm install && npm start"` 로 변경하세요.
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    container_name: shelter_frontend
+    working_dir: /app
+    # 호스트의 frontend/ 전체를 컨테이너 /app 에 마운트
+    volumes:
+      - ../frontend:/app
+    ports:
+      - "8080:8080"   # Flutter Web 서버가 8080번으로 실행된다고 가정
+    environment:
+      # Flutter Web을 실행할 때 필요한 Chromium 경로 예시
+      - CHROME_EXECUTABLE=/usr/bin/chromium-browser
+    command: >
+      bash -lc "
+        flutter pub get &&
+        flutter run -d web-server
+          --web-port 8080
+          --web-hostname 0.0.0.0
+      "
+      #  • 실제 모바일(Android/iOS) 앱 빌드를 위해서는
+      #    별도의 Dockerfile + 빌드 스크립트를 작성 후
+      #    여기 command를 그 빌드 스크립트로 바꾸시면 됩니다.
+
+# (선택) 네트워크 설정을 별도로 정의하고 싶은 경우 아래와 같이 추가할 수 있습니다.
+#networks:
+#  shelter_net:
+#    driver: bridge
