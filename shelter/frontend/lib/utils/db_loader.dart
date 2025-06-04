@@ -4,6 +4,8 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:shelter/services/user_location.dart';
+
 Future<Database> loadDatabase() async {
   final dbName = 'shelters.db';
   final documentsDir = await getApplicationDocumentsDirectory();
@@ -21,12 +23,40 @@ Future<Database> loadDatabase() async {
 
   return openDatabase(dbPath);
 }
-Future<String> getRegionFromLatLng(double lat, double lon) async {
-  // TODO: 위도경도 기반 지역 결정 로직 필요
-  // 현재는 테스트용으로 충북 반환
-  return 'chungbuk';
-}
+Future<String> getRegionFromLatLng(double latitude, double longitude) async {
+  final locationService = UserLocationService();
+  final location = await locationService.getNearestLocation(latitude, longitude);
+  final doName = location['do'];
 
+  // 행정구역명 → DB 파일명 매핑
+  const regionMap = {
+    '서울특별시': 'seoul',
+    '부산광역시': 'busan',
+    '대구광역시': 'daegu',
+    '인천광역시': 'incheon',
+    '광주광역시': 'gwangju',
+    '대전광역시': 'daejeon',
+    '울산광역시': 'ulsan',
+    '세종특별자치시': 'sejong',
+    '경기도': 'gyeonggi',
+    '강원특별자치도': 'gangwon',
+    '충청북도': 'chungbuk',
+    '충청남도': 'chungnam',
+    '전북특별자치도': 'jeonbuk',
+    '전라남도': 'jeonnam',
+    '경상북도': 'gyeongbuk',
+    '경상남도': 'gyeongnam',
+    '제주특별자치도': 'jeju',
+  };
+
+  final region = regionMap[doName];
+
+  if (region == null) {
+    throw Exception('알 수 없는 행정구역입니다: $doName');
+  }
+
+  return region;
+}
 Future<Database> loadRegionDatabase(String region) async {
   final dbName = 'region_$region.db';
   final documentsDir = await getApplicationDocumentsDirectory();
