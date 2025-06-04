@@ -12,6 +12,7 @@ import 'package:shelter/models/shelter.dart';
 import 'package:shelter/screens/search/search_screen.dart';
 import 'package:shelter/component/bottomSheet/ShelterBottomSheet.dart';
 import 'package:shelter/component/bottomSheet/data/ShelterDetailView.dart';
+import 'package:shelter/component/bottomSheet/data/ShelterListView.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shelter/screens/navigation/navigation_screen.dart';
 import 'package:shelter/screens/settings/SettingsMainScreens.dart';
@@ -51,6 +52,28 @@ String getTableName(Shelter shelter) {
   if (address.contains('제주')) return 'jeju';
 
   throw Exception('❌ getTableName: 알 수 없는 주소 형식입니다 -> ${shelter.address}');
+}
+
+String getTableNameFromAddress(String address) {
+  if (address.contains('서울')) return 'seoul';
+  if (address.contains('부산')) return 'busan';
+  if (address.contains('대전')) return 'daejeon';
+  if (address.contains('광주')) return 'gwangju';
+  if (address.contains('인천')) return 'incheon';
+  if (address.contains('대구')) return 'daegu';
+  if (address.contains('울산')) return 'ulsan';
+  if (address.contains('세종')) return 'sejong';
+  if (address.contains('경기도') || address.contains('경기')) return 'gyeonggi';
+  if (address.contains('강원도') || address.contains('강원')) return 'gangwon';
+  if (address.contains('충청북도') || address.contains('충북')) return 'chungbuk';
+  if (address.contains('충청남도') || address.contains('충남')) return 'chungnam';
+  if (address.contains('전라북도') || address.contains('전북')) return 'jeonbuk';
+  if (address.contains('전라남도') || address.contains('전남')) return 'jeonnam';
+  if (address.contains('경상북도') || address.contains('경북')) return 'gyeongbuk';
+  if (address.contains('경상남도') || address.contains('경남')) return 'gyeongnam';
+  if (address.contains('제주')) return 'jeju';
+
+  throw Exception('❌ getTableNameFromAddress: 알 수 없는 주소 형식입니다 -> $address');
 }
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -363,44 +386,103 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
               ),
             )
-          else
+          else if (_currentPosition != null)
             ShelterBottomSheet(
               mode: SheetMode.list,
               controller: _sheetController,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(16, 8, 16, 4),
-                    child: Text(
-                      '현재 위치에서 가까운 대피소',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.black,
-                      ),
+              child: Builder(
+                builder: (context) {
+                  final provider = context.watch<FavoriteProvider>();
+
+                  final nearbySheltersMap = _nearbyShelters.map((shelter) => {
+                    'name': shelter.name,
+                    'address': shelter.address,
+                    'latitude': shelter.latitude,
+                    'longitude': shelter.longitude,
+                    'earthquake': shelter.earthquakeSafe ? 1 : 0,
+                    'tsunami': shelter.tsunamiSafe ? 1 : 0,
+                    'isFavorite': provider.isFavorite(shelter.name) ? 1 : 0,
+                  }).toList();
+
+                  return ShelterListView(
+                    scrollController: ScrollController(),
+                    shelters: nearbySheltersMap,
+                    currentPosition: Position(
+                      latitude: _currentPosition!.latitude,
+                      longitude: _currentPosition!.longitude,
+                      timestamp: DateTime.now(),
+                      accuracy: 0,
+                      altitude: 0,
+                      heading: 0,
+                      speed: 0,
+                      speedAccuracy: 0,
+                      altitudeAccuracy: 0,
+                      headingAccuracy: 0,
                     ),
-                  ),
-                  const Divider(height: 1),
-                  ..._nearbyShelters.map((shelter) {
-                    return ListTile(
-                      title: Text(shelter.name),
-                      subtitle: Text(shelter.address),
-                      onTap: () {
-                        final tappedShelter = _nearbyShelters.firstWhere(
-                          (s) =>
-                              s.name == shelter.name &&
-                              s.address == shelter.address,
-                          orElse: () => shelter,
-                        );
-                        setState(() {
-                          _selectedShelter = tappedShelter;
-                        });
-                      },
-                    );
-                  }).toList(),
-                ],
+                    onTapItem: (shelterMap) {
+                      final tapped = _nearbyShelters.firstWhere(
+                        (s) => s.name == shelterMap['name'],
+                        orElse: () => _nearbyShelters.first,
+                      );
+                      setState(() {
+                        _selectedShelter = tapped;
+                      });
+                    },
+                    onFavoriteToggle: (shelterMap) async {
+                      final address = shelterMap['address'] ?? '';
+                      final name = shelterMap['name'] ?? '';
+
+                      final tableName = getTableNameFromAddress(address);
+                      final provider = context.read<FavoriteProvider>();
+
+                      await provider.toggleFavorite(tableName, name);
+                      final isNowFavorite = provider.isFavorite(name);
+
+                      setState(() {
+                        _nearbyShelters = _nearbyShelters.map((shelter) {
+                          if (shelter.name == name && shelter.address == address) {
+                            return shelter.copyWith(isFavorite: isNowFavorite);
+                          }
+                          return shelter;
+                        }).toList();
+                      });
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            isNowFavorite ? '즐겨찾기에 추가되었습니다.' : '즐겨찾기에서 제거되었습니다.',
+                          ),
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
+                    },
+                    onNavigate: (shelterMap) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => NavigationScreen(
+                                start: _currentPosition!,
+                                destination: LatLng(
+                                  shelterMap['latitude'],
+                                  shelterMap['longitude'],
+                                ),
+                                shelter: Shelter(
+                                  name: shelterMap['name'],
+                                  address: shelterMap['address'],
+                                  latitude: shelterMap['latitude'],
+                                  longitude: shelterMap['longitude'],
+                                  earthquakeSafe: shelterMap['earthquake'] == 1,
+                                  tsunamiSafe: shelterMap['tsunami'] == 1,
+                                  isFavorite: shelterMap['isFavorite'] == 1,
+                                ),
+                              ),
+                        ),
+                      );
+                    },
+                    navButtonText: '경로 보기',
+                  );
+                },
               ),
             ),
         ],
