@@ -48,6 +48,7 @@ dependencies:
   provider: ^6.1.0
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.10.0
   flutter_test:
     sdk: flutter
 
@@ -63,11 +64,12 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+  uses-material-design: true
   assets:
     - shelter_db/shelters.db
     - lib/assets/user_locations/user_locations.json
     - assets/shelter_db/shelters.db
-    - assets/mbtiles/8_16kr-map.mbtiles
+    # - assets/mbtiles/8_16kr-map.mbtiles
     - assets/region_graphs/
 
 
@@ -85,10 +87,17 @@ flutter:
         - asset: lib/assets/font/Noto_Sans_KR/static/NotoSansKR-Bold.ttf
           weight: 700
 
+
+flutter_icons:
+    android: true
+    ios: true
+    image_path: "assets/icon/app_icon.png"
+
+  
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
-  uses-material-design: true
+  
 
   # To add assets to your application, add an assets section, like this:
   # assets:
