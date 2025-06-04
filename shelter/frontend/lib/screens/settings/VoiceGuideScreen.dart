@@ -28,7 +28,17 @@ class _VoiceGuideScreenState extends State<VoiceGuideScreen> {
   }
 
   Future<void> _initSettings() async{
-    await _ttsController.initTTS();
+    try {
+    await _ttsController.initTTS().timeout(
+      const Duration(seconds : 5),
+      onTimeout: () {
+        print("Android TTS 초기화가 time out 됨");
+        return;
+      },
+    );
+    } catch(e) {
+      print("TTS 초기화 error : $e");
+    }
     setState((){
       isVoiceGuideOn = _ttsController.isVoiceEnabled;
       volume = _ttsController.currentVolume;
