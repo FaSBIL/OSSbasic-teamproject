@@ -13,6 +13,8 @@ import 'package:shelter/models/shelter.dart';
 import 'package:shelter/utils/favorite_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:shelter/provider/favorite_provider.dart';
+import 'package:shelter/map/user_marker.dart';
+import 'package:flutter_compass/flutter_compass.dart';
 
 Position createMockPosition(LatLng latLng) {
   return Position(
@@ -139,10 +141,12 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   width: 60,
                   height: 60,
                   point: widget.start,
-                  child: const Icon(
-                    Icons.my_location,
-                    color: AppColors.blue,
-                    size: 40,
+                  child: StreamBuilder<double?>(
+                    stream: FlutterCompass.events!.map((e) => e.heading),
+                    builder: (context, snapshot) {
+                      final heading = snapshot.data ?? 0.0;
+                      return LocationMarker(size: 40, heading: heading);
+                    },
                   ),
                 ),
                 Marker(
