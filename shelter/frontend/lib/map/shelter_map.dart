@@ -18,6 +18,7 @@ class ShelterMap extends StatefulWidget {
   final void Function(LatLng latLng)? onShelterTap;
   final LatLng? initialCenter;
   final List<LatLng>? path;
+  final double? initialZoom;
 
   const ShelterMap({
     super.key,
@@ -28,6 +29,7 @@ class ShelterMap extends StatefulWidget {
     this.onShelterTap,
     this.initialCenter,
     this.path,
+    this.initialZoom,
   });
 
   @override
@@ -85,13 +87,9 @@ class _ShelterMapState extends State<ShelterMap> {
     if (widget.path != null && widget.path!.isNotEmpty)
       PolylineLayer(
         polylines: [
-         Polyline(
-           points: widget.path!,
-           color: Colors.red,
-            strokeWidth: 4,
-         )
+          Polyline(points: widget.path!, color: Colors.red, strokeWidth: 4),
         ],
-     );
+      );
 
     return FutureBuilder<MbTilesTileProvider>(
       future: _tileProviderFuture,
@@ -105,7 +103,7 @@ class _ShelterMapState extends State<ShelterMap> {
           options: MapOptions(
             initialCenter:
                 widget.initialCenter ?? widget.currentPosition ?? fallback,
-            initialZoom: 15.0,
+            initialZoom: widget.initialZoom ?? 16.0,
             minZoom: 8.0,
             maxZoom: 16.0,
             onTap: (_, __) {
@@ -138,20 +136,19 @@ class _ShelterMapState extends State<ShelterMap> {
               ],
             ),
             if (widget.path != null && widget.path!.isNotEmpty)
-    PolylineLayer(
-      polylines: [
-        Polyline(
-          points: widget.path!,
-          color: Colors.lightBlue,
-          strokeWidth: 4,
-        )
-      ],
-    ),
+              PolylineLayer(
+                polylines: [
+                  Polyline(
+                    points: widget.path!,
+                    color: Colors.lightBlue,
+                    strokeWidth: 4,
+                  ),
+                ],
+              ),
           ],
         );
       },
     );
-    
   }
 
   @override

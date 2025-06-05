@@ -139,13 +139,21 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   width: 60,
                   height: 60,
                   point: widget.start,
-                  child: const Icon(Icons.my_location, color: AppColors.blue),
+                  child: const Icon(
+                    Icons.my_location,
+                    color: AppColors.blue,
+                    size: 40,
+                  ),
                 ),
                 Marker(
                   width: 60,
                   height: 60,
                   point: widget.destination,
-                  child: const Icon(Icons.location_on, color: AppColors.blue),
+                  child: const Icon(
+                    Icons.location_on,
+                    color: AppColors.blue,
+                    size: 40,
+                  ),
                 ),
               ],
               path: _path,

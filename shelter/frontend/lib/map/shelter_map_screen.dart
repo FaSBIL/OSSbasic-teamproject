@@ -14,8 +14,9 @@ class ShelterMapScreen extends StatelessWidget {
       appBar: AppBar(title: const Text('대피 경로 안내')),
       body: FlutterMap(
         options: MapOptions(
-          initialCenter: pathPoints.isNotEmpty ? pathPoints.first : LatLng(36.5, 127.5),
-          initialZoom: 15,
+          initialCenter:
+              pathPoints.isNotEmpty ? pathPoints.first : LatLng(36.5, 127.5),
+          initialZoom: 16,
         ),
         children: [
           TileLayer(
@@ -29,7 +30,11 @@ class ShelterMapScreen extends StatelessWidget {
                 width: 40,
                 height: 40,
                 point: pathPoints.first,
-                child: const Icon(Icons.my_location, color: Colors.blue, size: 36),
+                child: const Icon(
+                  Icons.my_location,
+                  color: Colors.blue,
+                  size: 36,
+                ),
               ),
               Marker(
                 width: 40,
@@ -38,7 +43,7 @@ class ShelterMapScreen extends StatelessWidget {
                 child: const Icon(Icons.flag, color: Colors.red, size: 36),
               ),
             ],
-          )
+          ),
         ],
       ),
     );
