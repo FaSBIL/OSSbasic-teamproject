@@ -31,6 +31,7 @@ class ShelterRegionScreen extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(height: 50),
           SafeArea(
             child: Column(
               children: [

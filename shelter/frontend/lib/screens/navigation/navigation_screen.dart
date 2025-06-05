@@ -145,10 +145,12 @@ class _NavigationScreenState extends State<NavigationScreen> {
       if (mounted) {
         setState(() {
           _path = latLngPath;
-          _guidancePoints = extractGuidancePointsFromNodePath(
-            nodePath,
-            nodeMap,
-          );
+          _guidancePoints = [
+            GuidancePoint(
+              position: widget.destination,
+              message: "목적지에 도착했습니다.",
+            ),
+          ];
         });
       }
     } catch (e) {
@@ -233,35 +235,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
             ),
           );
           return;
-        }
-      }
-    }
-
-    for (final point in _guidancePoints) {
-      final double dist = const Distance().as(
-        LengthUnit.Meter,
-        currentPos,
-        point.position,
-      );
-      final List<int> turnDistances = [10, 5, 1, 0];
-
-      for (final d in turnDistances) {
-        if ((dist - d).abs() <= 1 && !point.distanceAnnounced.contains(d)) {
-          // 사용자 heading 가져오기
-          final compassEvent = await FlutterCompass.events!.first;
-          final userHeading = compassEvent.heading ?? 0.0;
-
-          // 경로상 다음 방향의 bearing 계산
-          final pathBearing = calculateBearing(currentPos, point.position);
-
-          // 실제 회전 방향 안내 문구 결정
-          final instruction = getTurnInstruction(userHeading, pathBearing);
-
-          final spokenText = d == 0 ? instruction : '$d미터 앞에서 $instruction';
-
-          _ttsController.speak(spokenText);
-          point.distanceAnnounced.add(d);
-          break;
         }
       }
     }
@@ -358,11 +331,17 @@ class _NavigationScreenState extends State<NavigationScreen> {
                   },
                   onNavigate: (_) {
                     setState(() {
-                      _navigationStarted = true;
-                      _ttsController.speak('안내를 시작합니다.');
+                      _navigationStarted = !_navigationStarted;
+
+                      if (_navigationStarted) {
+                        _ttsController.speak('안내를 시작합니다.');
+                      } else {
+                        _ttsController.speak('안내를 종료합니다.');
+                        _guidancePoints.clear();
+                      }
                     });
                   },
-                  navButtonText: '안내 시작',
+                  navButtonText: _navigationStarted ? '안내 종료' : '안내 시작',
                 );
               },
             ),
