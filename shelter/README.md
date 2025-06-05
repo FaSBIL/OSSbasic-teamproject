@@ -23,6 +23,16 @@ Flutter SDK 3.x (개발용; Docker 내부 이미지를 사용하므로 로컬 �
 Node.js 18.x LTS (개발용; Docker 내부에서 node:lts-alpine 기본 이미지 사용)
 
 3. 실행 방법
+
+안드로이드 휴대폰 디렉토리의 /sdcard/Android/data/com.example.shelter/files/
+에 미리 mbtiles 파일을 넣어둔 후에 그 위에서 앱을 빌드하는 방식으로 시도
+
+따라서 Android 빌드 전에는 pubspec.yaml에서 .mbtiles 관련 항목을 주석 처리하는 방식으로 해결함. iOS에서 빌드 할 때는 아래의 코드를 주석처리 하지 않고 assets 폴더에 포함된 파일을 이용헤서 빌드함.
+
+flutter:
+  assets:
+    # - assets/mbtiles/8_16kr-map.mbtiles
+
 cd OSSbasic-teamproject/shelter/frontend
 (flutter가 frontend 디렉토리에 설치되어있음!)
 flutter run
