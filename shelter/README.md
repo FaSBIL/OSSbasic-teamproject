@@ -24,6 +24,8 @@ Node.js 18.x LTS (개발용; Docker 내부에서 node:lts-alpine 기본 이미�
 
 3. 실행 방법
 
+프로젝트 디렉토리 shelter/frontend/assets/region_graphs에 노드/간선 db를 별도로 다운받아 저장하는 것이 필요함. 용량이 1GB를 초과하여 LFS를 사용하지 못했음.
+
 안드로이드 휴대폰 디렉토리의 /sdcard/Android/data/com.example.shelter/files/
 에 미리 mbtiles 파일을 넣어둔 후에 그 위에서 앱을 빌드하는 방식으로 시도
 
