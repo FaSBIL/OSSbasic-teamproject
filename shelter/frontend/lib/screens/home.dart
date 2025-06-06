@@ -22,6 +22,7 @@ import 'package:shelter/utils/navigation_animation.dart';
 import 'package:shelter/services/favorite_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shelter/provider/favorite_provider.dart';
+import 'dart:async';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -80,19 +81,18 @@ class _HomeScreenState extends State<HomeScreen> {
   LatLng? _currentPosition;
   List<Marker> _shelterMarkers = [];
   final MapController _mapController = MapController();
-
   final DraggableScrollableController _sheetController =
       DraggableScrollableController();
-
-  final ShelterService _shelterService = ShelterService(); // 대피소 서비스
-  Shelter? _selectedShelter; // 선택된 대피소 정보를 담는 변수
-
+  final ShelterService _shelterService = ShelterService();
+  Shelter? _selectedShelter;
   List<Shelter> _nearbyShelters = [];
+
+  StreamSubscription<Position>? _positionSubscription;
 
   @override
   void initState() {
     super.initState();
-    _getUserLocation();
+    _startLocationStream(); // 실시간 위치 업데이트 시작
 
     Future.microtask(() {
       final provider = context.read<FavoriteProvider>();
@@ -118,128 +118,123 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Color _getMarkerColor(Shelter shelter) {
-    if (shelter.earthquakeSafe) return Colors.purple; // 지진
-    if (shelter.tsunamiSafe) return Colors.green; // 해일
-    if (!shelter.earthquakeSafe && !shelter.tsunamiSafe)
-      return AppColors.blue; // 민방위
-    return Colors.grey;
+  @override
+  void dispose() {
+    _positionSubscription?.cancel(); // 스트림 종료 필수
+    super.dispose();
   }
 
-  void _getUserLocation() async {
-    try {
-      final locationService = UserLocationService();
-      final position = await locationService.getCurrentLocation();
+  Color _getMarkerColor(Shelter shelter) {
+    if (shelter.earthquakeSafe) return Colors.purple;
+    if (shelter.tsunamiSafe) return Colors.green;
+    return AppColors.blue;
+  }
+
+  // 실시간 위치 업데이트로 변경한 부분
+  void _startLocationStream() {
+    final locationService = UserLocationService();
+    _positionSubscription = locationService.getPositionStream().listen((
+      Position position,
+    ) async {
       final currentLatLng = LatLng(position.latitude, position.longitude);
 
       setState(() {
         _currentPosition = currentLatLng;
       });
 
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _mapController.move(currentLatLng, 16.0);
-      });
-      await _shelterService.initialize();
+      _mapController.move(currentLatLng, 16.0);
 
-      // 반경 거리 계산용 도구
-      final distance = latlng.Distance();
-      final maxDistance = 3000.0; // 반경 3km 이내 (단위: 미터)
+      await _updateNearbyShelters(currentLatLng);
+    }, onError: (e) => print('❌ 위치 스트림 오류: $e'));
+  }
 
-      final allRegions = [
-        'seoul',
-        'busan',
-        'daegu',
-        'incheon',
-        'gwangju',
-        'daejeon',
-        'ulsan',
-        'sejong',
-        'gyeonggi',
-        'gangwon',
-        'chungbuk',
-        'chungnam',
-        'jeonbuk',
-        'jeonnam',
-        'gyeongbuk',
-        'gyeongnam',
-        'jeju',
-      ];
+  // 위치 업데이트 시 주변 대피소 갱신 로직 별도 메서드로 분리
+  Future<void> _updateNearbyShelters(LatLng currentLatLng) async {
+    await _shelterService.initialize();
+    final distance = latlng.Distance();
+    const maxDistance = 3000.0;
 
-      List<Shelter> nearbyShelters = [];
+    final allRegions = [
+      'seoul',
+      'busan',
+      'daegu',
+      'incheon',
+      'gwangju',
+      'daejeon',
+      'ulsan',
+      'sejong',
+      'gyeonggi',
+      'gangwon',
+      'chungbuk',
+      'chungnam',
+      'jeonbuk',
+      'jeonnam',
+      'gyeongbuk',
+      'gyeongnam',
+      'jeju',
+    ];
 
-      for (final region in allRegions) {
-        try {
-          final civilShelters = await _shelterService
-              .getSheltersByRegionAndType(region, 'civil');
-          final earthquakeShelters = await _shelterService
-              .getSheltersByRegionAndType(region, 'earthquake');
-          final tsunamiShelters = await _shelterService
-              .getSheltersByRegionAndType(region, 'tsunami');
+    List<Shelter> nearbyShelters = [];
 
-          final allShelters = [
-            ...civilShelters,
-            ...earthquakeShelters,
-            ...tsunamiShelters,
-          ];
+    for (final region in allRegions) {
+      try {
+        final civilShelters = await _shelterService.getSheltersByRegionAndType(
+          region,
+          'civil',
+        );
+        final earthquakeShelters = await _shelterService
+            .getSheltersByRegionAndType(region, 'earthquake');
+        final tsunamiShelters = await _shelterService
+            .getSheltersByRegionAndType(region, 'tsunami');
 
-          final filtered =
-              allShelters.where((shelter) {
-                final shelterLatLng = LatLng(
-                  shelter.latitude,
-                  shelter.longitude,
-                );
-                final dist = distance(currentLatLng, shelterLatLng);
-                return dist <= maxDistance;
-              }).toList();
+        final allShelters = [
+          ...civilShelters,
+          ...earthquakeShelters,
+          ...tsunamiShelters,
+        ];
 
-          nearbyShelters.addAll(filtered);
-        } catch (e) {
-          print('❌ [$region] 지역 대피소 로딩 실패: $e');
-        }
-      }
-
-      nearbyShelters.sort((a, b) {
-        final distA = distance(currentLatLng, LatLng(a.latitude, a.longitude));
-        final distB = distance(currentLatLng, LatLng(b.latitude, b.longitude));
-        return distA.compareTo(distB);
-      });
-      nearbyShelters = nearbyShelters.take(10).toList();
-
-      setState(() {
-        _shelterMarkers =
-            nearbyShelters.map((shelter) {
-              return Marker(
-                width: 60,
-                height: 60,
-                point: LatLng(shelter.latitude, shelter.longitude),
-                child: GestureDetector(
-                  onTap: () {
-                    final tappedShelter = _nearbyShelters.firstWhere(
-                      (s) =>
-                          s.name == shelter.name &&
-                          s.address == shelter.address,
-                      orElse: () => shelter,
-                    );
-
-                    setState(() {
-                      _selectedShelter = tappedShelter;
-                    });
-                  },
-
-                  child: Icon(
-                    Icons.location_pin,
-                    color: _getMarkerColor(shelter),
-                    size: 40,
-                  ),
-                ),
-              );
+        final filtered =
+            allShelters.where((shelter) {
+              final shelterLatLng = LatLng(shelter.latitude, shelter.longitude);
+              return distance(currentLatLng, shelterLatLng) <= maxDistance;
             }).toList();
 
-        _nearbyShelters = nearbyShelters.take(10).toList();
-      });
-    } catch (e) {
-      print('❌ 위치 또는 대피소 로딩 실패: $e');
+        nearbyShelters.addAll(filtered);
+      } catch (e) {
+        print('❌ [$region] 지역 대피소 로딩 실패: $e');
+      }
     }
+
+    nearbyShelters.sort(
+      (a, b) => distance(
+        currentLatLng,
+        LatLng(a.latitude, a.longitude),
+      ).compareTo(distance(currentLatLng, LatLng(b.latitude, b.longitude))),
+    );
+
+    nearbyShelters = nearbyShelters.take(10).toList();
+
+    setState(() {
+      _nearbyShelters = nearbyShelters;
+      _shelterMarkers =
+          nearbyShelters
+              .map(
+                (shelter) => Marker(
+                  width: 60,
+                  height: 60,
+                  point: LatLng(shelter.latitude, shelter.longitude),
+                  child: GestureDetector(
+                    onTap: () => setState(() => _selectedShelter = shelter),
+                    child: Icon(
+                      Icons.location_pin,
+                      color: _getMarkerColor(shelter),
+                      size: 40,
+                    ),
+                  ),
+                ),
+              )
+              .toList();
+    });
   }
 
   @override
@@ -394,15 +389,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (context) {
                   final provider = context.watch<FavoriteProvider>();
 
-                  final nearbySheltersMap = _nearbyShelters.map((shelter) => {
-                    'name': shelter.name,
-                    'address': shelter.address,
-                    'latitude': shelter.latitude,
-                    'longitude': shelter.longitude,
-                    'earthquake': shelter.earthquakeSafe ? 1 : 0,
-                    'tsunami': shelter.tsunamiSafe ? 1 : 0,
-                    'isFavorite': provider.isFavorite(shelter.name) ? 1 : 0,
-                  }).toList();
+                  final nearbySheltersMap =
+                      _nearbyShelters
+                          .map(
+                            (shelter) => {
+                              'name': shelter.name,
+                              'address': shelter.address,
+                              'latitude': shelter.latitude,
+                              'longitude': shelter.longitude,
+                              'earthquake': shelter.earthquakeSafe ? 1 : 0,
+                              'tsunami': shelter.tsunamiSafe ? 1 : 0,
+                              'isFavorite':
+                                  provider.isFavorite(shelter.name) ? 1 : 0,
+                            },
+                          )
+                          .toList();
 
                   return ShelterListView(
                     scrollController: ScrollController(),
@@ -439,18 +440,24 @@ class _HomeScreenState extends State<HomeScreen> {
                       final isNowFavorite = provider.isFavorite(name);
 
                       setState(() {
-                        _nearbyShelters = _nearbyShelters.map((shelter) {
-                          if (shelter.name == name && shelter.address == address) {
-                            return shelter.copyWith(isFavorite: isNowFavorite);
-                          }
-                          return shelter;
-                        }).toList();
+                        _nearbyShelters =
+                            _nearbyShelters.map((shelter) {
+                              if (shelter.name == name &&
+                                  shelter.address == address) {
+                                return shelter.copyWith(
+                                  isFavorite: isNowFavorite,
+                                );
+                              }
+                              return shelter;
+                            }).toList();
                       });
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            isNowFavorite ? '즐겨찾기에 추가되었습니다.' : '즐겨찾기에서 제거되었습니다.',
+                            isNowFavorite
+                                ? '즐겨찾기에 추가되었습니다.'
+                                : '즐겨찾기에서 제거되었습니다.',
                           ),
                           duration: const Duration(seconds: 1),
                         ),

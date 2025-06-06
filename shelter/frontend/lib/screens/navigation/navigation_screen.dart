@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:shelter/theme/color.dart';
@@ -13,6 +14,12 @@ import 'package:shelter/models/shelter.dart';
 import 'package:shelter/utils/favorite_utils.dart';
 import 'package:provider/provider.dart';
 import 'package:shelter/provider/favorite_provider.dart';
+import 'package:shelter/map/user_marker.dart';
+import 'package:flutter_compass/flutter_compass.dart';
+import 'package:shelter/services/user_location.dart';
+import 'package:shelter/utils/navigation_guidance_utils.dart';
+import 'package:shelter/controllers/tts_controller.dart';
+import 'package:shelter/utils/navigation_guidance_utils.dart';
 
 Position createMockPosition(LatLng latLng) {
   return Position(
@@ -48,15 +55,43 @@ class NavigationScreen extends StatefulWidget {
 class _NavigationScreenState extends State<NavigationScreen> {
   final DijkstraService _dijkstraService = DijkstraService();
   final MapController _mapController = MapController();
+  final TTSController _ttsController = TTSController();
+  bool _navigationStarted = false;
 
   String distance = '계산 중...';
   List<LatLng> _path = [];
+  List<GuidancePoint> _guidancePoints = [];
+  LatLng? _currentPosition;
+  StreamSubscription<Position>? _positionSubscription;
 
   @override
   void initState() {
     super.initState();
+    _ttsController.initTTS();
+    _currentPosition = widget.start;
     _loadDistance();
-    _calculatePath();
+    _calculatePath(widget.start);
+
+    _positionSubscription = UserLocationService().getPositionStream().listen((
+      position,
+    ) {
+      final updatedPosition = LatLng(position.latitude, position.longitude);
+      if (mounted) {
+        setState(() {
+          _currentPosition = updatedPosition;
+        });
+        _calculatePath(updatedPosition);
+        final zoom = _mapController.camera.zoom;
+        _mapController.move(updatedPosition, zoom);
+        _handleGuidance(updatedPosition);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _positionSubscription?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadDistance() async {
@@ -74,16 +109,15 @@ class _NavigationScreenState extends State<NavigationScreen> {
     }
   }
 
-  Future<void> _calculatePath() async {
+  Future<void> _calculatePath(LatLng currentPos) async {
     try {
       await _dijkstraService.loadRegionData(
-        widget.start.latitude,
-        widget.start.longitude,
+        currentPos.latitude,
+        currentPos.longitude,
       );
-
       final int? startNode = await _dijkstraService.findClosestNode(
-        widget.start.latitude,
-        widget.start.longitude,
+        currentPos.latitude,
+        currentPos.longitude,
       );
       final int? endNode = await _dijkstraService.findClosestNode(
         widget.destination.latitude,
@@ -103,12 +137,20 @@ class _NavigationScreenState extends State<NavigationScreen> {
         startNode,
         endNode,
       );
+      final Map<int, LatLng> nodeMap = _dijkstraService.nodeMap;
+
       final List<LatLng> latLngPath = await _dijkstraService
           .getLatLngListFromNodeIds(nodePath);
 
       if (mounted) {
         setState(() {
           _path = latLngPath;
+          _guidancePoints = [
+            GuidancePoint(
+              position: widget.destination,
+              message: "목적지에 도착했습니다.",
+            ),
+          ];
         });
       }
     } catch (e) {
@@ -121,31 +163,127 @@ class _NavigationScreenState extends State<NavigationScreen> {
     }
   }
 
+  double calculateRemainingPathDistance(LatLng currentPos, List<LatLng> path) {
+    final distance = const Distance();
+
+    // 경로에서 현재 위치와 가장 가까운 지점 찾기
+    int closestIndex = 0;
+    double minDist = double.infinity;
+    for (int i = 0; i < path.length; i++) {
+      final d = distance.as(LengthUnit.Meter, currentPos, path[i]);
+      if (d < minDist) {
+        minDist = d;
+        closestIndex = i;
+      }
+    }
+
+    // 현재 위치에서 가장 가까운 경로 지점까지 거리
+    double total = distance.as(
+      LengthUnit.Meter,
+      currentPos,
+      path[closestIndex],
+    );
+
+    // 이후 경로 구간 누적
+    for (int i = closestIndex; i < path.length - 1; i++) {
+      total += distance.as(LengthUnit.Meter, path[i], path[i + 1]);
+    }
+
+    return total;
+  }
+
+  void _handleGuidance(LatLng currentPos) async {
+    if (!_navigationStarted) return; // 안내 시작 안했으면 종료
+
+    final double distanceToDest = calculateRemainingPathDistance(
+      currentPos,
+      _path,
+    );
+
+    // 도착 안내
+    if (distanceToDest <= 5 &&
+        !_guidancePoints.any((p) => p.message == "목적지에 도착했습니다.")) {
+      _ttsController.speak("목적지에 도착했습니다.");
+      _guidancePoints.add(
+        GuidancePoint(position: widget.destination, message: "목적지에 도착했습니다."),
+      );
+      return;
+    }
+
+    // 거리 기반 안내 (1km ~ 10m)
+    final List<int> alertDistances = [
+      1000,
+      500,
+      400,
+      300,
+      200,
+      100,
+      50,
+      40,
+      30,
+      20,
+      10,
+    ];
+    for (final dist in alertDistances) {
+      if ((distanceToDest - dist).abs() <= 3) {
+        if (!_guidancePoints.any((p) => p.message == "$dist미터 남았습니다.")) {
+          _ttsController.speak("$dist미터 남았습니다.");
+          _guidancePoints.add(
+            GuidancePoint(
+              position: widget.destination,
+              message: "$dist미터 남았습니다.",
+            ),
+          );
+          return;
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.white,
-      appBar: AppBar(backgroundColor: AppColors.white, title: Text('경로 미리보기')),
+      appBar: AppBar(
+        backgroundColor: _navigationStarted ? AppColors.blue : AppColors.white,
+        title: Text(
+          _navigationStarted ? '안내 중...' : '경로 미리보기',
+          style: TextStyle(
+            color: _navigationStarted ? Colors.white : Colors.black,
+          ),
+        ),
+      ),
       body: Stack(
         children: [
           // 지도
           Positioned.fill(
             child: ShelterMap(
-              currentPosition: widget.start,
+              currentPosition: _currentPosition ?? widget.start,
               mapController: _mapController,
               initialCenter: widget.start,
               shelterMarkers: [
-                Marker(
-                  width: 60,
-                  height: 60,
-                  point: widget.start,
-                  child: const Icon(Icons.my_location, color: AppColors.blue),
-                ),
+                if (_currentPosition != null)
+                  Marker(
+                    width: 60,
+                    height: 60,
+                    point: _currentPosition!,
+                    child: StreamBuilder<double?>(
+                      stream: FlutterCompass.events!.map((e) => e.heading),
+                      builder: (context, snapshot) {
+                        final heading = snapshot.data ?? 0.0;
+                        return LocationMarker(size: 40, heading: heading);
+                      },
+                    ),
+                  ),
                 Marker(
                   width: 60,
                   height: 60,
                   point: widget.destination,
-                  child: const Icon(Icons.location_on, color: AppColors.blue),
+                  child: const Icon(
+                    Icons.location_on,
+                    color: AppColors.blue,
+                    size: 40,
+                  ),
                 ),
               ],
               path: _path,
@@ -170,7 +308,9 @@ class _NavigationScreenState extends State<NavigationScreen> {
                     'tsunami': widget.shelter.tsunamiSafe ? 1 : 0,
                     'isFavorite': isFavorite ? 1 : 0,
                   },
-                  currentPosition: createMockPosition(widget.start),
+                  currentPosition: createMockPosition(
+                    _currentPosition ?? widget.start,
+                  ),
                   onFavoriteToggle: (shelterMap) async {
                     final provider = context.read<FavoriteProvider>();
                     final tableName = getTableName(shelterMap);
@@ -189,8 +329,19 @@ class _NavigationScreenState extends State<NavigationScreen> {
                       ),
                     );
                   },
-                  onNavigate: (_) {},
-                  navButtonText: '안내 시작',
+                  onNavigate: (_) {
+                    setState(() {
+                      _navigationStarted = !_navigationStarted;
+
+                      if (_navigationStarted) {
+                        _ttsController.speak('안내를 시작합니다.');
+                      } else {
+                        _ttsController.speak('안내를 종료합니다.');
+                        _guidancePoints.clear();
+                      }
+                    });
+                  },
+                  navButtonText: _navigationStarted ? '안내 종료' : '안내 시작',
                 );
               },
             ),
