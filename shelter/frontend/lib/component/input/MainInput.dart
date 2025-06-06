@@ -43,7 +43,7 @@ class MainInput extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                searchText.isEmpty ? '대파소 검색' : searchText,
+                searchText.isEmpty ? '대피소 검색' : searchText,
                 style: AppTextStyles.body.copyWith(
                   color: searchText.isEmpty ? AppColors.gray : AppColors.black,
                 ),

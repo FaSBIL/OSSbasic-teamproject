@@ -40,6 +40,17 @@ class UserLocationService {
     );
   }
 
+  Stream<Position> getPositionStream({
+    LocationAccuracy accuracy = LocationAccuracy.high,
+    int distanceFilter = 10,
+  }) {
+    final locationSettings = LocationSettings(
+      accuracy: accuracy,
+      distanceFilter: distanceFilter,
+    );
+    return Geolocator.getPositionStream(locationSettings: locationSettings);
+  }
+
   Future<Map<String, String>> getNearestLocation(
     double latitude,
     double longitude,

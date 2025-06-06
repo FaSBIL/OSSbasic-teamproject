@@ -123,7 +123,7 @@ class _SearchScreenState extends State<SearchScreen> {
           SafeArea(
             child: Column(
               children: [
-                SizedBox(height: 10),
+                SizedBox(height: 50),
                 Padding(
                   padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
                   child: SearchInput(

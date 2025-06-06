@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '대피소 앱', // 앱의 기본 제목 (iOS나 일부 안드로이드에서 사용됨)
+      title: '대피GO',
       theme: ThemeData(
         fontFamily: 'NotoSansKR', // 앱 전체에서 사용할 기본 글꼴
       ),
