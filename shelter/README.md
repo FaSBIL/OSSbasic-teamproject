@@ -24,12 +24,18 @@ Node.js 18.x LTS (개발용; Docker 내부에서 node:lts-alpine 기본 이미�
 
 3. 실행 방법
 
-프로젝트 디렉토리 shelter/frontend/assets/region_graphs에 노드/간선 db를 별도로 다운받아 저장하는 것이 필요함. 용량이 1GB를 초과하여 LFS를 사용하지 못했음.
+APK 파일 구글드라이브 다운로드 링크 : https://drive.google.com/file/d/1yTrXkppiixyXfLa-3Kaa5NePJjcrpT5w/view?usp=sharing
+
+프로젝트 디렉토리 shelter/frontend/assets/region_graphs에 노드/간선 db를 별도로 다운받아 저장하는 것이 필요함. 전체 용량이 1GB를 초과하여 LFS를 사용하지 못했음.
+다운로드 링크 : https://drive.google.com/file/d/15FOHBQs8olzeFVOQuPfiQDEo9t0sMXki/view?usp=sharing
 
 안드로이드 휴대폰 디렉토리의 /sdcard/Android/data/com.example.shelter/files/
-에 미리 mbtiles 파일을 넣어둔 후에 그 위에서 앱을 빌드하는 방식으로 시도
+에 미리 8_16kr-map.mbtiles 파일을 넣어둔 후에 그 위에서 앱을 빌드하는 방식으로 시도
 
-따라서 Android 빌드 전에는 pubspec.yaml에서 .mbtiles 관련 항목을 주석 처리하는 방식으로 해결함. iOS에서 빌드 할 때는 아래의 코드를 주석처리 하지 않고 assets 폴더에 포함된 파일을 이용헤서 빌드함.
+다운로드 링크 : https://drive.google.com/file/d/1pVDPQGnMrf5T0oePbN3-UW8X29MoSwCJ/view?usp=sharing
+
+따라서 Android 빌드 전에는 pubspec.yaml에서 .mbtiles 관련 항목을 주석 처리하는 방식으로 해결함.
+iOS에서 빌드 할 때는 아래의 코드를 주석처리 하지 않고 frontend/assets/mbtiles/8_16kr-map.mbtiles 에 다운받은 파일을 포함시켜서 빌드함.
 
 flutter:
   assets:
